@@ -1,0 +1,36 @@
+<header>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" routerLink="/home">E-Commerce App</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page">Products</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/about" routerLinkActive="active" ariaCurrentWhenActive="page">About</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <ng-container *ngIf="!isAuthenticated">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/register" routerLinkActive="active" ariaCurrentWhenActive="page">Register</a>
+            </li>
+          </ng-container>
+          <li class="nav-item" *ngIf="isAuthenticated">
+            <button class="btn btn-danger" (click)="logout()">Logout</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
