@@ -1,70 +1,181 @@
-<div class="card p-4 shadow-sm w-100" style="max-width: 450px;">
-  <div class="card-body">
-    <h2 class="card-title text-center mb-4 display-5 fw-bold text-dark">Login</h2>
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-      <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
-        <div class="input-group">
-          <span class="input-group-text">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
-              <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.5L8 9.352 1 5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
-            </svg>
-          </span>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            autocomplete="email"
-            required
-            [(ngModel)]="email"
-            placeholder="you@example.com"
-          />
+<div class="login-container">
+  <div class="login-wrapper">
+    <!-- Background Animation -->
+    <!-- Login Card -->
+    <div class="login-card">
+      <div class="card-header">
+        <div class="logo-container">
+          <div class="logo-icon">
+            <i class="fas fa-shopping-bag"></i>
+          </div>
+          <h1 class="brand-title">ShopZone</h1>
+        </div>
+        <h2 class="login-title">Welcome Back!</h2>
+        <p class="login-subtitle">Sign in to your account to continue</p>
+      </div>
+
+      <div class="card-body">
+        <!-- Alert Messages -->
+        <div class="alert alert-success animate__animated animate__fadeIn" *ngIf="successMessage">
+          <i class="fas fa-check-circle"></i>
+          {{ successMessage }}
+        </div>
+
+        <div class="alert alert-danger animate__animated animate__shakeX" *ngIf="errorMessage">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ errorMessage }}
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+          <!-- Email Input -->
+          <div class="input-group-custom">
+            <label for="email" class="form-label-custom">Email Address</label>
+            <div class="input-wrapper" [class.has-error]="isFieldInvalid('email')" [class.has-success]="isFieldValid('email')">
+              <div class="input-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <input
+                type="email"
+                class="form-control-custom"
+                id="email"
+                formControlName="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+                [class.is-invalid]="isFieldInvalid('email')"
+                [class.is-valid]="isFieldValid('email')"
+              />
+
+              <div class="validation-icon" *ngIf="isFieldValid('email')">
+                <i class="fas fa-check"></i>
+              </div>
+            </div>
+
+            <!-- Email Error Messages -->
+            <div class="input-error animate__animated animate__fadeInUp" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+            </div>
+          </div>
+
+          <!-- Password Input -->
+          <div class="input-group-custom">
+            <label for="password" class="form-label-custom">Password</label>
+            <div class="input-wrapper" [class.has-error]="isFieldInvalid('password')" [class.has-success]="isFieldValid('password')">
+              <div class="input-icon">
+                <i class="fas fa-lock"></i>
+              </div>
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-control-custom"
+                id="password"
+                formControlName="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                [class.is-invalid]="isFieldInvalid('password')"
+                [class.is-valid]="isFieldValid('password')"
+              />
+              <button
+                type="button"
+                class="password-toggle me-3"
+                (click)="togglePassword()"
+                [class.active]="showPassword"
+                tabindex="-1"
+                title="Toggle password visibility"
+              >
+                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+              <div class="validation-icon" *ngIf="isFieldValid('password')">
+                <i class="fas fa-check ms-3"></i>
+              </div>
+            </div>
+
+            <!-- Password Error Messages -->
+            <div class="input-error animate__animated animate__fadeInUp" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</span>
+              <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters long</span>
+            </div>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="form-options">
+            <div class="remember-me">
+              <input
+                type="checkbox"
+                id="remember"
+                class="custom-checkbox"
+                formControlName="rememberMe"
+              >
+              <label for="remember" class="checkbox-label">
+                <span class="checkmark"></span>
+                Remember me
+              </label>
+            </div>
+            <a href="#" class="forgot-password" (click)="forgotPassword($event)">
+              Forgot Password?
+            </a>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="btn-login"
+            [disabled]="loginForm.invalid || loading"
+            [class.loading]="loading"
+          >
+            <div class="btn-content">
+              <span class="btn-text" *ngIf="!loading">
+                <i class="fas fa-sign-in-alt"></i>
+                Sign In
+              </span>
+              <span class="btn-text" *ngIf="loading">
+                <div class="loading-spinner"></div>
+                Signing In...
+              </span>
+            </div>
+            <div class="btn-shine"></div>
+          </button>
+
+          <!-- Social Login -->
+          <div class="social-login">
+            <div class="divider">
+              <span class="divider-text">Or continue with</span>
+            </div>
+            <div class="social-buttons">
+              <button
+                type="button"
+                class="btn-social google"
+                (click)="loginWithGoogle()"
+                [disabled]="loading"
+              >
+                <i class="fab fa-google"></i>
+                <span>Google</span>
+              </button>
+              <button
+                type="button"
+                class="btn-social facebook"
+                (click)="loginWithFacebook()"
+                [disabled]="loading"
+              >
+                <i class="fab fa-facebook-f"></i>
+                <span>Facebook</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Register Link -->
+        <div class="register-link">
+          <p class="register-text">
+            Don't have an account?
+            <a routerLink="/register" class="register-btn">
+              Create Account
+              <i class="fas fa-arrow-right"></i>
+            </a>
+          </p>
         </div>
       </div>
-
-      <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <div class="input-group">
-          <span class="input-group-text">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
-              <path d="M8 1a2 2 0 0 0-2 2v4H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H10V3a4 4 0 0 0-8 0v4H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H8V3zm-2 1v3h4V3a2 2 0 0 0-4 0"/>
-            </svg>
-          </span>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            name="password"
-            autocomplete="current-password"
-            required
-            [(ngModel)]="password"
-            placeholder="••••••••"
-          />
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-end mb-3">
-        <a href="#" class="text-decoration-none">Forgot your password?</a>
-      </div>
-
-      <div class="d-grid gap-2">
-        <button
-          type="submit"
-          class="btn btn-primary btn-lg"
-          [disabled]="loading"
-        >
-          <span *ngIf="!loading">Sign in</span>
-          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          <span *ngIf="loading">Signing in...</span>
-        </button>
-      </div>
-    </form>
-    <div class="text-center mt-3">
-      <p class="text-muted">
-        Not a member?
-        <a routerLink="/register" class="text-decoration-none">Register for an account</a>
-      </p>
     </div>
   </div>
 </div>
