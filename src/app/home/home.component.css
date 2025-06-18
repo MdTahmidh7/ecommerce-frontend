@@ -1,135 +1,203 @@
-/*
-.custom-btn-gradient-primary {
-  background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
-  border: none;
-  transition: all 0.3s ease;
+/* General Body and Container Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.custom-btn-gradient-primary:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.custom-btn-gradient-secondary {
-  background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.custom-btn-gradient-secondary:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-!* src/app/home/home.component.css *!
-
-!* --- General Styling --- *!
 .home-page-container {
-  overflow-x: hidden; !* Prevent horizontal scroll from animations *!
+  overflow-x: hidden; /* Prevent horizontal scroll due to animations */
 }
 
-.section-padding {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
-!* --- Hero Section --- *!
+/* Hero Section */
 .hero-section {
   position: relative;
-  height: 90vh; !* Adjust as needed *!
-  background: url('https://placehold.co/1920x1080/6A5ACD/E0BBE4?text=Fashion+Hero') no-repeat center center/cover;
-  background-attachment: fixed; !* For a subtle parallax-like effect *!
-  animation: fadeInBackground 2s ease-out forwards;
+  height: 100vh;
+  min-height: 650px; /* Minimum height for larger screens */
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  overflow: hidden; !* Ensure content doesn't overflow fixed background *!
+  justify-content: center;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+  background-color: #3f51b5; /* Fallback background */
 }
 
-.hero-section::before {
-  content: '';
+.hero-section .parallax-bg {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4); !* Dark overlay *!
+  width: 100%;
+  height: 120%; /* Slightly taller to allow for subtle parallax scroll */
+  background-image: url('https://placehold.co/1920x1080/424169/6A689B?text=Hero+Background'); /* Replace with your hero image */
+  background-size: cover;
+  background-position: center;
+  z-index: 0; /* Keep it behind text content */
+  transform: translateZ(-1px) scale(2); /* Parallax effect for the background */
+  animation: backgroundPan 30s linear infinite alternate; /* Gentle background movement */
+}
+
+@keyframes backgroundPan {
+  0% { transform: translateZ(-1px) scale(2) translateX(0); }
+  100% { transform: translateZ(-1px) scale(2) translateX(-5%); }
+}
+
+.hero-section .text-content-box {
+  position: relative; /* Ensure text content is above parallax-bg */
   z-index: 1;
+  background-color: rgba(0, 0, 0, 0.3); /* Slightly darkened overlay for text readability */
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px); /* Subtle blur effect */
 }
 
-.hero-section > .container {
-  position: relative;
-  z-index: 2; !* Ensure text is above overlay *!
+.hero-section .display-3 {
+  font-size: 4.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.hero-section h1,
-.hero-section p {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); !* Text shadow for readability *!
+.hero-section .lead {
+  font-size: 1.8rem;
+  margin-bottom: 2.5rem;
+  font-weight: 300;
 }
 
 .hero-cta-btn {
-  background-color: #fff !important;
-  color: #343a40 !important;
-  border-color: #fff !important;
+  padding: 1.2rem 3.5rem;
+  font-size: 1.3rem;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: bold;
   transition: all 0.3s ease-in-out;
-  font-weight: 600 !important;
 }
 
-.hero-cta-btn:hover {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  transform: scale(1.05); !* Micro-interaction: button scale *!
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3) !important;
+/* Custom Gradient Button */
+.custom-gradient-btn {
+  /*background: linear-gradient(45deg, #FF6B6B, #FFCD6B);*/
+  background: linear-gradient(45deg, #c675fc, #4334ef);
+  /*background: linear-gradient(45deg, #ff6b6b, #776bff);*/
+  color: white;
+  box-shadow: 0 5px 15px rgba(93, 95, 215, 0.4);
+  border: none;
 }
 
-!* --- Featured Categories --- *!
+.custom-gradient-btn:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+  background: linear-gradient(45deg, #FFCD6B, #FF6B6B);
+}
+
+.custom-gradient-btn-secondary {
+  background: linear-gradient(45deg, #6A689B, #424169);
+  color: white;
+  box-shadow: 0 5px 15px rgba(106, 104, 155, 0.4);
+  border: none;
+}
+
+.custom-gradient-btn-secondary:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(106, 104, 155, 0.6);
+  background: linear-gradient(45deg, #424169, #6A689B);
+}
+
+/* Section Common Styles */
+.section-padding {
+  padding: 6rem 0;
+}
+
+.section-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 4rem;
+  color: #333;
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 5px;
+  background: linear-gradient(90deg, #FF6B6B, #FFCD6B);
+  border-radius: 5px;
+}
+
+/* Featured Categories Section */
+.featured-categories {
+  background-color: #f8f9fa;
+}
+
+.category-link {
+  display: block; /* Make the entire link clickable block */
+  text-decoration: none;
+}
+
 .category-card {
   position: relative;
-  cursor: pointer;
-  height: 250px; !* Fixed height for consistency *!
-  border: none;
+  height: 280px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  border-radius: 12px !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .category-card:hover {
-  transform: translateY(-5px); !* Micro-interaction: lift effect *!
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-10px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .category-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease-out; !* Smooth zoom on hover *!
+  transition: transform 0.3s ease;
 }
 
 .category-card:hover .category-img {
-  transform: scale(1.08); !* Zoom effect *!
+  transform: scale(1.1);
 }
 
-.category-card .card-img-overlay {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 50%); !* Gradient overlay *!
-  transition: background 0.3s ease-out;
+.category-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.category-card:hover .card-img-overlay {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.1) 50%);
+.category-card:hover .category-overlay {
+  opacity: 1;
 }
 
 .category-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  transition: opacity 0.3s ease-out;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
-!* --- Promotional Parallax-like Section --- *!
+/* Promotional Parallax-like Section */
 .parallax-promo {
-  height: 60vh;
-  background: url('https://placehold.co/1920x800/8A2BE2/FFD1DC?text=Elegance') no-repeat center center/cover;
-  background-attachment: fixed; !* Parallax effect *!
+  height: 70vh;
+  min-height: 400px;
+  background-image: url('https://placehold.co/1920x700/6A689B/424169?text=Promo+Background'); /* Replace with your promo image */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Creates the parallax scrolling effect */
   position: relative;
 }
 
@@ -140,336 +208,291 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.45); !* Slightly darker overlay *!
-  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.4); /* Dark overlay for text readability */
 }
 
-.parallax-promo > .container {
-  position: relative;
-  z-index: 2;
+.parallax-promo .text-content-box {
+  z-index: 1; /* Ensure text is above overlay */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for text */
+  border-radius: 15px;
+  padding: 3rem 4rem !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
 }
 
+.parallax-promo .display-4 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
 
-!* --- Product Cards (Best Sellers / New Arrivals) --- *!
+.parallax-promo .lead {
+  font-size: 1.4rem;
+  margin-bottom: 2rem;
+}
+
+.parallax-promo .btn {
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  border-width: 2px;
+  transition: all 0.3s ease;
+}
+
+.parallax-promo .btn:hover {
+  background-color: white;
+  color: #333 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Product Card Styles (used for Best Sellers & New Arrivals) */
+.product-link {
+  display: block; /* Make the entire link clickable block */
+  text-decoration: none;
+}
+
 .product-card {
-  height: 100%;
-  border: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-  cursor: pointer;
+  background: #fff;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%; /* Ensure cards in a row have same height */
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
-  transform: translateY(-8px); !* Micro-interaction: lift effect *!
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); !* Stronger shadow *!
+  transform: translateY(-10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
 
 .product-img {
-  height: 300px; !* Consistent image height *!
-  object-fit: cover;
-  border-top-left-radius: calc(0.5rem - 1px); !* Match Bootstrap rounded-4 *!
-  border-top-right-radius: calc(0.5rem - 1px);
-}
-
-.product-cta-btn {
-  background-color: #6a11cb !important; !* Custom color for primary action *!
-  border-color: #6a11cb !important;
-  transition: all 0.3s ease-in-out;
-  font-weight: 600 !important;
-}
-
-.product-cta-btn:hover {
-  background-color: #2575fc !important; !* Change color on hover *!
-  border-color: #2575fc !important;
-  transform: scale(1.02); !* Slightly scale button *!
-}
-
-!* --- Carousel Navigation --- *!
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  background-color: rgba(0, 0, 0, 0.5); !* Make icons more visible *!
-  border-radius: 50%;
-  padding: 1.5rem;
-}
-
-!* --- Scroll-based animations (using Animate.css) --- *!
-!* To use this, you would integrate a library like Animate.css and/or an Intersection Observer *!
-!* for demonstration, we just add the classes, you'll need to set up the JS for actual triggers. *!
-!* If you want to use Animate.css, run: `npm install animate.css --save` and import it in angular.json styles *!
-!* and then you'd need a directive or a service to trigger these classes on scroll. *!
-!* For now, the classes are added, but they won't animate on scroll without JS. *!
-!* Initial animations (on page load) are already handled by directly adding classes like animate__fadeInUp *!
-
-!* Keyframes for initial background fade-in *!
-@keyframes fadeInBackground {
-  from {
-    opacity: 0.8;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-!* Ensure responsive behavior *!
-@media (max-width: 767.98px) {
-  .hero-section {
-    height: 60vh;
-  }
-  .hero-section h1 {
-    font-size: 2.5rem;
-  }
-  .hero-section p {
-    font-size: 1rem;
-  }
-  .section-padding {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
-  .product-img {
-    height: 200px; !* Smaller image height on mobile *!
-  }
-  .carousel-control-prev, .carousel-control-next {
-    display: none; !* Hide carousel controls on very small screens if desired *!
-  }
-}
-*/
-
-/* src/app/home/home.component.css */
-
-/* --- General Styling & Container for the entire page --- */
-.home-page-container {
-  overflow-x: hidden; /* Prevent horizontal scroll from animations */
-  background-color: #f8f9fa; /* Light background for overall page */
-}
-
-.section-padding {
-  padding-top: 6rem; /* More generous padding */
-  padding-bottom: 6rem;
-}
-
-/* --- Elevated Text Content Box for Hero/Parallax Sections --- */
-.text-content-box {
-  background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
-  backdrop-filter: blur(8px); /* Frosted glass effect */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-  border-radius: 1.5rem !important; /* More rounded corners */
-  padding: 3rem !important; /* More padding */
-  max-width: 800px; /* Constrain width for better readability */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* Stronger, softer shadow for elevation */
-  color: white; /* Ensure text is white for contrast */
-}
-
-.text-content-box h1,
-.text-content-box h2 {
-  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); /* Stronger text shadow for readability */
-}
-
-.text-content-box p {
-  opacity: 0.9;
-}
-
-/* --- Custom Gradient Buttons (can be reused) --- */
-.custom-gradient-btn {
-  background: linear-gradient(135deg, #6b21a8, #8b5cf6) !important; /* Elegant purple gradient */
-  border: none !important;
-  color: white !important;
-  transition: all 0.3s ease-in-out;
-  font-weight: 600 !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Initial subtle shadow */
-}
-
-.custom-gradient-btn:hover {
-  transform: translateY(-3px) scale(1.02); /* Slight lift and scale */
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35); /* More pronounced shadow on hover */
-  background: linear-gradient(135deg, #8b5cf6, #6b21a8) !important; /* Reverse gradient on hover */
-}
-
-
-/* --- Hero Section --- */
-.hero-section {
-  position: relative;
-  height: 90vh; /* Adjust as needed */
-  background: url('https://placehold.co/1920x1080/4A148C/B39DDB?text=Luxury+Fashion+Collection') no-repeat center center/cover;
-  background-attachment: fixed; /* For a subtle parallax-like effect */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden; /* Ensure content doesn't overflow fixed background */
-}
-
-/* No direct ::before overlay, as text-content-box provides its own background */
-
-
-/* --- Featured Categories --- */
-.category-card {
-  position: relative;
-  cursor: pointer;
-  height: 300px; /* More generous height for category cards */
-  border: none;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Softer initial shadow */
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth cubic-bezier transition */
-}
-
-.category-card:hover {
-  transform: translateY(-8px); /* Micro-interaction: more pronounced lift effect */
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Stronger, more elevated shadow */
-}
-
-.category-img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth zoom on hover */
+  height: 300px; /* Fixed height for consistent image display */
+  object-fit: cover; /* Cover the container */
+  display: block;
+  transition: transform 0.3s ease;
 }
 
-.category-card:hover .category-img {
-  transform: scale(1.1); /* More pronounced zoom effect */
+.product-card:hover .product-img {
+  transform: scale(1.1);
 }
 
-.category-overlay {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 50%); /* Darker gradient overlay */
-  transition: background 0.4s ease-out;
+.product-card .card-body {
+  padding: 1.5rem;
+  flex-grow: 1; /* Allow body to take available space */
 }
 
-.category-card:hover .category-overlay {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.2) 50%); /* Even darker on hover */
+.product-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
 }
 
-.category-title {
-  font-size: 1.8rem; /* Larger title */
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  transition: opacity 0.3s ease-out;
-}
-
-/* --- Promotional Parallax-like Section --- */
-.parallax-promo {
-  height: 70vh; /* A bit taller */
-  background: url('https://placehold.co/1920x800/8A2BE2/B0C4DE?text=Exquisite+Craftsmanship') no-repeat center center/cover;
-  background-attachment: fixed; /* Parallax effect */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-/* No direct ::before overlay, text-content-box handles it */
-
-
-/* --- Product Cards (Best Sellers / New Arrivals) --- */
-.product-card {
-  height: 100%;
-  border: none;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Softer initial shadow */
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  cursor: pointer;
-}
-
-.product-card:hover {
-  transform: translateY(-10px); /* More pronounced lift effect */
-  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2); /* Stronger, more elevated shadow */
-}
-
-.product-img {
-  height: 350px; /* Consistent image height */
-  object-fit: cover;
-  border-top-left-radius: calc(1rem - 1px); /* Match Bootstrap rounded-4 */
-  border-top-right-radius: calc(1rem - 1px);
+.product-price {
+  font-size: 1.2rem;
+  color: #6c757d;
+  font-weight: 600;
 }
 
 .product-cta-btn {
-  /* Using custom-gradient-btn class from above */
+  width: 80%; /* Make button a bit narrower */
+  margin: 0 auto; /* Center the button */
+  display: block;
+  font-weight: bold;
 }
 
-/* --- Carousel Navigation --- */
-.carousel-control-prev,
-.carousel-control-next {
-  width: 5%; /* Wider clickable area for arrows */
+/* Newsletter Subscription Section */
+.newsletter-section {
+  padding: 6rem 0;
+  background-color: #343a40; /* Dark background */
+  color: white;
+  text-align: center;
 }
 
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  background-color: rgba(0, 0, 0, 0.6); /* Slightly darker, more prominent icons */
-  border-radius: 50%;
-  padding: 1.8rem; /* Larger icons */
-  transition: background-color 0.3s ease;
+.newsletter-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
 }
 
-.carousel-control-prev-icon:hover,
-.carousel-control-next-icon:hover {
-  background-color: rgba(0, 0, 0, 0.8); /* Darker on hover */
+.newsletter-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  color: #ccc;
 }
 
+.input-group {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  border-radius: 50px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 991.98px) { /* Medium devices (tablets) */
-  .text-content-box {
-    padding: 2rem !important;
-    border-radius: 1rem !important;
+.form-control {
+  flex-grow: 1;
+  padding: 1.2rem 1.5rem;
+  border: none;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.input-group .btn {
+  padding: 1.2rem 2.5rem;
+  border: none;
+  background: linear-gradient(45deg, #FF6B6B, #FFCD6B);
+  color: white;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.input-group .btn:hover {
+  background: linear-gradient(45deg, #FFCD6B, #FF6B6B);
+  transform: scale(1.02);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .hero-section .display-3 {
+    font-size: 4rem;
   }
-  .hero-section h1 {
-    font-size: 2.5rem;
+  .hero-section .lead {
+    font-size: 1.6rem;
   }
-  .hero-section p {
-    font-size: 1.1rem;
+  .section-title {
+    font-size: 3rem;
   }
-  .parallax-promo h2 {
-    font-size: 2.5rem;
+  .parallax-promo .display-4 {
+    font-size: 3rem;
   }
 }
 
-@media (max-width: 767.98px) { /* Small devices (phones) */
-  .hero-section {
-    height: 70vh;
+@media (max-width: 992px) {
+  .hero-section .display-3 {
+    font-size: 3.5rem;
   }
-  .text-content-box {
-    padding: 1.5rem !important;
-    border-radius: 0.8rem !important;
-    width: 90%; /* Take more width on small screens */
-  }
-  .hero-section h1 {
-    font-size: 2rem;
-  }
-  .hero-section p {
-    font-size: 0.9rem;
+  .hero-section .lead {
+    font-size: 1.4rem;
   }
   .section-padding {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+    padding: 4rem 0;
   }
-  .product-img {
-    height: 250px; /* Adjust product image height for mobile */
+  .section-title {
+    font-size: 2.8rem;
+    margin-bottom: 3rem;
   }
   .category-card {
-    height: 200px; /* Adjust category image height for mobile */
+    height: 220px;
   }
-  .category-title {
-    font-size: 1.3rem;
+  .parallax-promo .display-4 {
+    font-size: 2.8rem;
   }
-  .carousel-control-prev, .carousel-control-next {
-    width: 8%; /* Smaller control area on mobile */
+  .parallax-promo .lead {
+    font-size: 1.2rem;
   }
-  .carousel-control-prev-icon, .carousel-control-next-icon {
-    padding: 1rem; /* Smaller icons on mobile */
+  .input-group {
+    max-width: 450px;
   }
 }
 
-@media (max-width: 575.98px) { /* Extra small devices (portrait phones) */
-  .hero-section h1 {
-    font-size: 1.8rem;
+@media (max-width: 768px) {
+  .hero-section {
+    height: 80vh;
+    min-height: 500px;
   }
-  .hero-section p {
-    font-size: 0.8rem;
+  .hero-section .text-content-box {
+    padding: 1.5rem !important;
+  }
+  .hero-section .display-3 {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+  }
+  .hero-section .lead {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
   }
   .hero-cta-btn {
-    font-size: 0.9rem !important;
-    padding: 0.8rem 2rem !important;
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+  }
+  .section-title {
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+  }
+  .category-card {
+    height: 200px;
+  }
+  .parallax-promo {
+    height: 60vh;
+    min-height: 350px;
+  }
+  .parallax-promo .text-content-box {
+    padding: 2.5rem 3rem !important;
+  }
+  .parallax-promo .display-4 {
+    font-size: 2.2rem;
+  }
+  .parallax-promo .lead {
+    font-size: 1.1rem;
   }
   .product-img {
-    height: 180px;
+    height: 250px; /* Adjust height for smaller screens */
+  }
+  .newsletter-title {
+    font-size: 2.5rem;
+  }
+  .newsletter-subtitle {
+    font-size: 1rem;
+  }
+  .input-group {
+    flex-direction: column; /* Stack input and button */
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .form-control, .input-group .btn {
+    border-radius: 50px !important; /* Re-apply border-radius for stacked elements */
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .input-group .btn {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section .display-3 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
+  .hero-section .lead {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-cta-btn {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+  }
+  .section-title {
+    font-size: 1.8rem;
+  }
+  .parallax-promo .display-4 {
+    font-size: 1.8rem;
+  }
+  .parallax-promo .lead {
+    font-size: 1rem;
+  }
+  .newsletter-title {
+    font-size: 2rem;
   }
 }
