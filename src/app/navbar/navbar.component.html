@@ -1,33 +1,85 @@
-<header>
-  <nav class="navbar navbar-expand-lg" style="background: #d0d0d0">
-    <div class="container-fluid">
-      <a class="navbar-brand" routerLink="/home">E-Commerce App</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+<header class="navbar-wrapper">
+  <nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid px-lg-5">
+      <!-- Brand Logo -->
+      <a class="navbar-brand brand-logo" routerLink="/home">
+        <i class="fas fa-shopping-bag me-2"></i>
+        <span class="brand-text">ShopZone</span>
+      </a>
+
+      <!-- Mobile Toggle Button -->
+      <button
+        class="navbar-toggler custom-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="toggler-line"></span>
+        <span class="toggler-line"></span>
+        <span class="toggler-line"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- Main Navigation Links -->
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
+            <a class="nav-link nav-link-custom" routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">
+              <i class="fas fa-home me-1"></i>Home
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page">Products</a>
+            <a class="nav-link nav-link-custom" routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page">
+              <i class="fas fa-box me-1"></i>Products
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/about" routerLinkActive="active" ariaCurrentWhenActive="page">About</a>
+            <a class="nav-link nav-link-custom" routerLink="/about" routerLinkActive="active" ariaCurrentWhenActive="page">
+              <i class="fas fa-info-circle me-1"></i>About
+            </a>
           </li>
         </ul>
-        <ul class="navbar-nav">
+
+        <!-- Right Side Navigation -->
+        <ul class="navbar-nav align-items-center">
+          <!-- Shopping Cart -->
+          <li class="nav-item me-3" *ngIf="isAuthenticated">
+            <a class="nav-link cart-link" routerLink="/cart" title="Shopping Cart">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-badge">3</span>
+            </a>
+          </li>
+
+          <!-- Authentication Links -->
           <ng-container *ngIf="!isAuthenticated">
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Login</a>
+            <li class="nav-item me-2">
+              <a class="nav-link auth-link login-link" routerLink="/login" routerLinkActive="active">
+                <i class="fas fa-sign-in-alt me-1"></i>Login
+              </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/register" routerLinkActive="active" ariaCurrentWhenActive="page">Register</a>
+              <a class="btn btn-register" routerLink="/register">
+                <i class="fas fa-user-plus me-1"></i>Sign Up
+              </a>
             </li>
           </ng-container>
-          <li class="nav-item" *ngIf="isAuthenticated">
-            <button class="btn btn-danger" (click)="logout()">Logout</button>
+
+          <!-- User Profile & Logout -->
+          <li class="nav-item dropdown" *ngIf="isAuthenticated">
+            <a class="nav-link dropdown-toggle user-dropdown" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="user-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <span class="user-name ms-2">John Doe</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end user-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" routerLink="/profile"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" routerLink="/orders"><i class="fas fa-box me-2"></i>My Orders</a></li>
+              <li><a class="dropdown-item" routerLink="/wishlist"><i class="fas fa-heart me-2"></i>Wishlist</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button class="dropdown-item logout-btn" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></li>
+            </ul>
           </li>
         </ul>
       </div>
