@@ -1,23 +1,82 @@
-<div class="card p-4 shadow-sm text-center ">
-  <div class="card-body">
-    <h1 class="card-title display-4 fw-bold text-dark mb-4 animate__animated animate__fadeInDown">
-      Welcome to Your E-Commerce Store!
-    </h1>
-    <p class="card-text lead text-muted mb-5 animate__animated animate__fadeInUp">
-      Discover amazing products, great deals, and a seamless shopping experience.
-      Log in or register to get started.
-    </p>
-    <div class="d-grid gap-3 col-md-8 mx-auto d-sm-flex justify-content-sm-center">
-      <a routerLink="/login" class="btn btn-primary btn-lg custom-btn-gradient-primary">
-        Login
-      </a>
-      <a routerLink="/register" class="btn btn-secondary btn-lg custom-btn-gradient-secondary">
-        Register
-      </a>
-    </div>
-    <div class="mt-5 text-secondary small">
-      <p>Built with Angular 18 and Bootstrap.</p>
-      <p>Your journey to great shopping starts here!</p>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 hero-content animate__animated animate__fadeInLeft">
+        <h1 class="hero-title">Discover Amazing Products</h1>
+        <p class="hero-subtitle">Shop the latest trends with our curated collection of premium products.</p>
+        <div class="hero-buttons">
+          <a routerLink="/login" class="btn btn-primary btn-lg custom-btn-gradient-primary me-3">
+            Login
+          </a>
+          <a routerLink="/register" class="btn btn-secondary btn-lg custom-btn-gradient-secondary">
+            Register
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-6 hero-image animate__animated animate__fadeInRight">
+        <div class="image-container">
+          <div class="floating-shape shape1"></div>
+          <div class="floating-shape shape2"></div>
+          <div class="floating-shape shape3"></div>
+        </div>
+      </div>
     </div>
   </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="section-title text-center animate__animated animate__fadeInUp">
+      <h2>Why Choose Us</h2>
+      <p>Experience shopping like never before</p>
+    </div>
+    <div class="row">
+      <div class="col-md-4 animate__animated animate__fadeInUp" data-wow-delay="0.1s">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="feature-circle shipping-icon"></i>
+          </div>
+          <h3>Fast Shipping</h3>
+          <p>Get your products delivered quickly and reliably to your doorstep.</p>
+        </div>
+      </div>
+      <div class="col-md-4 animate__animated animate__fadeInUp" data-wow-delay="0.3s">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="feature-circle secure-icon"></i>
+          </div>
+          <h3>Secure Payments</h3>
+          <p>Shop with confidence with our secure payment processing system.</p>
+        </div>
+      </div>
+      <div class="col-md-4 animate__animated animate__fadeInUp" data-wow-delay="0.5s">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="feature-circle support-icon"></i>
+          </div>
+          <h3>24/7 Support</h3>
+          <p>Our customer support team is always ready to assist you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content text-center animate__animated animate__fadeInUp">
+      <h2>Ready to Start Shopping?</h2>
+      <p>Join thousands of satisfied customers and experience our premium service.</p>
+      <a routerLink="/register" class="btn btn-lg custom-btn-gradient-primary mt-4">Get Started Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer Info -->
+<div class="footer-info text-center mt-5">
+  <p>Built with Angular 18 and Bootstrap</p>
+  <p>Your journey to great shopping starts here!</p>
 </div>

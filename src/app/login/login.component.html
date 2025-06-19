@@ -1,8 +1,12 @@
-<div class="card p-4 shadow-sm w-100" style="max-width: 450px;">
-  <div class="card-body">
-    <h2 class="card-title text-center mb-4 display-5 fw-bold text-dark">Login</h2>
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-      <div class="mb-3">
+<div class="login-container">
+  <div class="login-card animate__animated animate__fadeIn">
+    <div class="login-header">
+      <h2 class="login-title text-gradient">Welcome Back</h2>
+      <p class="login-subtitle">Sign in to continue to your account</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+      <div class="form-group animate__animated animate__fadeInUp animate__delay-1s">
         <label for="email" class="form-label">Email address</label>
         <div class="input-group">
           <span class="input-group-text">
@@ -23,7 +27,7 @@
         </div>
       </div>
 
-      <div class="mb-3">
+      <div class="form-group animate__animated animate__fadeInUp animate__delay-2s">
         <label for="password" class="form-label">Password</label>
         <div class="input-group">
           <span class="input-group-text">
@@ -44,27 +48,59 @@
         </div>
       </div>
 
-      <div class="d-flex justify-content-end mb-3">
+      <div class="forgot-password animate__animated animate__fadeInUp animate__delay-3s">
         <a href="#" class="text-decoration-none">Forgot your password?</a>
       </div>
 
-      <div class="d-grid gap-2">
+      <div class="login-button animate__animated animate__fadeInUp animate__delay-4s">
         <button
           type="submit"
-          class="btn btn-primary btn-lg"
+          class="btn btn-lg custom-btn-gradient-primary signin-btn"
           [disabled]="loading"
+          style="background: #3F50EA; height: 40px"
         >
-          <span *ngIf="!loading">Sign in</span>
+          <span *ngIf="!loading" class="text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18" fill="currentColor" class="bi bi-box-arrow-in-right me-2" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"/>
+              <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+            </svg>
+            Sign in
+          </span>
           <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          <span *ngIf="loading">Signing in...</span>
+          <span class="text-white" *ngIf="loading">Signing in...</span>
         </button>
       </div>
     </form>
-    <div class="text-center mt-3">
-      <p class="text-muted">
-        Not a member?
-        <a routerLink="/register" class="text-decoration-none">Register for an account</a>
+
+    <div class="login-footer animate__animated animate__fadeInUp animate__delay-5s">
+      <p>Not a member?
+        <a routerLink="/register" class="register-link">Register for an account</a>
       </p>
+
+      <div class="login-divider">
+        <span>or continue with</span>
+      </div>
+
+      <div class="social-login">
+        <button class="social-btn google-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"/>
+          </svg>
+          Google
+        </button>
+        <button class="social-btn facebook-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+          </svg>
+          Facebook
+        </button>
+      </div>
     </div>
+  </div>
+
+  <div class="login-decoration">
+    <div class="floating-shape shape1"></div>
+    <div class="floating-shape shape2"></div>
+    <div class="floating-shape shape3"></div>
   </div>
 </div>
