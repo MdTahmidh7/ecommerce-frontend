@@ -1,0 +1,550 @@
+<div class="product-detail-container">
+  <div class="container py-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4 animate__animated animate__fadeIn">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
+        <li class="breadcrumb-item"><a routerLink="/products">Products</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+      </ol>
+    </nav>
+
+    <div class="row">
+      <!-- Product Image Gallery - Left Column -->
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="product-gallery animate__animated animate__fadeIn">
+          <!-- Main Image with Zoom -->
+          <div class="main-image-container">
+            <div class="image-zoom-wrapper">
+              <img [src]="product.images[currentImageIndex]" alt="{{ product.title }}" class="main-product-image img-fluid">
+              <div class="image-zoom-lens"></div>
+            </div>
+
+            <!-- Image Navigation Arrows -->
+            <button class="gallery-nav prev-image" (click)="prevImage()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+              </svg>
+            </button>
+            <button class="gallery-nav next-image" (click)="nextImage()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Thumbnail Gallery -->
+          <div class="thumbnail-gallery">
+            <div *ngFor="let image of product.images; let i = index"
+                 class="thumbnail-item"
+                 [class.active]="i === currentImageIndex"
+                 (click)="selectImage(i)">
+              <img [src]="image" alt="Thumbnail {{ i + 1 }}" class="img-fluid">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Info - Right Column -->
+      <div class="col-lg-6">
+        <div class="product-info animate__animated animate__fadeIn animate__delay-1s">
+          <!-- Product Header -->
+          <div class="product-header">
+            <div class="brand-name">{{ product.brand }}</div>
+            <h1 class="product-title">{{ product.title }}</h1>
+
+            <!-- Ratings -->
+            <div class="product-rating">
+              <div class="stars">
+                <span *ngFor="let star of [1, 2, 3, 4, 5]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                       [class.filled]="star <= Math.floor(product.rating)"
+                       [class.half-filled]="star === Math.ceil(product.rating) && !Number.isInteger(product.rating)"
+                       viewBox="0 0 16 16">
+                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                  </svg>
+                </span>
+              </div>
+              <span class="rating-value">{{ product.rating }}</span>
+              <span class="review-count">({{ product.reviewCount }} reviews)</span>
+            </div>
+
+            <!-- Price -->
+            <div class="product-price">
+              <span class="current-price">${{ product.price.toFixed(2) }}</span>
+              <span *ngIf="product.oldPrice" class="old-price">${{ product.oldPrice.toFixed(2) }}</span>
+              <span *ngIf="product.discount" class="discount-badge">{{ product.discount }}% OFF</span>
+            </div>
+
+            <!-- Availability -->
+            <div class="product-availability" [class.in-stock]="product.availability === 'In Stock'">
+              {{ product.availability }}
+            </div>
+          </div>
+
+          <!-- Product Variants -->
+          <div class="product-variants">
+            <!-- Color Variants -->
+            <div class="variant-section">
+              <h3 class="variant-title">Color</h3>
+              <div class="color-options">
+                <button *ngFor="let color of product.variants.colors"
+                        class="color-option"
+                        [class.active]="selectedColor === color"
+                        [style.background-color]="color.toLowerCase()"
+                        (click)="selectColor(color)">
+                  <span class="color-check" *ngIf="selectedColor === color">✓</span>
+                </button>
+              </div>
+              <div class="selected-variant">Selected: {{ selectedColor }}</div>
+            </div>
+
+            <!-- Size Variants (if applicable) -->
+            <div class="variant-section" *ngIf="product.variants.sizes.length > 0">
+              <h3 class="variant-title">Size</h3>
+              <div class="size-options">
+                <button *ngFor="let size of product.variants.sizes"
+                        class="size-option"
+                        [class.active]="selectedSize === size"
+                        (click)="selectSize(size)">
+                  {{ size }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Quantity Selector -->
+            <div class="variant-section">
+              <h3 class="variant-title">Quantity</h3>
+              <div class="quantity-selector">
+                <button class="quantity-btn" (click)="decreaseQuantity()">-</button>
+                <span class="quantity-value">{{ quantity }}</span>
+                <button class="quantity-btn" (click)="increaseQuantity()">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="product-actions">
+            <button class="btn btn-primary add-to-cart-btn disabled" (click)="addToCart()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus me-2" viewBox="0 0 16 16">
+                <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z"/>
+                <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 1H2a.5.5 0 0 0 0-1h1a2 2 0 1 0 0 1h6a2 2 0 1 0 0 1H4a.5.5 0 0 0 0-1h8a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5H5.5l-.13-.648.61-1.307 1.44-3.942 1.21-2.5A.5.5 0 0 0 9 2.5h3.5a.5.5 0 0 0 0-1H2.89l-.405-1.621A.5.5 0 0 0 2 0H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z"/>
+              </svg>
+              Add to Cart
+            </button>
+            <button class="btn btn-secondary buy-now-btn" (click)="buyNow(contactModal)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill me-2" viewBox="0 0 16 16">
+                <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
+              </svg>
+              Buy Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Details Tabs -->
+    <div class="product-details-tabs mt-5 animate__animated animate__fadeIn animate__delay-2s">
+      <ul class="nav nav-tabs" id="productTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link"
+                  [class.active]="activeTab === 'description'"
+                  (click)="setActiveTab('description')"
+                  type="button">
+            Description
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link"
+                  [class.active]="activeTab === 'features'"
+                  (click)="setActiveTab('features')"
+                  type="button">
+            Features
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link"
+                  [class.active]="activeTab === 'specifications'"
+                  (click)="setActiveTab('specifications')"
+                  type="button">
+            Specifications
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content p-4 border border-top-0 rounded-bottom">
+        <!-- Description Tab -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'description'" [class.active]="activeTab === 'description'">
+          <p class="product-description">{{ product.description }}</p>
+        </div>
+
+        <!-- Features Tab -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'features'" [class.active]="activeTab === 'features'">
+          <ul class="features-list">
+            <li *ngFor="let feature of product.features">{{ feature }}</li>
+          </ul>
+        </div>
+
+        <!-- Specifications Tab -->
+        <div class="tab-pane fade" [class.show]="activeTab === 'specifications'" [class.active]="activeTab === 'specifications'">
+          <table class="table specifications-table">
+            <tbody>
+              <tr *ngFor="let spec of product.specifications | keyvalue">
+                <th>{{ spec.key }}</th>
+                <td>{{ spec.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Reviews Section -->
+    <div class="customer-reviews-section mt-5 animate__animated animate__fadeIn animate__delay-3s">
+      <h2 class="section-title">Customer Reviews</h2>
+      <div class="reviews-summary">
+        <div class="overall-rating">
+          <div class="rating-number">{{ product.rating }}</div>
+          <div class="stars">
+            <span *ngFor="let star of [1, 2, 3, 4, 5]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                   [class.filled]="star <= Math.floor(product.rating)"
+                   [class.half-filled]="star === Math.ceil(product.rating) && !Number.isInteger(product.rating)"
+                   viewBox="0 0 16 16">
+                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+              </svg>
+            </span>
+          </div>
+          <div class="total-reviews">Based on {{ product.reviewCount }} reviews</div>
+        </div>
+      </div>
+
+      <!-- Reviews List -->
+      <div class="reviews-list">
+        <div *ngFor="let review of displayedReviews" class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-name">{{ review.user }}</div>
+              <div class="review-date">{{ review.date }}</div>
+            </div>
+            <div class="review-rating">
+              <span *ngFor="let star of [1, 2, 3, 4, 5]">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                     [class.filled]="star <= review.rating"
+                     viewBox="0 0 16 16">
+                  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+          <h4 class="review-title">{{ review.title }}</h4>
+          <p class="review-content">{{ review.comment }}</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <nav *ngIf="totalReviewPages > 1" aria-label="Reviews pagination" class="reviews-pagination">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentReviewPage === 1">
+            <a class="page-link" href="javascript:void(0)" (click)="changePage(currentReviewPage - 1)">Previous</a>
+          </li>
+          <li *ngFor="let page of [].constructor(totalReviewPages); let i = index"
+              class="page-item"
+              [class.active]="currentReviewPage === i + 1">
+            <a class="page-link" href="javascript:void(0)" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentReviewPage === totalReviewPages">
+            <a class="page-link" href="javascript:void(0)" (click)="changePage(currentReviewPage + 1)">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Related Products Section -->
+    <div class="related-products-section mt-5 animate__animated animate__fadeIn animate__delay-4s">
+      <h2 class="section-title">You May Also Like</h2>
+      <div class="related-products-carousel">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+          <div *ngFor="let relatedProduct of product.relatedProducts" class="col">
+            <div class="card product-card h-100">
+              <img [src]="relatedProduct.image" class="card-img-top" alt="{{ relatedProduct.title }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ relatedProduct.title }}</h5>
+                <p class="card-text price">${{ relatedProduct.price.toFixed(2) }}</p>
+                <a [routerLink]="['/products', relatedProduct.id]" class="btn btn-outline-primary view-product-btn">View Product</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Create a modal that take user name and mobile number as input-->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reviewModalLabel">Submit Review</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="reviewForm">
+          <div class="mb-3">
+            <label for="reviewTitle" class="form-label">Review Title</label>
+            <input type="text" class="form-control" id="reviewTitle" formControlName="title">
+          </div>
+          <div class="mb-3">
+            <label for="reviewComment" class="form-label">Review Comment</label>
+            <textarea class="form-control" id="reviewComment" rows="3" formControlName="comment"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="reviewRating" class="form-label">Rating</label>
+            <select class="form-select" id="reviewRating" formControlName="rating">
+              <option value="1">1 Star</option>
+              <option value="2">2 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="5">5 Stars</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+<!--
+        <button type="button" class="btn btn-primary" (click)="submitReview()" [disabled]="!reviewForm.valid">Submit</button>
+-->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Modal for not logged in User-->
+<!-- Modal -->
+<!-- Modal Template with Reference Variable -->
+<ng-template #contactModal let-modal>
+  <div class="modern-modal-header">
+    <div class="header-content">
+      <div class="icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="title-section">
+        <h4 class="modal-title" id="modal-title">Contact Information</h4>
+        <p class="modal-subtitle">Please fill in your details below</p>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="modern-close-btn"
+      aria-label="Close button"
+      aria-describedby="modal-title"
+      (click)="modal.dismiss('Cross click')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="modern-modal-body">
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit(modal)" class="contact-form">
+      <div class="form-group">
+
+        <div class="input-wrapper">
+          <label for="name" class="col-lg-4">User Name</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            formControlName="name"
+            [class.error]="isFieldInvalid('name')"
+            [class.filled]="contactForm.get('name')?.value"
+            placeholder="Type your name">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('name')">
+          <div *ngIf="contactForm.get('name')?.errors?.['required']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Name is required
+          </div>
+          <div *ngIf="contactForm.get('name')?.errors?.['minlength']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Name must be at least 2 characters
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="phone" class="floating-label col-lg-4">Phone Number</label>
+          <input
+            type="tel"
+            id="phone"
+            class="form-control"
+            formControlName="phone"
+            [class.error]="isFieldInvalid('phone')"
+            [class.filled]="contactForm.get('phone')?.value"
+            placeholder="01*********"
+          >
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('phone')">
+          <div *ngIf="contactForm.get('phone')?.errors?.['required']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Phone number is required
+          </div>
+          <div *ngIf="contactForm.get('phone')?.errors?.['pattern']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Please enter a valid phone number
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Division select -->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="division" class="col-lg-4">Select Division</label>
+          <select
+            id="division"
+            class="form-control"
+            formControlName="division"
+            [class.error]="isFieldInvalid('division')"
+            (change)="onDivisionChange($event)"
+          >
+            <option value="" [selected]="true">Select division</option>
+            <option *ngFor="let division of divisions" [value]="division.id">
+              {{ division.bnName }}
+            </option>
+          </select>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('division')">
+          <span>Division is required</span>
+        </div>
+      </div>
+
+      <!-- Add District select -->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="district" class="col-lg-4">Select District</label>
+          <select
+            id="district"
+            class="form-control"
+            formControlName="district"
+            [class.error]="isFieldInvalid('district')"
+            [disabled]="!districts?.length"
+            (change)="onDistrictChange($event)"
+          >
+            <option value="">Select district</option>
+            <option *ngFor="let district of districts" [value]="district.id">
+              {{ district.bnName }}
+            </option>
+          </select>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('district')">
+          <span>District is required</span>
+        </div>
+      </div>
+
+      <!-- Add Upazila select -->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="upazila" class="col-lg-4">Select Upazila</label>
+          <select
+            id="upazila" class="form-control"
+            formControlName="upazila"
+            [class.error]="isFieldInvalid('upazila')"
+            [disabled]="!upazilas?.length"
+          >
+            <option value="">Select upazila</option>
+            <option *ngFor="let upazila of upazilas" [value]="upazila.id">
+              {{ upazila.bnName }}
+            </option>
+          </select>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('upazila')">
+          <span>Upazila is required</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper textarea-wrapper">
+          <label for="address" class="col-lg-4">Address</label>
+          <textarea
+            id="address"
+            class="form-control"
+            formControlName="address"
+            [class.error]="isFieldInvalid('address')"
+            [class.filled]="contactForm.get('address')?.value"
+            rows="4"
+            placeholder="Enter Full Address">
+          </textarea>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('address')">
+          <div *ngIf="contactForm.get('address')?.errors?.['required']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Address is required
+          </div>
+          <div *ngIf="contactForm.get('address')?.errors?.['minlength']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Address must be at least 5 characters
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+
+  <div class="modern-modal-footer">
+    <button
+      type="button"
+      class="btn btn-ghost"
+      (click)="modal.dismiss('cancel')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-gradient"
+      [disabled]="contactForm.invalid"
+      [class.loading]="isSubmitting"
+      (click)="onSubmit(modal)">
+      <span *ngIf="!isSubmitting" class="btn-content">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 7L10 16L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Save Contact
+      </span>
+      <span *ngIf="isSubmitting" class="loading-spinner">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
+          <path d="M21 12C21 7.02944 16.9706 3 12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
+          </path>
+        </svg>
+        Saving...
+      </span>
+    </button>
+  </div>
+</ng-template>

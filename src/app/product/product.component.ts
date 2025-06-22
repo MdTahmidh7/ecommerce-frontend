@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Product} from '../model/product.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-product',
@@ -13,6 +14,8 @@ export class ProductComponent implements OnInit {
 
   products: Product[] = [];
   isLoading = true;
+
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     // Simulate API call delay
@@ -107,7 +110,7 @@ export class ProductComponent implements OnInit {
     ];
   }
 
-  onAddToCart(product: Product): void {
+  /*onAddToCart(product: Product): void {
     if (!product.inStock) {
       alert('Sorry, this product is currently out of stock!');
       return;
@@ -116,7 +119,7 @@ export class ProductComponent implements OnInit {
     console.log('Adding to cart:', product);
     // Implement your cart logic here
     alert(`${product.name} added to cart!`);
-  }
+  }*/
 
   getStars(rating: number): number[] {
     const stars = [];
@@ -142,4 +145,7 @@ export class ProductComponent implements OnInit {
     return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
   }
 
+  navigateToProductDetailsPage(product: Product) {
+    this.router.navigate(['/products', product.id]);
+  }
 }

@@ -108,4 +108,8 @@ export class AuthService {
     this._isAuthenticated.next(false); // Emit false for logged out
     console.log('Simulated Logout');
   }
+
+  isUserAuthenticated(): boolean {
+    return this.checkAuthenticationStatus();
+  }
 }

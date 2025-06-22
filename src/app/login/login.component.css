@@ -195,12 +195,12 @@
 }
 
 .input-icon {
-  position: absolute;
-  left: 1rem;
-  z-index: 2;
-  color: #a0aec0;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  /*position: absolute;*/
+  /*left: 1rem;*/
+  /*z-index: 2;*/
+  /*color: #a0aec0;*/
+  /*font-size: 1rem;*/
+  /*transition: all 0.3s ease;*/
 }
 
 .input-wrapper.has-success .input-icon {

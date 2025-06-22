@@ -77,7 +77,7 @@
             <!-- Add to Cart Button -->
             <button class="btn btn-add-cart w-100"
                     [disabled]="!product.inStock"
-                    (click)="onAddToCart(product)">
+                    (click)="navigateToProductDetailsPage(product)">
               <i class="fa-solid fa-truck-fast me-2"></i>
               <span *ngIf="product.inStock; else outOfStockText">Order Now</span>
               <ng-template #outOfStockText>Out of Stock</ng-template>
