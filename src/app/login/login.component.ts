@@ -1,4 +1,3 @@
-// src/app/auth/login/login.component.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; // For NgIf, NgClass
 import {ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms'; // For Reactive Forms
@@ -36,7 +35,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Initialize the login form with FormControls and Validators
     this.loginForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
+      phoneNo: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
       rememberMe: new FormControl(false) // For the "Remember me" checkbox
     });
@@ -86,10 +85,10 @@ export class LoginComponent implements OnInit {
       this.successMessage = null; // Clear previous messages
       this.errorMessage = null;
 
-      const { email, password, rememberMe } = this.loginForm.value;
+      const { phoneNo, password, rememberMe } = this.loginForm.value;
 
       // Call the authentication service
-      this.authService.login(email, password).subscribe({
+      this.authService.login(phoneNo, password).subscribe({
         next: (response) => {
           this.successMessage = response.message; // Display success message locally
           this.appComponent.setMessage(response.message); // Also send to global message system

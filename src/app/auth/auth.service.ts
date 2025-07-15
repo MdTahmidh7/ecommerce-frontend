@@ -1,7 +1,7 @@
-import { Injectable, PLATFORM_ID, inject } from '@angular/core'; // Import PLATFORM_ID and inject
+import {Injectable, PLATFORM_ID, inject, Inject} from '@angular/core'; // Import PLATFORM_ID and inject
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError, BehaviorSubject } from 'rxjs';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import {Observable, of, throwError, BehaviorSubject, catchError} from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 
 interface LoginResponse {
@@ -19,18 +19,21 @@ interface RegisterResponse {
 export class AuthService {
 
   private readonly baseUrl = 'http://localhost:8080/api/auth';
-  private platformId = inject(PLATFORM_ID); // Inject PLATFORM_ID
+  //private platformId = inject(PLATFORM_ID); // Inject PLATFORM_ID
   private _isAuthenticated = new BehaviorSubject<boolean>(false); // Initialize with false
 
   // Use a local variable to store the authentication status
   // It will be updated by checkAuthenticationStatus only on the browser
   public isAuthenticated: boolean = false;
 
-  constructor(private http: HttpClient) {
-    // Only check authentication status if running in the browser
+  constructor(
+    private http: HttpClient, // Inject HttpClient
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    // Check for token in localStorage on service initialization
     if (isPlatformBrowser(this.platformId)) {
-      this.isAuthenticated = this.checkAuthenticationStatus();
-      this._isAuthenticated.next(this.isAuthenticated); // Emit initial status to BehaviorSubject
+      const token = localStorage.getItem('authToken');
+      this._isAuthenticated.next(!!token); // Set initial auth state based on token presence
     }
   }
 
@@ -57,27 +60,61 @@ export class AuthService {
 
   /**
    * Simulates a login API call.
-   * @param email The user's email.
+   * @param phoneNumber
    * @param password The user's password.
    * @returns An Observable of LoginResponse or an error.
    */
-  login(email: string, password: string): Observable<LoginResponse> {
-    // In a real app, you would make an HTTP request here.
-    // For this simulation, we'll keep the localStorage interaction conditional.
+  login(phoneNumber: string, password: string): Observable<LoginResponse> {
+    // Define the endpoint for login
+    const loginEndpoint = `${this.baseUrl}/login`;
 
-    return of({ token: 'mock-jwt-token', message: 'Login successful!' }).pipe(
-      delay(1500), // Simulate network delay
-      tap(() => {
-        if (email === 'test@example.com' && password === 'password123') {
+    // Create the request body
+    const body = { phoneNumber: phoneNumber, password };
+
+    // Set HTTP headers, specifying content type as JSON
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    // Make the HTTP POST request to the backend
+    return this.http.post<LoginResponse>(loginEndpoint, body, { headers }).pipe(
+      tap((response: LoginResponse) => {
+        // On successful login, store the token and update authentication status
+        if (response.token) {
           if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem('authToken', 'mock-jwt-token');
+            localStorage.setItem('authToken', response.token);
           }
           this._isAuthenticated.next(true); // Emit true for authenticated
-          console.log('Simulated Login Success');
+          console.log('Login successful:', response.message || 'Token received.');
         } else {
-          throw new Error('Invalid email or password');
-
+          // If no token is received but the call was successful, something is off
+          console.warn('Login successful but no token received in response.');
+          throw new Error('Authentication failed: No token received.');
         }
+      }),
+      catchError((error: HttpErrorResponse) => {
+        // Handle errors from the backend API call
+        let errorMessage = 'An unknown error occurred during login.';
+        if (error.error instanceof ErrorEvent) {
+          // Client-side or network error
+          errorMessage = `Network Error: ${error.error.message}`;
+        } else {
+          // Backend returned an unsuccessful response code
+          console.error(`Backend returned code ${error.status}, body was: `, error.error);
+          if (error.status === 401) {
+            errorMessage = 'Invalid mobileNo or password. Please try again.';
+          } else if (error.error && error.error.message) {
+            // Assuming your backend sends an error message in the response body
+            errorMessage = error.error.message;
+          } else if (error.statusText) {
+            errorMessage = `Login failed: ${error.statusText}`;
+          }
+        }
+        // Emit false for authentication status on error
+        this._isAuthenticated.next(false);
+        console.error('Login error:', errorMessage);
+        // Re-throw the error so components can handle it
+        return throwError(() => new Error(errorMessage));
       })
     );
   }
@@ -85,11 +122,11 @@ export class AuthService {
   /**
    * Simulates a registration API call.
    * @param fullName The user's full name.
-   * @param email The user's email.
+   * @param mobileNo The user's mobileNo.
    * @param password The user's password.
    * @returns An Observable of RegisterResponse or an error.
    */
-  register(fullName: string, email: string, password: string): Observable<RegisterResponse> {
+  register(fullName: string, mobileNo: string, password: string): Observable<RegisterResponse> {
     // This part doesn't interact with localStorage directly, so no platform check needed here.
     return of({ message: 'Registration successful!' }).pipe(
       delay(1500), // Simulate network delay
@@ -111,5 +148,28 @@ export class AuthService {
 
   isUserAuthenticated(): boolean {
     return this.checkAuthenticationStatus();
+  }
+
+  getToken(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken');
+    }
+    return null;
+  }
+
+  getUserName() {
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          return payload.lastName || 'Guest'; // Return userName or 'Guest' if not available
+        } catch (e) {
+          console.error('Error parsing token:', e);
+          return 'Guest';
+        }
+      }
+    }
+    return 'Guest'; // Default if no token or not in browser
   }
 }

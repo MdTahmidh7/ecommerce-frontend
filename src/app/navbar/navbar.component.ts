@@ -17,6 +17,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private authSubscription: Subscription | null = null;
   private authService = inject(AuthService);
   private router = inject(Router);
+  userName: string = '';
 
   @Output() messageEvent = new EventEmitter<string>();
 
@@ -25,6 +26,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
       .isAuthenticated$
       .subscribe(status => {
         this.isAuthenticated = status;
+        if (status) {
+          this.userName = this.authService.getUserName();
+        } else {
+          this.userName = 'Guest';
+        }
       });
   }
 

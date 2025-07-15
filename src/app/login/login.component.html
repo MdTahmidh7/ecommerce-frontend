@@ -27,34 +27,33 @@
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
-          <!-- Email Input -->
+          <!-- Mobile Input -->
           <div class="input-group-custom">
-            <label for="email" class="form-label-custom">Email Address</label>
-            <div class="input-wrapper" [class.has-error]="isFieldInvalid('email')" [class.has-success]="isFieldValid('email')">
-              <div class="input-icon">
-                <i class="fas fa-envelope"></i>
+            <label for="phoneNo" class="form-label-custom">Phone Number</label>
+            <div class="input-wrapper" [class.has-error]="isFieldInvalid('phoneNo')" [class.has-success]="isFieldValid('phoneNo')">
+              <div class="input-icon px-1">
+                <i class="fas fa-phone"></i>
               </div>
               <input
-                type="email"
+                type="text"
                 class="form-control-custom"
-                id="email"
-                formControlName="email"
-                placeholder="Enter your email"
-                autocomplete="email"
-                [class.is-invalid]="isFieldInvalid('email')"
-                [class.is-valid]="isFieldValid('email')"
+                id="phoneNo"
+                formControlName="phoneNo"
+                placeholder="Enter your mobile number"
+                [class.is-invalid]="isFieldInvalid('phoneNo')"
+                [class.is-valid]="isFieldValid('phoneNo')"
               />
 
-              <div class="validation-icon" *ngIf="isFieldValid('email')">
+              <div class="validation-icon" *ngIf="isFieldValid('phoneNo')">
                 <i class="fas fa-check"></i>
               </div>
             </div>
 
-            <!-- Email Error Messages -->
-            <div class="input-error animate__animated animate__fadeInUp" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors">
+            <!-- phoneNo Error Messages -->
+            <div class="input-error animate__animated animate__fadeInUp" *ngIf="loginForm.get('phoneNo')?.touched && loginForm.get('phoneNo')?.errors">
               <i class="fas fa-exclamation-circle"></i>
-              <span *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</span>
-              <span *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+              <span *ngIf="loginForm.get('phoneNo')?.errors?.['required']">phoneNo is required</span>
+              <span *ngIf="loginForm.get('phoneNo')?.errors?.['phoneNo']">Please enter a valid phoneNo</span>
             </div>
           </div>
 
@@ -62,7 +61,7 @@
           <div class="input-group-custom">
             <label for="password" class="form-label-custom">Password</label>
             <div class="input-wrapper" [class.has-error]="isFieldInvalid('password')" [class.has-success]="isFieldValid('password')">
-              <div class="input-icon">
+              <div class="input-icon px-1">
                 <i class="fas fa-lock"></i>
               </div>
               <input
@@ -138,7 +137,7 @@
           </button>
 
           <!-- Social Login -->
-          <div class="social-login">
+          <!--<div class="social-login">
             <div class="divider">
               <span class="divider-text">Or continue with</span>
             </div>
@@ -162,7 +161,7 @@
                 <span>Facebook</span>
               </button>
             </div>
-          </div>
+          </div>-->
         </form>
 
         <!-- Register Link -->
