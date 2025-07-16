@@ -102,13 +102,13 @@ export class LoginComponent implements OnInit {
           console.error('Login error:', error);
           // Optional: Clear password field on error
           this.loginForm.get('password')?.reset();
+          this.loading = false;
         },
         complete: () => {
           this.loading = false; // Hide loading spinner regardless of success/error
         }
       });
     } else {
-      // If form is invalid, show a generic error or rely on field-specific errors
       this.errorMessage = 'Please correct the errors in the form.';
       this.appComponent.setMessage(this.errorMessage);
     }
@@ -122,7 +122,6 @@ export class LoginComponent implements OnInit {
     event.preventDefault(); // Prevent default link behavior
     this.appComponent.setMessage('Forgot password functionality not yet implemented.');
     console.log('Forgot Password clicked!');
-    // Implement navigation to forgot password page or open a modal
   }
 
   /**

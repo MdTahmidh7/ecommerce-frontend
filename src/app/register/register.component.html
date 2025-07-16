@@ -1,7 +1,7 @@
-<div class="card p-4 shadow-sm w-100" style="max-width: 450px;">
+<!--<div class="card p-4 shadow-sm w-100" style="max-width: 450px;">
   <div class="card-body">
     <h2 class="card-title text-center mb-4 display-5 fw-bold text-dark">Register</h2>
-    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+    <form (ngSubmit)="onSubmit()" #userRegistrationForm="ngForm">
       <div class="mb-3">
         <label for="fullName" class="form-label">Full Name</label>
         <div class="input-group">
@@ -105,4 +105,73 @@
       </p>
     </div>
   </div>
-</div>
+</div>-->
+
+<form [formGroup]="userRegistrationForm" (ngSubmit)="onSubmit()" class="form-container">
+  <h2>Create an Account</h2>
+
+  <!-- Phone Number -->
+  <div class="form-group">
+    <label><i class="fas fa-phone"></i> Phone Number</label>
+    <input type="text" formControlName="phoneNumber" placeholder="Enter phone number" />
+    <div class="error" *ngIf="f.phoneNumber.touched && f.phoneNumber.invalid">
+      Phone number is required (max 20 characters).
+    </div>
+  </div>
+
+  <!-- Password -->
+  <div class="form-group">
+    <label><i class="fas fa-lock"></i> Password</label>
+    <div class="password-wrapper">
+      <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Enter password" />
+      <i (click)="togglePassword()" [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+    </div>
+    <div class="error" *ngIf="f.password.touched && f.password.invalid">
+      Password must be between 6 and 40 characters.
+    </div>
+  </div>
+
+  <!-- Confirm Password -->
+  <div class="form-group">
+    <label><i class="fas fa-lock"></i> Confirm Password</label>
+    <input type="password" formControlName="confirmPassword" placeholder="Confirm password" />
+    <div class="error" *ngIf="f.confirmPassword.touched && f.confirmPassword.invalid">
+      Confirm Password is required.
+    </div>
+    <div class="error" *ngIf="userRegistrationForm.errors?.['passwordMismatch'] && f.confirmPassword.touched">
+      Passwords do not match.
+    </div>
+  </div>
+
+  <!-- First Name -->
+  <div class="form-group">
+    <label><i class="fas fa-user"></i> First Name</label>
+    <input type="text" formControlName="firstName" placeholder="Enter first name" />
+  </div>
+
+  <!-- Last Name -->
+  <div class="form-group">
+    <label><i class="fas fa-user"></i> Last Name</label>
+    <input type="text" formControlName="lastName" placeholder="Enter last name" />
+  </div>
+
+  <!-- Address -->
+  <div class="form-group">
+    <label><i class="fas fa-map-marker-alt"></i> Address</label>
+    <textarea formControlName="address" rows="2" placeholder="Enter address"></textarea>
+  </div>
+
+  <!-- Upazila ID -->
+  <div class="form-group">
+    <label><i class="fas fa-map-pin"></i> Upazila ID</label>
+    <input type="number" formControlName="upazilaId" placeholder="Enter Upazila ID" />
+    <div class="error" *ngIf="f.upazilaId.touched && f.upazilaId.invalid">
+      Upazila ID is required.
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="userRegistrationForm.invalid">Register</button>
+</form>
+
+
+

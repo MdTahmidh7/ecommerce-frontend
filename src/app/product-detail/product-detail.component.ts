@@ -8,6 +8,7 @@ import {ProductDetailsService} from './service/product-details.service';
 import {DivisionModel} from '../model/division.model';
 import {DistrictsModel} from '../model/districts.model';
 import {UpazilaModel} from '../model/upazila.model';
+import {UserRegistrationRequest} from '../model/userRegistrationRequest.model';
 
 
 declare var bootstrap: any;
@@ -126,6 +127,7 @@ export class ProductDetailComponent implements OnInit {
   currentReviewPage: number = 1;
   reviewsPerPage: number = 3;
   reviewForm: FormGroup;
+  user : UserRegistrationRequest = null as any;
 
 
   contactForm: FormGroup;
@@ -140,8 +142,8 @@ export class ProductDetailComponent implements OnInit {
               private router: Router,
               private fb: FormBuilder,
               private modalService: NgbModal,
-              private productDetailsService: ProductDetailsService,
-              ) {
+              private productDetailsService: ProductDetailsService
+  ) {
 
     this.reviewForm = new FormGroup({
       rating: new FormControl(null, Validators.required),
@@ -150,21 +152,21 @@ export class ProductDetailComponent implements OnInit {
     });
 
     this.contactForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
       address: ['', [Validators.required, Validators.minLength(5)]],
-      division: ['', Validators.required],
-      district: ['', Validators.required],
-      upazila: ['', Validators.required],
+      divisionId: ['', Validators.required],
+      districtId: ['', Validators.required],
+      upazilaId: ['', Validators.required],
     });
 
   }
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('id');
-    // In a real app, you would fetch the product data based on the ID
-    // For now, we're using mock data
-    //call api for getAllDivisions
     this.getAllDivisions();
   }
 
@@ -220,6 +222,8 @@ export class ProductDetailComponent implements OnInit {
       return;
     }
 
+    alert("Order placed successfully!");
+
     console.log('Buy now:', {
       product: this.product.title,
       color: this.selectedColor,
@@ -266,9 +270,6 @@ export class ProductDetailComponent implements OnInit {
     );
   }
 
-  closeModal() {
-    this.modal.hide();
-  }
 
   // isFieldInvalid(fieldName: string): boolean {
   //   const field = this.contactForm?.get(fieldName);
@@ -285,10 +286,34 @@ export class ProductDetailComponent implements OnInit {
   // }
 
   onSubmit(modal: any): void {
+
     if (this.contactForm.valid) {
+
       modal.close(this.contactForm.value);
-      console.log("Form values = ",this.contactForm.value)
-      alert("Form submitted.")
+      console.log("Form values for user registration = ",this.contactForm.value)
+
+      this.user = {
+        firstName: this.contactForm.value.firstName,
+        lastName: this.contactForm.value.lastName,
+        password: this.contactForm.value.password,
+        phoneNumber: this.contactForm.value.phoneNumber,
+        address: this.contactForm.value.address,
+        upazilaId: this.contactForm.value.upazilaId
+      };
+
+      //call register API
+      this.authService.register(this.user).subscribe({
+
+        next: (response) => {
+          console.log('Contact registered successfully:', response);
+          // Optionally, reset the form or show a success message
+          this.contactForm.reset();
+        },
+        error: (error) => {
+          console.error('Error registering contact:', error);
+          // Optionally, show an error message to the user
+        }
+      });
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.contactForm.controls).forEach(key => {

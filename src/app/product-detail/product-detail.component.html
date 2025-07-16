@@ -352,28 +352,58 @@
 
   <div class="modern-modal-body">
     <form [formGroup]="contactForm" (ngSubmit)="onSubmit(modal)" class="contact-form">
-      <div class="form-group">
 
+      <div class="form-group">
         <div class="input-wrapper">
-          <label for="name" class="col-lg-4">User Name</label>
+          <label for="firstName" class="col-lg-4">First Name</label>
           <input
             type="text"
-            id="name"
+            id="firstName"
             class="form-control"
-            formControlName="name"
-            [class.error]="isFieldInvalid('name')"
-            [class.filled]="contactForm.get('name')?.value"
-            placeholder="Type your name">
+            formControlName="firstName"
+            [class.error]="isFieldInvalid('firstName')"
+            [class.filled]="contactForm.get('firstName')?.value"
+            placeholder="Type your First Name">
         </div>
-        <div class="error-message" *ngIf="isFieldInvalid('name')">
-          <div *ngIf="contactForm.get('name')?.errors?.['required']">
+        <div class="error-message" *ngIf="isFieldInvalid('firstName')">
+          <div *ngIf="contactForm.get('firstName')?.errors?.['required']">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
               <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            Name is required
+            First Name is required
           </div>
-          <div *ngIf="contactForm.get('name')?.errors?.['minlength']">
+          <div *ngIf="contactForm.get('firstName')?.errors?.['minlength']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            First Name must be at least 2 characters
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="lastName" class="col-lg-4">Last Name</label>
+          <input
+            type="text"
+            id="lastName"
+            class="form-control"
+            formControlName="lastName"
+            [class.error]="isFieldInvalid('lastName')"
+            [class.filled]="contactForm.get('lastName')?.value"
+            placeholder="Type your last name">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('lastName')">
+          <div *ngIf="contactForm.get('lastName')?.errors?.['required']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Last Name is required
+          </div>
+          <div *ngIf="contactForm.get('lastName')?.errors?.['minlength']">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
               <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -390,7 +420,7 @@
             type="tel"
             id="phone"
             class="form-control"
-            formControlName="phone"
+            formControlName="phoneNumber"
             [class.error]="isFieldInvalid('phone')"
             [class.filled]="contactForm.get('phone')?.value"
             placeholder="01*********"
@@ -421,7 +451,7 @@
           <select
             id="division"
             class="form-control"
-            formControlName="division"
+            formControlName="divisionId"
             [class.error]="isFieldInvalid('division')"
             (change)="onDivisionChange($event)"
           >
@@ -443,7 +473,7 @@
           <select
             id="district"
             class="form-control"
-            formControlName="district"
+            formControlName="districtId"
             [class.error]="isFieldInvalid('district')"
             [disabled]="!districts?.length"
             (change)="onDistrictChange($event)"
@@ -465,7 +495,7 @@
           <label for="upazila" class="col-lg-4">Select Upazila</label>
           <select
             id="upazila" class="form-control"
-            formControlName="upazila"
+            formControlName="upazilaId"
             [class.error]="isFieldInvalid('upazila')"
             [disabled]="!upazilas?.length"
           >
@@ -510,6 +540,66 @@
           </div>
         </div>
       </div>
+
+      <!--password Input-->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="password" class="col-lg-4">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            formControlName="password"
+            [class.error]="isFieldInvalid('password')"
+            [class.filled]="contactForm.get('password')?.value"
+            placeholder="Enter Password">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('password')">
+          <div *ngIf="contactForm.get('password')?.errors?.['required']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Password is required
+          </div>
+          <div *ngIf="contactForm.get('password')?.errors?.['minlength']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Password must be at least 6 characters
+          </div>
+        </div>
+      </div>
+
+        <!--Confirm Password Input-->
+        <div class="input-wrapper">
+          <label for="confirmPassword" class="col-lg-4">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            class="form-control"
+            formControlName="confirmPassword"
+            [class.error]="isFieldInvalid('confirmPassword')"
+            [class.filled]="contactForm.get('confirmPassword')?.value"
+            placeholder="Confirm Password">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('confirmPassword')">
+          <div *ngIf="contactForm.get('confirmPassword')?.errors?.['required']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Confirm Password is required
+          </div>
+          <div *ngIf="contactForm.get('confirmPassword')?.errors?.['passwordMismatch']">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Passwords do not match
+          </div>
+        </div>
     </form>
   </div>
 

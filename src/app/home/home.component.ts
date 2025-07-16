@@ -2,6 +2,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import {AuthService} from '../auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -36,6 +37,9 @@ export class HomeComponent {
     { id: 10, name: 'Vintage Denim Jacket', price: '110.00', image: 'https://placehold.co/300x400/C8E6C9/A5D6A7?text=Jacket', link: '#'},
   ];
 
+  constructor(private authService: AuthService) { }
+
+
   // Helper to chunk arrays for carousel slides (3 items per slide)
   chunkArray(array: any[], chunkSize: number): any[][] {
     const result = [];
@@ -47,4 +51,11 @@ export class HomeComponent {
 
   bestSellersSlides = this.chunkArray(this.bestSellers, 3);
   newArrivalsSlides = this.chunkArray(this.newArrivals, 3);
+
+  //check if user is logged in using auth service
+  isAuthenticated(): boolean {
+    // This should ideally call an auth service to check the user's authentication status
+    return this.authService.isUserAuthenticated();
+  }
+
 }

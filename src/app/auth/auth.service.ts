@@ -121,16 +121,47 @@ export class AuthService {
 
   /**
    * Simulates a registration API call.
-   * @param fullName The user's full name.
-   * @param mobileNo The user's mobileNo.
-   * @param password The user's password.
    * @returns An Observable of RegisterResponse or an error.
+   * @param user
    */
-  register(fullName: string, mobileNo: string, password: string): Observable<RegisterResponse> {
-    // This part doesn't interact with localStorage directly, so no platform check needed here.
-    return of({ message: 'Registration successful!' }).pipe(
-      delay(1500), // Simulate network delay
-      tap(() => console.log('Simulated Registration Success'))
+  register(user:any): Observable<RegisterResponse> {
+
+    // Define the endpoint for registration
+    const registerEndpoint = `http://localhost:8080/api/register`;
+
+    // Set HTTP headers, specifying content type as JSON
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    // Make the HTTP POST request to the backend
+    return this.http.post<RegisterResponse>(registerEndpoint, user, { headers }).pipe(
+      tap((response: RegisterResponse) => {
+        console.log('Registration successful:', response.message);
+        window.location.href = '/login';
+      }),
+      catchError((error: HttpErrorResponse) => {
+        // Handle errors from the backend API call
+        let errorMessage = 'An unknown error occurred during registration.';
+        if (error.error instanceof ErrorEvent) {
+          // Client-side or network error
+          errorMessage = `Network Error: ${error.error.message}`;
+        } else {
+          // Backend returned an unsuccessful response code
+          console.error(`Backend returned code ${error.status}, body was: `, error.error);
+          if (error.status === 400) {
+            errorMessage = 'Invalid input. Please check your details and try again.';
+          } else if (error.error && error.error.message) {
+            // Assuming your backend sends an error message in the response body
+            errorMessage = error.error.message;
+          } else if (error.statusText) {
+            errorMessage = `Registration failed: ${error.statusText}`;
+          }
+        }
+        console.error('Registration error:', errorMessage);
+        // Re-throw the error so components can handle it
+        return throwError(() => new Error(errorMessage));
+      })
     );
   }
 
