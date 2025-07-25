@@ -1,5 +1,5 @@
 <div class="product-detail-container">
-  <div class="container py-5">
+  <div class="container py-5" *ngIf="product">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4 animate__animated animate__fadeIn">
       <ol class="breadcrumb">
@@ -50,18 +50,18 @@
         <div class="product-info animate__animated animate__fadeIn animate__delay-1s">
           <!-- Product Header -->
           <div class="product-header">
-            <div class="brand-name">{{ product.category.name }}</div>
-            <h1 class="product-title">{{ product.name }}</h1>
+            <div class="brand-name">{{ product?.category?.name }}</div>
+            <h1 class="product-title">{{ product?.name }}</h1>
 
             <!-- Price -->
             <div class="product-price">
-              <span class="current-price">${{ product.price.toFixed(2) }}</span>
+              <span class="current-price">${{ product?.price}}</span>
             </div>
 
             <!-- Availability -->
-            <div class="product-availability" [class.in-stock]="product.stockQuantity > 0">
+           <!-- <div class="product-availability" [class.in-stock]="product.stockQuantity > 0">
               {{ product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
-            </div>
+            </div>-->
           </div>
 
           <!-- Quantity Selector -->
@@ -112,7 +112,7 @@
       <div class="tab-content p-4 border border-top-0 rounded-bottom">
         <!-- Description Tab -->
         <div class="tab-pane fade" [class.show]="activeTab === 'description'" [class.active]="activeTab === 'description'">
-          <p class="product-description">{{ product.description }}</p>
+          <p class="product-description">{{ product?.description }}</p>
         </div>
       </div>
     </div>
@@ -177,7 +177,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="reviewForm">
+        <!--<form [formGroup]="reviewForm">
           <div class="mb-3">
             <label for="reviewTitle" class="form-label">Review Title</label>
             <input type="text" class="form-control" id="reviewTitle" formControlName="title">
@@ -196,7 +196,7 @@
               <option value="5">5 Stars</option>
             </select>
           </div>
-        </form>
+        </form>-->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -206,6 +206,12 @@
       </div>
     </div>
   </div>
+</div>
+
+<div>
+
+  images =
+  <img style="width: 50vw" [src]="environment.imageBaseUrl + '/Palestine.jpg'" alt="Palestine" />
 </div>
 
 

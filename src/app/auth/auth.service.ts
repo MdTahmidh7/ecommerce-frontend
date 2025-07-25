@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {Observable, of, throwError, BehaviorSubject, catchError} from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
+import {environment} from '../../environments/environment';
 
 interface LoginResponse {
   token: string;
@@ -127,7 +128,7 @@ export class AuthService {
   register(user:any): Observable<RegisterResponse> {
 
     // Define the endpoint for registration
-    const registerEndpoint = `http://localhost:8080/api/register`;
+    const registerEndpoint = `${environment.apiBaseUrl}/register`;
 
     // Set HTTP headers, specifying content type as JSON
     const headers = new HttpHeaders({

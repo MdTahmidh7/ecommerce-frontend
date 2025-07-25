@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {Product} from '../model/product.model';
 import {Router} from '@angular/router';
 import { ProductService } from './product.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-product',
@@ -35,9 +36,11 @@ export class ProductComponent implements OnInit {
     });
   }
 
-  
+
 
   navigateToProductDetailsPage(product: Product) {
     this.router.navigate(['/products', product.id]);
   }
+
+  protected  environment = environment;
 }

@@ -9,6 +9,8 @@ import {DivisionModel} from '../model/division.model';
 import {DistrictsModel} from '../model/districts.model';
 import {UpazilaModel} from '../model/upazila.model';
 import {UserRegistrationRequest} from '../model/userRegistrationRequest.model';
+import {Product} from '../model/product.model';
+import {environment} from '../../environments/environment';
 
 
 @Component({
@@ -290,4 +292,5 @@ export class ProductDetailComponent implements OnInit {
   }
 
   protected readonly HTMLSelectElement = HTMLSelectElement;
+  protected  environment = environment;
 }
