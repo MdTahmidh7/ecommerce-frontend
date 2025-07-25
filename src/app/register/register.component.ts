@@ -34,11 +34,11 @@ export class RegisterComponent {
   upazilas:UpazilaModel[] = [];
 
   private authService = inject(AuthService);
-  private router = inject(Router);
   private appComponent = inject(AppComponent);
 
   constructor(private fb: FormBuilder,
-              private registerService: RegisterService
+              private registerService: RegisterService,
+              private router: Router
   ) {
     this.userRegistrationForm = this.fb.group(
       {
@@ -79,6 +79,8 @@ export class RegisterComponent {
   }
 
   onSubmit() {
+
+    console.log("In onSubmit method of register component");
     if (this.password !== this.confirmPassword) {
       this.appComponent.setMessage('Passwords do not match.');
       return;
@@ -87,9 +89,14 @@ export class RegisterComponent {
     this.loading = true;
     this.appComponent.setMessage('');
 
-    this.authService.register(this.user).subscribe({
+    console.log('Form Values:', this.userRegistrationForm.value);
+
+    this.authService.register(this.userRegistrationForm.value).subscribe({
+
       next: (response) => {
-        this.appComponent.setMessage(response.message || 'Registration successful! Please login.');
+       //redirect to login page after successful registration
+        console.log("response from register api", response);
+        console.log("registration successful, redirecting to login page");
         this.router.navigate(['/login']);
       },
       error: (error) => {
@@ -102,10 +109,7 @@ export class RegisterComponent {
     });
   }
 
-  isFieldInvalid(field: string) {
-    const control = this.userRegistrationForm.get(field);
-    return control && control.invalid && (control.dirty || control.touched);
-  }
+
 
   onDivisionChange(event: Event) {
 

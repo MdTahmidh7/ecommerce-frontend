@@ -16,26 +16,14 @@
       <div class="col" *ngFor="let product of products; let i = index">
         <div class="card h-100">
 
-          <!-- Badge -->
-          <div *ngIf="product.badge"
-               class="floating-badge"
-               [ngClass]="'badge-' + product.badgeType">
-            {{ product.badge }}
-          </div>
-
-          <!-- Discount Badge -->
-          <div *ngIf="product.originalPrice" class="discount-badge">
-            -{{ getDiscountPercentage(product.originalPrice, product.price) }}%
-          </div>
-
           <!-- Product Image -->
           <div class="image-container">
-            <img [src]="product.image"
+            <img [src]="product.imageUrl"
                  class="card-img-top"
                  [alt]="product.name"
                  loading="lazy">
             <div class="image-overlay">
-              <span class="category-tag">{{ product.category }}</span>
+              <span class="category-tag">{{ product.category.name }}</span>
             </div>
           </div>
 
@@ -46,40 +34,23 @@
             <!-- Product Description -->
             <p class="card-text">{{ product.description }}</p>
 
-            <!-- Rating -->
-            <div class="rating">
-              <div class="stars">
-                <i *ngFor="let star of getStars(product.rating)"
-                   class="fas"
-                   [ngClass]="{
-                     'fa-star': star === 1 || star === 0,
-                     'fa-star-half-alt': star === 0.5
-                   }"
-                   [class.empty-star]="star === 0"></i>
-              </div>
-              <span class="rating-text">({{ product.rating }}) • {{ product.reviewCount }} reviews</span>
-            </div>
-
             <!-- Price Section -->
             <div class="price-section">
               <div class="price-container">
                 <span class="price">${{ product.price }}</span>
-                <span *ngIf="product.originalPrice" class="original-price">
-                  ${{ product.originalPrice }}
-                </span>
               </div>
-              <div class="stock-status" [ngClass]="product.inStock ? 'in-stock' : 'out-of-stock'">
-                <i class="fas" [ngClass]="product.inStock ? 'fa-check-circle' : 'fa-times-circle'"></i>
-                {{ product.inStock ? 'In Stock' : 'Out of Stock' }}
+              <div class="stock-status" [ngClass]="product.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'">
+                <i class="fas" [ngClass]="product.stockQuantity > 0 ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                {{ product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
               </div>
             </div>
 
             <!-- Add to Cart Button -->
             <button class="btn btn-add-cart w-100"
-                    [disabled]="!product.inStock"
+                    [disabled]="product.stockQuantity === 0"
                     (click)="navigateToProductDetailsPage(product)">
               <i class="fa-solid fa-truck-fast me-2"></i>
-              <span *ngIf="product.inStock; else outOfStockText">Order Now</span>
+              <span *ngIf="product.stockQuantity > 0; else outOfStockText">Order Now</span>
               <ng-template #outOfStockText>Out of Stock</ng-template>
             </button>
           </div>

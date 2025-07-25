@@ -216,11 +216,11 @@ export class ProductDetailComponent implements OnInit {
 
   buyNow(modal: any): void {
 
-    //First check if the user is logged in
-    if (!this.authService.isUserAuthenticated()) {
-      this.openModal(modal);
-      return;
-    }
+    // //First check if the user is logged in
+    // if (!this.authService.isUserAuthenticated()) {
+    //   this.openModal(modal);
+    //   return;
+    // }
 
     alert("Order placed successfully!");
 
@@ -308,6 +308,8 @@ export class ProductDetailComponent implements OnInit {
           console.log('Contact registered successfully:', response);
           // Optionally, reset the form or show a success message
           this.contactForm.reset();
+          //call order API
+
         },
         error: (error) => {
           console.error('Error registering contact:', error);

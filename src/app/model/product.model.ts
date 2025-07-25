@@ -1,14 +1,16 @@
+export interface Category {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface Product {
   id: number;
   name: string;
   description: string;
   price: number;
-  originalPrice?: number;
-  image: string;
-  rating: number;
-  reviewCount: number;
-  badge?: string;
-  badgeType?: 'new' | 'hot' | 'sale';
-  category: string;
-  inStock: boolean;
+  stockQuantity: number;
+  imageUrl: string;
+  imageUrls: string[];
+  category: Category;
 }
