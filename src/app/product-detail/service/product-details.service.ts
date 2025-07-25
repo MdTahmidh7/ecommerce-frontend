@@ -23,4 +23,8 @@ export class ProductDetailsService {
   getAllDistrictByDivisionId(divisionId: string) {
     return this.http.get<any>(`${this.apiUrl}/api/districts/division/${divisionId}`);
   }
+
+  getProductById(productId: string) {
+    return this.http.get<any>(`${this.apiUrl}/api/products/${productId}`);
+  }
 }

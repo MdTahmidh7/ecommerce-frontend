@@ -5,7 +5,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
         <li class="breadcrumb-item"><a routerLink="/products">Products</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
       </ol>
     </nav>
 
@@ -16,7 +16,7 @@
           <!-- Main Image with Zoom -->
           <div class="main-image-container">
             <div class="image-zoom-wrapper">
-              <img [src]="product.images[currentImageIndex]" alt="{{ product.title }}" class="main-product-image img-fluid">
+              <img [src]="product.imageUrl" alt="{{ product.name }}" class="main-product-image img-fluid">
               <div class="image-zoom-lens"></div>
             </div>
 
@@ -35,7 +35,7 @@
 
           <!-- Thumbnail Gallery -->
           <div class="thumbnail-gallery">
-            <div *ngFor="let image of product.images; let i = index"
+            <div *ngFor="let image of product.imageUrls; let i = index"
                  class="thumbnail-item"
                  [class.active]="i === currentImageIndex"
                  (click)="selectImage(i)">
@@ -50,69 +50,22 @@
         <div class="product-info animate__animated animate__fadeIn animate__delay-1s">
           <!-- Product Header -->
           <div class="product-header">
-            <div class="brand-name">{{ product.brand }}</div>
-            <h1 class="product-title">{{ product.title }}</h1>
-
-            <!-- Ratings -->
-            <div class="product-rating">
-              <div class="stars">
-                <span *ngFor="let star of [1, 2, 3, 4, 5]">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                       [class.filled]="star <= Math.floor(product.rating)"
-                       [class.half-filled]="star === Math.ceil(product.rating) && !Number.isInteger(product.rating)"
-                       viewBox="0 0 16 16">
-                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-                  </svg>
-                </span>
-              </div>
-              <span class="rating-value">{{ product.rating }}</span>
-              <span class="review-count">({{ product.reviewCount }} reviews)</span>
-            </div>
+            <div class="brand-name">{{ product.category.name }}</div>
+            <h1 class="product-title">{{ product.name }}</h1>
 
             <!-- Price -->
             <div class="product-price">
               <span class="current-price">${{ product.price.toFixed(2) }}</span>
-              <span *ngIf="product.oldPrice" class="old-price">${{ product.oldPrice.toFixed(2) }}</span>
-              <span *ngIf="product.discount" class="discount-badge">{{ product.discount }}% OFF</span>
             </div>
 
             <!-- Availability -->
-            <div class="product-availability" [class.in-stock]="product.availability === 'In Stock'">
-              {{ product.availability }}
+            <div class="product-availability" [class.in-stock]="product.stockQuantity > 0">
+              {{ product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
             </div>
           </div>
 
-          <!-- Product Variants -->
+          <!-- Quantity Selector -->
           <div class="product-variants">
-            <!-- Color Variants -->
-            <div class="variant-section">
-              <h3 class="variant-title">Color</h3>
-              <div class="color-options">
-                <button *ngFor="let color of product.variants.colors"
-                        class="color-option"
-                        [class.active]="selectedColor === color"
-                        [style.background-color]="color.toLowerCase()"
-                        (click)="selectColor(color)">
-                  <span class="color-check" *ngIf="selectedColor === color">✓</span>
-                </button>
-              </div>
-              <div class="selected-variant">Selected: {{ selectedColor }}</div>
-            </div>
-
-            <!-- Size Variants (if applicable) -->
-            <div class="variant-section" *ngIf="product.variants.sizes.length > 0">
-              <h3 class="variant-title">Size</h3>
-              <div class="size-options">
-                <button *ngFor="let size of product.variants.sizes"
-                        class="size-option"
-                        [class.active]="selectedSize === size"
-                        (click)="selectSize(size)">
-                  {{ size }}
-                </button>
-              </div>
-            </div>
-
-            <!-- Quantity Selector -->
             <div class="variant-section">
               <h3 class="variant-title">Quantity</h3>
               <div class="quantity-selector">
@@ -154,47 +107,12 @@
             Description
           </button>
         </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link"
-                  [class.active]="activeTab === 'features'"
-                  (click)="setActiveTab('features')"
-                  type="button">
-            Features
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link"
-                  [class.active]="activeTab === 'specifications'"
-                  (click)="setActiveTab('specifications')"
-                  type="button">
-            Specifications
-          </button>
-        </li>
       </ul>
 
       <div class="tab-content p-4 border border-top-0 rounded-bottom">
         <!-- Description Tab -->
         <div class="tab-pane fade" [class.show]="activeTab === 'description'" [class.active]="activeTab === 'description'">
           <p class="product-description">{{ product.description }}</p>
-        </div>
-
-        <!-- Features Tab -->
-        <div class="tab-pane fade" [class.show]="activeTab === 'features'" [class.active]="activeTab === 'features'">
-          <ul class="features-list">
-            <li *ngFor="let feature of product.features">{{ feature }}</li>
-          </ul>
-        </div>
-
-        <!-- Specifications Tab -->
-        <div class="tab-pane fade" [class.show]="activeTab === 'specifications'" [class.active]="activeTab === 'specifications'">
-          <table class="table specifications-table">
-            <tbody>
-              <tr *ngFor="let spec of product.specifications | keyvalue">
-                <th>{{ spec.key }}</th>
-                <td>{{ spec.value }}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
@@ -204,57 +122,35 @@
       <h2 class="section-title">Customer Reviews</h2>
       <div class="reviews-summary">
         <div class="overall-rating">
-          <div class="rating-number">{{ product.rating }}</div>
+          <div class="rating-number">N/A</div>
           <div class="stars">
             <span *ngFor="let star of [1, 2, 3, 4, 5]">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                   [class.filled]="star <= Math.floor(product.rating)"
-                   [class.half-filled]="star === Math.ceil(product.rating) && !Number.isInteger(product.rating)"
                    viewBox="0 0 16 16">
                 <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
               </svg>
             </span>
           </div>
-          <div class="total-reviews">Based on {{ product.reviewCount }} reviews</div>
+          <div class="total-reviews">No reviews available</div>
         </div>
       </div>
 
       <!-- Reviews List -->
       <div class="reviews-list">
-        <div *ngFor="let review of displayedReviews" class="review-card">
-          <div class="review-header">
-            <div class="reviewer-info">
-              <div class="reviewer-name">{{ review.user }}</div>
-              <div class="review-date">{{ review.date }}</div>
-            </div>
-            <div class="review-rating">
-              <span *ngFor="let star of [1, 2, 3, 4, 5]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                     [class.filled]="star <= review.rating"
-                     viewBox="0 0 16 16">
-                  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-                </svg>
-              </span>
-            </div>
-          </div>
-          <h4 class="review-title">{{ review.title }}</h4>
-          <p class="review-content">{{ review.comment }}</p>
-        </div>
+        <p class="text-center text-muted">No reviews yet. Be the first to review this product!</p>
       </div>
 
       <!-- Pagination -->
-      <nav *ngIf="totalReviewPages > 1" aria-label="Reviews pagination" class="reviews-pagination">
+      <nav aria-label="Reviews pagination" class="reviews-pagination">
         <ul class="pagination justify-content-center">
-          <li class="page-item" [class.disabled]="currentReviewPage === 1">
-            <a class="page-link" href="javascript:void(0)" (click)="changePage(currentReviewPage - 1)">Previous</a>
+          <li class="page-item disabled">
+            <a class="page-link" href="javascript:void(0)">Previous</a>
           </li>
-          <li *ngFor="let page of [].constructor(totalReviewPages); let i = index"
-              class="page-item"
-              [class.active]="currentReviewPage === i + 1">
-            <a class="page-link" href="javascript:void(0)" (click)="changePage(i + 1)">{{ i + 1 }}</a>
+          <li class="page-item active">
+            <a class="page-link" href="javascript:void(0)">1</a>
           </li>
-          <li class="page-item" [class.disabled]="currentReviewPage === totalReviewPages">
-            <a class="page-link" href="javascript:void(0)" (click)="changePage(currentReviewPage + 1)">Next</a>
+          <li class="page-item disabled">
+            <a class="page-link" href="javascript:void(0)">Next</a>
           </li>
         </ul>
       </nav>
@@ -265,16 +161,7 @@
       <h2 class="section-title">You May Also Like</h2>
       <div class="related-products-carousel">
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-          <div *ngFor="let relatedProduct of product.relatedProducts" class="col">
-            <div class="card product-card h-100">
-              <img [src]="relatedProduct.image" class="card-img-top" alt="{{ relatedProduct.title }}">
-              <div class="card-body">
-                <h5 class="card-title">{{ relatedProduct.title }}</h5>
-                <p class="card-text price">${{ relatedProduct.price.toFixed(2) }}</p>
-                <a [routerLink]="['/products', relatedProduct.id]" class="btn btn-outline-primary view-product-btn">View Product</a>
-              </div>
-            </div>
-          </div>
+          <p class="text-center text-muted">No related products available.</p>
         </div>
       </div>
     </div>
