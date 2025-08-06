@@ -1,6 +1,6 @@
 <div class="d-flex flex-column min-vh-100 bg-light">
   <!-- Navbar Component -->
-  <app-navbar (messageEvent)="setMessage($event)"></app-navbar>
+  <app-navbar *ngIf="showNavbar" (messageEvent)="setMessage($event)"></app-navbar>
 
   <!-- Main Content Area -->
   <main class="container flex-grow-1 py-4 d-flex flex-column align-items-center justify-content-center">
