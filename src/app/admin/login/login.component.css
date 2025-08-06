@@ -1,43 +1,88 @@
+/* Custom styles for modern look with Bootstrap */
+body {
+  font-family: 'Inter', sans-serif; /* Using a modern sans-serif font */
+  background-color: #f8f9fa; /* Light background for the page */
+}
+
 .login-container {
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f0f2f5;
+  justify-content: center;
+  padding: 15px; /* Padding for small screens */
 }
 
 .login-card {
-  width: 400px;
-  padding: 40px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 1rem; /* More rounded corners */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* Soft shadow */
+  max-width: 450px; /* Max width for the card */
+  width: 100%;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.card-title {
+  color: #343a40; /* Darker text for title */
+  font-size: 2rem; /* Larger font size for title */
 }
 
-.form-group {
-  margin-bottom: 15px;
+.form-label {
+  font-weight: 500; /* Slightly bolder labels */
+  color: #495057;
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 600;
+.input-group-text {
+  background-color: #e9ecef; /* Light background for icon container */
+  border-right: none;
+  border-radius: 0.25rem 0 0 0.25rem; /* Rounded left side */
+  border-color: #ced4da;
 }
 
 .form-control {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border-left: none;
+  border-radius: 0 0.25rem 0.25rem 0; /* Rounded right side */
+  padding-left: 0.75rem; /* Adjust padding for text next to icon */
 }
 
-.btn {
+.form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); /* Bootstrap's default focus ring */
+  border-color: #86b7fe; /* Bootstrap's default focus border */
+}
+
+.login-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px; /* Fixed width for the icon background */
+}
+
+.login-icon {
+  height: 20px;
+  width: 20px;
+  color: #6c757d; /* Gray color for icons */
+}
+
+.login-button {
+  background-color: #0d6efd; /* Primary blue */
+  border-color: #0d6efd;
+  font-weight: 600;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.login-button:hover {
+  background-color: #0b5ed7; /* Darker blue on hover */
+  border-color: #0a58ca;
+}
+
+.login-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Custom invalid feedback styling to match Bootstrap's look */
+.invalid-feedback {
+  display: block; /* Ensure it's always block to take space */
   width: 100%;
-  padding: 10px;
-  border-radius: 4px;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: #dc3545; /* Bootstrap's default red for invalid feedback */
 }
