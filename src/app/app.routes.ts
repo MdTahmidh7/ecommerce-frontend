@@ -10,6 +10,7 @@ import { CreateProductComponent } from './admin/create-product/create-product.co
 import { AdminLoginComponent } from './admin/login/login.component';
 import { AuthGuard } from './admin/auth.guard';
 import { MyOrdersComponent } from './my-orders/my-orders.component';
+import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -26,7 +27,8 @@ export const routes: Routes = [
     component: AdminComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: 'create-product', component: CreateProductComponent }
+      { path: 'create-product', component: CreateProductComponent },
+      { path: 'orders', component: AdminOrdersComponent }
     ]
   },
   { path: '**', redirectTo: '/home' }
