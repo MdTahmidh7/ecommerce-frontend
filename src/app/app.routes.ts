@@ -9,6 +9,7 @@ import { AdminComponent } from './admin/admin.component';
 import { CreateProductComponent } from './admin/create-product/create-product.component';
 import { AdminLoginComponent } from './admin/login/login.component';
 import { AuthGuard } from './admin/auth.guard';
+import { MyOrdersComponent } from './my-orders/my-orders.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'products', component: ProductComponent },
   { path: 'products/:id', component: ProductDetailComponent },
+  { path: 'my-orders', component: MyOrdersComponent },
   { path: 'admin/login', component: AdminLoginComponent },
   {
     path: 'admin',
