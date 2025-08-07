@@ -16,7 +16,7 @@
           <!-- Main Image with Zoom -->
           <div class="main-image-container">
             <div class="image-zoom-wrapper">
-              <img [src]="product.imageUrl" alt="{{ product.name }}" class="main-product-image img-fluid">
+              <img [src]="environment.imageBaseUrl + '/' + product.imageUrl" alt="{{ product.name }}" class="main-product-image img-fluid">
               <div class="image-zoom-lens"></div>
             </div>
 
