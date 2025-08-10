@@ -59,15 +59,15 @@
             </div>
 
             <!-- Availability -->
-           <!-- <div class="product-availability" [class.in-stock]="product.stockQuantity > 0">
+            <div class="product-availability" [class.in-stock]="product.stockQuantity > 0">
               {{ product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
-            </div>-->
+            </div>
           </div>
 
           <!-- Quantity Selector -->
           <div class="product-variants">
-            <div class="variant-section">
-              <h3 class="variant-title">Quantity</h3>
+            <div class="variant-section d-flex align-items-center">
+              <h3 class="variant-title pe-1">Quantity</h3>
               <div class="quantity-selector">
                 <button class="quantity-btn" (click)="decreaseQuantity()">-</button>
                 <span class="quantity-value">{{ quantity }}</span>
@@ -85,7 +85,7 @@
               </svg>
               Add to Cart
             </button>
-            <button class="btn btn-secondary buy-now-btn" (click)="buyNow(contactModal)">
+            <button class="btn btn-secondary buy-now-btn" (click)="buyNow(contactModal,deliveryAddressModal)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill me-2" viewBox="0 0 16 16">
                 <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
               </svg>
@@ -527,6 +527,162 @@
           </path>
         </svg>
         Saving...
+      </span>
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deliveryAddressModal let-modal>
+  <div class="modern-modal-header">
+    <div class="header-content">
+      <div class="icon-wrapper">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="title-section">
+        <h4 class="modal-title" id="modal-title">Confirm Your Delivery Address</h4>
+        <p class="modal-subtitle">Please fill in your details below</p>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="modern-close-btn"
+      aria-label="Close button"
+      aria-describedby="modal-title"
+      (click)="modal.dismiss('Cross click')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="modern-modal-body">
+    <form [formGroup]="deliveryAddressForm" class="delivery-address-form">
+      <!-- Add Division select -->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="division" class="col-lg-4">Select Division</label>
+          <select
+            id="division"
+            class="form-control"
+            formControlName="divisionId"
+            [class.error]="isFieldInvalid('division')"
+            (change)="onDivisionChange($event)"
+          >
+            <option value="" [selected]="true">Select division</option>
+            <option *ngFor="let division of divisions" [value]="division.id">
+              {{ division.bnName }}
+            </option>
+          </select>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('division')">
+          <span>Division is required</span>
+        </div>
+      </div>
+
+      <!-- Add District select -->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="district" class="col-lg-4">Select District</label>
+          <select
+            id="district"
+            class="form-control"
+            formControlName="districtId"
+            [class.error]="isFieldInvalid('district')"
+            [disabled]="!districts?.length"
+            (change)="onDistrictChange($event)"
+          >
+            <option value="">Select district</option>
+            <option *ngFor="let district of districts" [value]="district.id">
+              {{ district.bnName }}
+            </option>
+          </select>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('district')">
+          <span>District is required</span>
+        </div>
+      </div>
+
+      <!-- Add Upazila select -->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label for="upazila" class="col-lg-4">Select Upazila</label>
+          <select
+            id="upazila" class="form-control"
+            formControlName="upazilaId"
+            [class.error]="isFieldInvalid('upazila')"
+            [disabled]="!upazilas?.length"
+          >
+            <option value="">Select upazila</option>
+            <option *ngFor="let upazila of upazilas" [value]="upazila.id">
+              {{ upazila.bnName }}
+            </option>
+          </select>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('upazila')">
+          <span>Upazila is required</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-wrapper textarea-wrapper">
+          <label for="address" class="col-lg-4">Address</label>
+          <textarea
+            id="address"
+            class="form-control"
+            formControlName="address"
+            [class.error]="isFieldInvalid('address')"
+            [class.filled]="contactForm.get('address')?.value"
+            rows="4"
+            placeholder="Enter Full Address">
+          </textarea>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+
+  <div class="modern-modal-footer">
+    <button
+      type="button"
+      class="btn btn-ghost"
+      (click)="modal.dismiss('cancel')">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-gradient"
+      [disabled]="deliveryAddressForm.invalid"
+      [class.loading]="isSubmitting"
+      (click)="onSubmitDeliveryAddress(modal)">
+      <span *ngIf="!isSubmitting" class="btn-content">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 7L10 16L5 11"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Confirm Order
       </span>
     </button>
   </div>

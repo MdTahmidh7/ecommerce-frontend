@@ -204,4 +204,20 @@ export class AuthService {
     }
     return 'Guest'; // Default if no token or not in browser
   }
+
+  getUserId() {
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          return payload.userId || null; // Return user ID or null if not available
+        } catch (e) {
+          console.error('Error parsing token:', e);
+          return null;
+        }
+      }
+    }
+    return null; // Default if no token or not in browser
+  }
 }

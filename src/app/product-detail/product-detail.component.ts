@@ -34,6 +34,7 @@ export class ProductDetailComponent implements OnInit {
 
 
   contactForm: FormGroup;
+  deliveryAddressForm: FormGroup;
   private modal: any;
 
   divisions:DivisionModel[] = [];
@@ -54,6 +55,13 @@ export class ProductDetailComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
       address: ['', [Validators.required, Validators.minLength(5)]],
+      divisionId: ['', Validators.required],
+      districtId: ['', Validators.required],
+      upazilaId: ['', Validators.required],
+    });
+
+    this.deliveryAddressForm = this.fb.group({
+      address: ['',],
       divisionId: ['', Validators.required],
       districtId: ['', Validators.required],
       upazilaId: ['', Validators.required],
@@ -137,22 +145,35 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
-  buyNow(modal: any): void {
+  buyNow(modal: any, deliveryAddressModal: any): void {
     // //First check if the user is logged in
-    // if (!this.authService.isUserAuthenticated()) {
-    //   this.openModal(modal);
-    //   return;
-    // }
+    if (!this.authService.isUserAuthenticated()) {
+      this.openModal(modal);
+      return;
+    }
+    else{
+      this.openModal(deliveryAddressModal);
+    }
 
-    alert("Order placed successfully!");
+    const userId = this.authService.getUserId();
+    const upazilaId = this.deliveryAddressForm.get('upazilaId')?.value;
+    const productId = this.product?.id;
+    const quantity = this.quantity;
+    const price = this.product?.price;
+    const totalPrice = price ? price * quantity : 0;
+
 
     if (!this.product) return;
     console.log('Buy now:', {
+      id: this.product.id,
       product: this.product.name,
       color: this.selectedColor,
       size: this.selectedSize,
-      quantity: this.quantity
+      quantity: this.quantity,
+      userId: userId
     });
+    //log user id
+
   }
 
   // Removed displayedReviews and totalReviewPages getters as reviews are not part of product
@@ -223,6 +244,23 @@ export class ProductDetailComponent implements OnInit {
       Object.keys(this.contactForm.controls).forEach(key => {
         this.contactForm.get(key)?.markAsTouched();
       });
+    }
+  }
+
+  onSubmitDeliveryAddress(modal: any): void {
+
+
+    if (this.deliveryAddressForm.valid) {
+
+      modal.close(this.deliveryAddressForm.value);
+      console.log("Form values for Delivery Address = ", this.deliveryAddressForm.value);
+      const deliveryAddress = {
+        address: this.deliveryAddressForm.value.address,
+        divisionId: this.deliveryAddressForm.value.divisionId,
+        districtId: this.deliveryAddressForm.value.districtId,
+        upazilaId: this.deliveryAddressForm.value.upazilaId
+      };
+      console.log("Delivery Address = ", deliveryAddress);
     }
   }
 
