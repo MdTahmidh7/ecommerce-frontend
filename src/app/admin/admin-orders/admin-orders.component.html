@@ -57,28 +57,37 @@
       No orders found matching the criteria.
     </div>
 
-    <div *ngIf="orders.length > 0" class="table-responsive">
+    <div *ngIf="orderSummery.length > 0" class="table-responsive">
       <table class="table table-striped table-hover">
         <thead class="table-dark">
           <tr>
+            <th>User Name</th>
             <th scope="col">Order ID</th>
             <th scope="col">Order Date</th>
             <th scope="col">Total Amount</th>
             <th scope="col">Status</th>
+            <th>Product Id</th>
+            <th>Total Items</th>
             <!-- Add more columns as needed -->
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of orders">
-            <td>{{ order.id }}</td>
-            <td>{{ order.orderDate | date:'mediumDate' }}</td>
-            <td>{{ order.totalAmount | currency:'USD' }}</td>
+          <tr *ngFor="let order of orderSummery">
+            <td>{{ order.customerName}}</td>
+            <td>{{ order.orderId }}</td>
+            <td>{{ order.creationDate | date:'mediumDate' }}</td>
+            <td>{{ order.totalPrice | currency:'USD' }}</td>
             <td><span class="badge" [ngClass]="{
               'bg-success': order.status === 'DELIVERED',
               'bg-warning text-dark': order.status === 'PENDING',
               'bg-info text-dark': order.status === 'SHIPPED',
               'bg-danger': order.status === 'CANCELLED'
-            }">{{ order.status }}</span></td>
+            }">{{ order.status }}</span>
+            </td>
+            <td>
+              {{order.primaryProductName}}
+            </td>
+            <td>{{order.totalItems}}</td>
           </tr>
         </tbody>
       </table>

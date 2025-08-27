@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AdminOrderService {
-  private apiUrl = `${environment.apiBaseUrl}/orders/admin`;
+  private apiUrl = `${environment.apiBaseUrl}/orders/all`;
 
   constructor(private http: HttpClient) { }
 
@@ -36,6 +36,6 @@ export class AdminOrderService {
     params = params.append('page', page.toString());
     params = params.append('size', size.toString());
 
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<any>(this.apiUrl);
   }
 }

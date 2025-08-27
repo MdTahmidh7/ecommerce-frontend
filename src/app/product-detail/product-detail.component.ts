@@ -11,6 +11,8 @@ import {UpazilaModel} from '../model/upazila.model';
 import {UserRegistrationRequest} from '../model/userRegistrationRequest.model';
 import {Product} from '../model/product.model';
 import {environment} from '../../environments/environment';
+import {CreateOrderRequest} from '../model/CreateOrderRequest.moel';
+import {OrderService} from '../order.service';
 
 
 @Component({
@@ -21,8 +23,10 @@ import {environment} from '../../environments/environment';
   styleUrls: ['./product-detail.component.css']
 })
 export class ProductDetailComponent implements OnInit {
+
   productId: string | null = null;
   product: Product | undefined; // Product can be undefined initially
+  orderRequest: CreateOrderRequest = null as any;
 
   selectedColor: string = ''; // Initialize with empty string or default color
   selectedSize: string = ''; // Initialize with empty string or default size
@@ -46,7 +50,8 @@ export class ProductDetailComponent implements OnInit {
               private router: Router,
               private fb: FormBuilder,
               private modalService: NgbModal,
-              private productDetailsService: ProductDetailsService
+              private productDetailsService: ProductDetailsService,
+              private orderService: OrderService
   ) {
     this.contactForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
@@ -155,25 +160,6 @@ export class ProductDetailComponent implements OnInit {
       this.openModal(deliveryAddressModal);
     }
 
-    const userId = this.authService.getUserId();
-    const upazilaId = this.deliveryAddressForm.get('upazilaId')?.value;
-    const productId = this.product?.id;
-    const quantity = this.quantity;
-    const price = this.product?.price;
-    const totalPrice = price ? price * quantity : 0;
-
-
-    if (!this.product) return;
-    console.log('Buy now:', {
-      id: this.product.id,
-      product: this.product.name,
-      color: this.selectedColor,
-      size: this.selectedSize,
-      quantity: this.quantity,
-      userId: userId
-    });
-    //log user id
-
   }
 
   // Removed displayedReviews and totalReviewPages getters as reviews are not part of product
@@ -253,14 +239,36 @@ export class ProductDetailComponent implements OnInit {
     if (this.deliveryAddressForm.valid) {
 
       modal.close(this.deliveryAddressForm.value);
-      console.log("Form values for Delivery Address = ", this.deliveryAddressForm.value);
-      const deliveryAddress = {
-        address: this.deliveryAddressForm.value.address,
-        divisionId: this.deliveryAddressForm.value.divisionId,
-        districtId: this.deliveryAddressForm.value.districtId,
-        upazilaId: this.deliveryAddressForm.value.upazilaId
+
+      const userId = this.authService.getUserId();
+      const upazilaId = this.deliveryAddressForm.get('upazilaId')?.value;
+      const productId = this.product?.id;
+      const quantity = this.quantity;
+      const price = this.product?.price;
+      const totalPrice = price ? price * quantity : 0;
+
+      //prepare order request
+      this.orderRequest = {
+        upazilaId: upazilaId,
+        userId: userId,
+        orderItems: [{
+          productId: productId || 0, // Fallback to 0 if productId is undefined
+          quantity: quantity,
+          price: totalPrice
+        }]
       };
-      console.log("Delivery Address = ", deliveryAddress);
+
+      //call api for order request
+      this.orderService.createOrder(this.orderRequest).subscribe({
+
+        next: (response) => {
+          console.log('Order created successfully:', response);
+          this.deliveryAddressForm.reset();
+        },
+        error: (error) => {
+          console.error('Error while creating order:', error);
+        }
+      });
     }
   }
 

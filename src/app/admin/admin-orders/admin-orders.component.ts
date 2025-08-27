@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminOrderService } from '../admin-order.service';
 import { OrderResponseDTO, OrderStatus } from '../../model/order-response-dto.model';
+import {OrderSummary} from '../../model/OrderSummary.model';
 
 @Component({
   selector: 'app-admin-orders',
@@ -13,6 +14,7 @@ import { OrderResponseDTO, OrderStatus } from '../../model/order-response-dto.mo
 })
 export class AdminOrdersComponent implements OnInit {
   orders: OrderResponseDTO[] = [];
+  orderSummery: OrderSummary[] = [];
   loading: boolean = true;
   error: string | null = null;
 
@@ -64,7 +66,8 @@ export class AdminOrdersComponent implements OnInit {
       this.pageSize
     ).subscribe({
       next: (data) => {
-        this.orders = data.content;
+        // this.orders = data.content;
+        this.orderSummery = data;
         this.totalPages = data.totalPages;
         this.totalElements = data.totalElements;
         this.loading = false;

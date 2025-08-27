@@ -1,8 +1,9 @@
 export interface OrderResponseDTO {
   id: number;
-  orderDate: string;
+  creationDate: string;
   totalAmount: number;
   status: OrderStatus;
+  userName: string;
   // Add other fields as per your backend DTO
 }
 
