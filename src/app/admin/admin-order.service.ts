@@ -23,19 +23,22 @@ export class AdminOrderService {
     let params = new HttpParams();
     if (status) {
       params = params.append('status', status);
+    }else{
+      params = params.append('status', null as any);
     }
     if (startDate) {
-      params = params.append('startDate', startDate);
+      params = params.append('from', startDate);
     }
     if (endDate) {
-      params = params.append('endDate', endDate);
+      params = params.append('to', endDate);
     }
-    if (categoryId) {
+    /*if (categoryId) {
       params = params.append('categoryId', categoryId.toString());
     }
     params = params.append('page', page.toString());
     params = params.append('size', size.toString());
+    */
 
-    return this.http.get<any>(this.apiUrl);
+    return this.http.get<any>(this.apiUrl, { params });
   }
 }
