@@ -6,6 +6,6 @@ export interface OrderSummary {
   status: 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
   creationDate: string;  // ISO timestamp string
   totalItems: number;
-  primaryProductName: string;
+  productId: number;
   itemsSummary: string;
 }
