@@ -1,6 +1,4 @@
 <div class="container my-5">
-  <h2 class="text-center mb-4">All Orders (Admin)</h2>
-
   <!-- Filter Section -->
   <div class="card mb-4">
     <div class="card-header">
@@ -8,32 +6,38 @@
     </div>
     <div class="card-body">
       <form (ngSubmit)="applyFilters()" #filterForm="ngForm">
-        <div class="row g-3 align-items-end">
-          <div class="col-md-3">
+        <div class="row g-1 flex-wrap">
+          <div class="col-lg-3 col-md-3  col-sm-12 ">
             <label for="fromDate" class="form-label">From Date</label>
             <input type="date" class="form-control" id="fromDate" name="fromDate" [(ngModel)]="fromDate">
           </div>
-          <div class="col-md-3">
+          <div class="col-lg-3 col-md-3  col-sm-12 ">
             <label for="toDate" class="form-label">To Date</label>
             <input type="date" class="form-control" id="toDate" name="toDate" [(ngModel)]="toDate">
           </div>
-          <div class="col-md-2">
+          <div class="col-lg-2 col-md-3  col-sm-12 ">
             <label for="status" class="form-label">Status</label>
             <select class="form-select" id="status" name="status" [(ngModel)]="selectedStatus">
               <option value="ALL">All</option>
               <option *ngFor="let status of orderStatuses" [value]="status">{{ status }}</option>
             </select>
           </div>
-          <div class="col-md-2">
+          <div class="col-lg-2 col-md-3  col-sm-12 ">
             <label for="category" class="form-label">Category</label>
             <select class="form-select" id="category" name="category" [(ngModel)]="selectedCategory">
               <option value="ALL">All</option>
               <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
             </select>
           </div>
-          <div class="col-md-2 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
-            <button type="button" class="btn btn-secondary" (click)="resetFilters()">Reset</button>
+          <div class="col-lg-2 col-md-3  col-sm-12  d-flex justify-content-end align-items-end">
+            <button type="submit" class="btn btn-primary me-2">
+              <i class="fa-solid fa-magnifying-glass me-2"></i>
+              Search
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="resetFilters()">
+              <i class="fa-solid fa-rotate-left me-2"></i>
+              Reset
+            </button>
           </div>
         </div>
       </form>
@@ -48,14 +52,11 @@
     <p>Loading orders...</p>
   </div>
 
-  <div *ngIf="error" class="alert alert-danger" role="alert">
-    {{ error }}
-  </div>
 
   <div *ngIf="!loading && !error">
-    <div *ngIf="orders.length === 0" class="alert alert-info text-center" role="alert">
+    <!--<div *ngIf="orders.length === 0" class="alert alert-info text-center" role="alert">
       No orders found matching the criteria.
-    </div>
+    </div>-->
 
     <div *ngIf="orderSummery.length > 0" class="table-responsive">
       <table class="table table-striped table-hover">
@@ -68,6 +69,7 @@
             <th scope="col">Status</th>
             <th>Product Id</th>
             <th>Total Items</th>
+            <th>Actions</th>
             <!-- Add more columns as needed -->
           </tr>
         </thead>
@@ -77,17 +79,23 @@
             <td>{{ order.orderId }}</td>
             <td>{{ order.creationDate | date:'mediumDate' }}</td>
             <td>{{ order.totalPrice | currency:'USD' }}</td>
-            <td><span class="badge" [ngClass]="{
+            <td>
+              <span class="badge" [ngClass]="{
               'bg-success': order.status === 'DELIVERED',
               'bg-warning text-dark': order.status === 'PENDING',
               'bg-info text-dark': order.status === 'SHIPPED',
-              'bg-danger': order.status === 'CANCELLED'
-            }">{{ order.status }}</span>
+              'bg-danger': order.status === 'CANCELLED'}"
+              >
+                {{ order.status }}
+              </span>
             </td>
-            <td>
-              {{order.productId}}
-            </td>
+            <td>{{order.productId}}</td>
             <td>{{order.totalItems}}</td>
+            <td>
+              <button class="btn btn-sm btn-info" (click)="viewOrderDetails(order.orderId)">
+                <i class="fa-solid fa-eye me-1"></i> View
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>

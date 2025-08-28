@@ -101,4 +101,11 @@ export class AdminOrdersComponent implements OnInit {
   getPages(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i);
   }
+
+  viewOrderDetails(orderId: number) {
+    //redirect to order details page
+    console.log("redirecting to order details page");
+    console.log("order id", orderId);
+
+  }
 }

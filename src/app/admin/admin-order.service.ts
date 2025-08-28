@@ -23,8 +23,6 @@ export class AdminOrderService {
     let params = new HttpParams();
     if (status) {
       params = params.append('status', status);
-    }else{
-      params = params.append('status', null as any);
     }
     if (startDate) {
       params = params.append('from', startDate);
