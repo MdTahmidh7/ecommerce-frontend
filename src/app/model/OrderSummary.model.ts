@@ -5,7 +5,7 @@ export interface OrderSummary {
   totalPrice: number;  // JSON returns 100.00, safe as number
   status: 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
   creationDate: string;  // ISO timestamp string
-  totalItems: number;
+  productCount: number;
   productId: number;
   itemsSummary: string;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Order } from './model/order.model';
 import { environment } from '../environments/environment';
@@ -26,5 +26,16 @@ export class OrderService {
 
   getOrderDetailsByOrderId(orderId:number | null):Observable<any> {
     return this.http.get<OrderDetailsDTO[]>(`${this.apiUrl}/`+orderId);
+  }
+
+  updateOrderStatus(orderId: number, status: string) {
+
+    //sent status to request params
+    let params = new HttpParams();
+    if (status) {
+      params = params.append('status', status);
+    }
+
+    return this.http.put(`${this.apiUrl}/${orderId}/status`, null, { params } );
   }
 }

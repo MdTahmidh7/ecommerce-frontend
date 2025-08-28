@@ -3,6 +3,7 @@ import {OrderDetailsDTO} from '../../model/OrderDetails.model';
 import {ActivatedRoute} from '@angular/router';
 import {OrderService} from '../../order.service';
 import {CurrencyPipe, DatePipe, JsonPipe, NgClass, NgIf} from '@angular/common';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-order-details',
@@ -58,6 +59,27 @@ export class OrderDetailsComponent implements OnInit{
   }
 
   getTotalPrice() {
-    return 100;
+    if (this.orderDetails && this.orderDetails.productCount > 0) {
+      return this.orderDetails.productCount * this.orderDetails.productPrice
+    }
+    return 0;
+  }
+
+  protected readonly environment = environment;
+
+  updateOrderStatus(orderStatus: string) {
+    //call api to update order status
+    if (this.orderId !== null) {
+      this.orderService.updateOrderStatus(this.orderId, orderStatus).subscribe({
+        next: value => {
+          console.log("Order status updated successfully");
+          //reload order details
+          this.loadOrderDetails();
+        },
+        error: err => {
+          console.error("Failed to update order status", err);
+        }
+      });
+    }
   }
 }

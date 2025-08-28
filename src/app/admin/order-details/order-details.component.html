@@ -76,7 +76,7 @@
 
     <div class="product-card">
       <div class="product-image-container">
-        <img [src]="orderDetails?.imageUrl"
+        <img [src]="environment.imageBaseUrl + '/' +orderDetails?.imageUrl"
              [alt]="orderDetails?.productName"
              class="product-image"
              (error)="onImageError($event)" />
@@ -119,17 +119,61 @@
 
   <!-- Action Buttons -->
   <div class="action-section">
+
     <button class="btn btn-secondary" >
       <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
         <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
       </svg>
       Back to Orders
     </button>
-    <button class="btn btn-primary" >
+
+    <!--Confirm-->
+    <button
+      class="btn btn-primary"
+      [disabled]="orderDetails?.status !== 'PENDING'"
+      (click)="updateOrderStatus('CONFIRMED')"
+    >
       <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
       </svg>
-      Track Order
+      Confirm
+    </button>
+
+    <!--Cancel-->
+    <button
+      class="btn btn-danger"
+      [disabled]="orderDetails?.status !== 'PENDING'"
+      (click)="updateOrderStatus('CANCELLED')"
+    >
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-4.5l-1-1z"/>
+      </svg>
+      Cancel
+    </button>
+
+    <!--Shipped-->
+    <button
+      class="btn "
+      [disabled]="orderDetails?.status == 'PENDING' || orderDetails?.status === 'CANCELLED' || orderDetails?.status === 'DELIVERED' || orderDetails?.status === 'SHIPPED'"
+      (click)="updateOrderStatus('SHIPPED')"
+      style="background: #5cf6c8;"
+    >
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 6h-3V4c0-1.1-.9-2-2-2H9c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9 4h6v2H9V4zm11 16H4V8h16v12z"/>
+      </svg>
+      Shipped
+    </button>
+
+    <!--delivered-->
+    <button
+      class="btn btn-success"
+      [disabled]="orderDetails?.status !== 'SHIPPED'"
+      (click)="updateOrderStatus('DELIVERED')"
+    >
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l7.59-7.59L20 8l-9 9z"/>
+      </svg>
+      Delivered
     </button>
   </div>
 </div>
