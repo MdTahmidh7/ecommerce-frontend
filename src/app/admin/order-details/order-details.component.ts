@@ -2,20 +2,23 @@ import {Component, OnInit} from '@angular/core';
 import {OrderDetailsDTO} from '../../model/OrderDetails.model';
 import {ActivatedRoute} from '@angular/router';
 import {OrderService} from '../../order.service';
-import {JsonPipe} from '@angular/common';
+import {CurrencyPipe, DatePipe, JsonPipe, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-order-details',
   standalone: true,
   imports: [
-    JsonPipe
+    JsonPipe,
+    DatePipe,
+    CurrencyPipe,
+    NgIf
   ],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.css'
 })
 export class OrderDetailsComponent implements OnInit{
 
-  orderDetails: OrderDetailsDTO[] = [];
+  public orderDetails: OrderDetailsDTO | null = null;
   private orderId: number | null = null;
 
   constructor(private route: ActivatedRoute,
@@ -35,12 +38,17 @@ export class OrderDetailsComponent implements OnInit{
 
 
   loadOrderDetails(): void {
-    this.orderService.getOrderDetailsByOrderId(this.orderId).subscribe(
-      value => {
-        this.orderDetails = value
-        console.log("Order Details = ",this.orderDetails)
-      }
-    )
+    if (this.orderId !== null) {
+      this.orderService.getOrderDetailsByOrderId(this.orderId).subscribe({
+        next: value => {
+          this.orderDetails = value;
+          console.log("Order Details = ", this.orderDetails);
+        },
+        error: err => {
+          console.error("Failed to load order details", err);
+        }
+      });
+    }
   }
 
 

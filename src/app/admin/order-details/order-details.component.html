@@ -1,4 +1,24 @@
 <p>order-details works!</p>
-<div>
-  {{orderDetails | json}}
+<div *ngIf="orderDetails" class="order-details-container">
+  <h2>Order #{{ orderDetails?.orderId }}</h2>
+
+  <div class="order-info">
+    <p><strong>Customer:</strong> {{ orderDetails?.customerName }} ({{ orderDetails?.customerPhone }})</p>
+    <p><strong>Address:</strong> {{ orderDetails?.address }},
+      {{ orderDetails?.upazilaName }}, {{ orderDetails?.districtName }},
+      {{ orderDetails?.divisionName }}
+    </p>
+    <p><strong>Status:</strong> {{ orderDetails?.status }}</p>
+    <p><strong>Created On:</strong> {{ orderDetails?.creationDate | date:'medium' }}</p>
+  </div>
+
+  <div class="product-section">
+    <img [src]="orderDetails?.imageUrl" alt="{{ orderDetails?.productName }}" class="product-image" />
+    <div class="product-info">
+      <h3>{{ orderDetails?.productName }}</h3>
+      <p><strong>Price:</strong> {{ orderDetails?.productPrice | currency }}</p>
+      <p><strong>Quantity:</strong> {{ orderDetails?.productCount }}</p>
+      <p><strong>Total:</strong> {{ orderDetails?.totalPrice | currency }}</p>
+    </div>
+  </div>
 </div>
