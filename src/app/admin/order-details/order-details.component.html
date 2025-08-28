@@ -1,24 +1,141 @@
-<p>order-details works!</p>
-<div *ngIf="orderDetails" class="order-details-container">
-  <h2>Order #{{ orderDetails?.orderId }}</h2>
-
-  <div class="order-info">
-    <p><strong>Customer:</strong> {{ orderDetails?.customerName }} ({{ orderDetails?.customerPhone }})</p>
-    <p><strong>Address:</strong> {{ orderDetails?.address }},
-      {{ orderDetails?.upazilaName }}, {{ orderDetails?.districtName }},
-      {{ orderDetails?.divisionName }}
-    </p>
-    <p><strong>Status:</strong> {{ orderDetails?.status }}</p>
-    <p><strong>Created On:</strong> {{ orderDetails?.creationDate | date:'medium' }}</p>
-  </div>
-
-  <div class="product-section">
-    <img [src]="orderDetails?.imageUrl" alt="{{ orderDetails?.productName }}" class="product-image" />
-    <div class="product-info">
-      <h3>{{ orderDetails?.productName }}</h3>
-      <p><strong>Price:</strong> {{ orderDetails?.productPrice | currency }}</p>
-      <p><strong>Quantity:</strong> {{ orderDetails?.productCount }}</p>
-      <p><strong>Total:</strong> {{ orderDetails?.totalPrice | currency }}</p>
+<div class="order-details-wrapper" *ngIf="orderDetails">
+  <!-- Header Section -->
+  <div class="order-header">
+    <div class="order-header-content">
+      <h1 class="order-title">Order Details</h1>
+      <div class="order-number">
+        <span class="order-label">Order #</span>
+        <span class="order-id">{{ orderDetails?.orderId }}</span>
+      </div>
+    </div>
+    <div class="status-badge" [ngClass]="'status-' + orderDetails?.status?.toLowerCase()">
+      <span class="status-dot"></span>
+      {{ orderDetails?.status }}
     </div>
   </div>
+
+  <!-- Main Content -->
+  <div class="order-content">
+    <!-- Customer Information Card -->
+    <div class="info-card customer-card">
+      <div class="card-header">
+        <div class="card-icon customer-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+        <h3 class="card-title">Customer Information</h3>
+      </div>
+      <div class="card-content">
+        <div class="info-row">
+          <span class="info-label">Name:</span>
+          <span class="info-value">{{ orderDetails?.customerName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Phone:</span>
+          <span class="info-value">{{ orderDetails?.customerPhone }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Address:</span>
+          <span class="info-value">
+            {{ orderDetails?.address }}, {{ orderDetails?.upazilaName }},
+            {{ orderDetails?.districtName }}, {{ orderDetails?.divisionName }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Information Card -->
+    <div class="info-card order-info-card">
+      <div class="card-header">
+        <div class="card-icon order-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"/>
+          </svg>
+        </div>
+        <h3 class="card-title">Order Information</h3>
+      </div>
+      <div class="card-content">
+        <div class="info-row">
+          <span class="info-label">Order Date:</span>
+          <span class="info-value">{{ orderDetails?.creationDate | date:'MMM dd, yyyy' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Order Time:</span>
+          <span class="info-value">{{ orderDetails?.creationDate | date:'h:mm a' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Section -->
+  <div class="product-section">
+    <div class="section-header">
+      <h3 class="section-title">Product Details</h3>
+    </div>
+
+    <div class="product-card">
+      <div class="product-image-container">
+        <img [src]="orderDetails?.imageUrl"
+             [alt]="orderDetails?.productName"
+             class="product-image"
+             (error)="onImageError($event)" />
+      </div>
+
+      <div class="product-details">
+        <h4 class="product-name">{{ orderDetails?.productName }}</h4>
+
+        <div class="product-specs">
+          <div class="spec-item">
+            <span class="spec-label">Unit Price:</span>
+            <span class="spec-value price">{{ orderDetails?.productPrice | currency }}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Quantity:</span>
+            <span class="spec-value quantity">{{ orderDetails?.productCount }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Section -->
+  <div class="total-section">
+    <div class="total-card">
+      <div class="total-row subtotal">
+        <span class="total-label">Subtotal:</span>
+        <span class="total-value">{{ getTotalPrice() | currency }}</span>
+      </div>
+      <div class="total-row shipping">
+        <span class="total-label">Shipping:</span>
+        <span class="total-value">Free</span>
+      </div>
+      <div class="total-row grand-total">
+        <span class="total-label">Total Amount:</span>
+        <span class="total-value">{{ orderDetails?.totalPrice | currency }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-section">
+    <button class="btn btn-secondary" >
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+      </svg>
+      Back to Orders
+    </button>
+    <button class="btn btn-primary" >
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+      </svg>
+      Track Order
+    </button>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="!orderDetails">
+  <div class="loading-spinner"></div>
+  <p class="loading-text">Loading order details...</p>
 </div>

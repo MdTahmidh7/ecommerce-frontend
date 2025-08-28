@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {OrderDetailsDTO} from '../../model/OrderDetails.model';
 import {ActivatedRoute} from '@angular/router';
 import {OrderService} from '../../order.service';
-import {CurrencyPipe, DatePipe, JsonPipe, NgIf} from '@angular/common';
+import {CurrencyPipe, DatePipe, JsonPipe, NgClass, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-order-details',
@@ -11,7 +11,8 @@ import {CurrencyPipe, DatePipe, JsonPipe, NgIf} from '@angular/common';
     JsonPipe,
     DatePipe,
     CurrencyPipe,
-    NgIf
+    NgIf,
+    NgClass
   ],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.css'
@@ -52,4 +53,11 @@ export class OrderDetailsComponent implements OnInit{
   }
 
 
+  onImageError($event: ErrorEvent) {
+
+  }
+
+  getTotalPrice() {
+    return 100;
+  }
 }
