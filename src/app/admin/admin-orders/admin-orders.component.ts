@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminOrderService } from '../admin-order.service';
 import { OrderResponseDTO, OrderStatus } from '../../model/order-response-dto.model';
 import {OrderSummary} from '../../model/OrderSummary.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-admin-orders',
@@ -37,7 +38,11 @@ export class AdminOrdersComponent implements OnInit {
     { id: 3, name: 'Clothing' }
   ]; // Placeholder for categories
 
-  constructor(private adminOrderService: AdminOrderService) {
+  constructor(
+    private adminOrderService: AdminOrderService,
+    private router: Router
+
+  ) {
     const today = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(today.getMonth() - 1);
@@ -106,6 +111,6 @@ export class AdminOrdersComponent implements OnInit {
     //redirect to order details page
     console.log("redirecting to order details page");
     console.log("order id", orderId);
-
+    this.router.navigate(['/admin/orders', orderId]);
   }
 }
