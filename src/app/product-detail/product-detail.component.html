@@ -16,7 +16,7 @@
           <!-- Main Image with Zoom -->
           <div class="main-image-container">
             <div class="image-zoom-wrapper">
-              <img [src]="environment.imageBaseUrl + '/' + product.imageUrl" alt="{{ product.name }}" class="main-product-image img-fluid">
+              <img [src]="environment.imageBaseUrl + '/' + getCurrentImage()" alt="{{ product.name }}" class="main-product-image img-fluid">
               <div class="image-zoom-lens"></div>
             </div>
 
@@ -39,7 +39,7 @@
                  class="thumbnail-item"
                  [class.active]="i === currentImageIndex"
                  (click)="selectImage(i)">
-              <img [src]="image" alt="Thumbnail {{ i + 1 }}" class="img-fluid">
+              <img [src]="environment.imageBaseUrl + '/' + image" alt="Thumbnail {{ i + 1 }}" class="img-fluid">
             </div>
           </div>
         </div>
@@ -586,7 +586,7 @@
         <div class="input-wrapper">
           <label for="district" class="col-lg-4">Select District</label>
           <select
-            id="district"
+            id=""
             class="form-control"
             formControlName="districtId"
             [class.error]="isFieldInvalid('district')"
@@ -609,7 +609,7 @@
         <div class="input-wrapper">
           <label for="upazila" class="col-lg-4">Select Upazila</label>
           <select
-            id="upazila" class="form-control"
+            id="" class="form-control"
             formControlName="upazilaId"
             [class.error]="isFieldInvalid('upazila')"
             [disabled]="!upazilas?.length"

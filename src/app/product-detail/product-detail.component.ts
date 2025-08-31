@@ -116,12 +116,14 @@ export class ProductDetailComponent implements OnInit {
   nextImage(): void {
     if (this.product && this.product.imageUrls) {
       this.currentImageIndex = (this.currentImageIndex + 1) % this.product.imageUrls.length;
+      console.log(this.currentImageIndex);
     }
   }
 
   prevImage(): void {
     if (this.product && this.product.imageUrls) {
       this.currentImageIndex = (this.currentImageIndex - 1 + this.product.imageUrls.length) % this.product.imageUrls.length;
+      console.log(this.currentImageIndex);
     }
   }
 
@@ -337,6 +339,13 @@ export class ProductDetailComponent implements OnInit {
     return control && control.invalid && (control.dirty || control.touched);
   }
 
-  protected readonly HTMLSelectElement = HTMLSelectElement;
   protected  environment = environment;
+
+  getCurrentImage() {
+    if (this.product && this.product.imageUrls && this.product.imageUrls.length > 0) {
+      return this.product.imageUrls[this.currentImageIndex];
+    }else {
+      return 'assets/images/no-image.png'; // Fallback image
+    }
+  }
 }

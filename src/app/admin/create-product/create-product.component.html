@@ -1,36 +1,65 @@
 <div class="create-product-container">
-  <h2>Create New Product</h2>
-  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="name">Product Name</label>
-      <input type="text" id="name" formControlName="name" class="form-control">
-    </div>
+  <div class="card">
+    <h2>Create New Product</h2>
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Product Name</label>
+        <input type="text" id="name" formControlName="name" class="form-control" placeholder="Enter product name">
+      </div>
 
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea id="description" formControlName="description" class="form-control"></textarea>
-    </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" formControlName="description" class="form-control" placeholder="Describe the product"></textarea>
+      </div>
 
-    <div class="form-group">
-      <label for="price">Price</label>
-      <input type="number" id="price" formControlName="price" class="form-control">
-    </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input type="number" id="price" formControlName="price" class="form-control" placeholder="In TAKA">
+        </div>
 
-    <div class="form-group">
-      <label for="stockQuantity">Stock Quantity</label>
-      <input type="number" id="stockQuantity" formControlName="stockQuantity" class="form-control">
-    </div>
+        <div class="form-group">
+          <label for="stockQuantity">Stock Quantity</label>
+          <input type="number" id="stockQuantity" formControlName="stockQuantity" class="form-control" placeholder="In Number">
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label for="categoryId">Category ID</label>
-      <input type="number" id="categoryId" formControlName="categoryId" class="form-control">
-    </div>
+      <div class="form-group">
+        <label for="categoryId">Category</label>
+        <select id="categoryId" formControlName="categoryId" class="form-control">
+          <option [value]="null" selected >Select a category</option>
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <label for="images">Images</label>
-      <input type="file" id="images" (change)="onFileSelect($event)" multiple class="form-control">
-    </div>
+      <div class="form-group image-upload-group">
+        <label>Product Images (Max 5)</label>
+        <input
+          type="file"
+          #fileInput
+          id="images"
+          class="file-input"
+          (change)="onFileSelect($event)"
+          multiple accept="image/*"
+        >
+        <div class="file-upload-area" (click)="fileInput.click()">
+          <p>Drag & drop images here or click to select</p>
+          <small *ngIf="selectedFiles.length > 0">{{ selectedFiles.length }} images selected</small>
+        </div>
+        <div class="image-preview-container">
+          <div *ngFor="let file of selectedFiles" class="image-preview">
+            <img [src]="file.url" [alt]="file.name">
+            <span class="remove-image" (click)="removeImage(file.name)">&times;</span>
+          </div>
+        </div>
+        <div *ngIf="selectedFiles.length > 5" class="error-message">
+          You can select up to 5 images only.
+        </div>
+      </div>
 
-    <button type="submit" [disabled]="productForm.invalid" class="btn btn-primary">Create Product</button>
-  </form>
+      <button type="submit" [disabled]="productForm.invalid || selectedFiles.length === 0 || selectedFiles.length > 5" class="btn btn-primary">
+        Create Product
+      </button>
+    </form>
+  </div>
 </div>

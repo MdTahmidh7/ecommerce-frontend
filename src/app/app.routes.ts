@@ -25,6 +25,7 @@ export const routes: Routes = [
   { path: 'admin/login', component: AdminLoginComponent },
   { path: 'admin/orders' , component: AdminOrdersComponent},
   { path: 'admin/orders/:id', component: OrderDetailsComponent },
+  { path: 'admin/create-product', component: CreateProductComponent},
   {
     path: 'admin',
     component: AdminComponent,
