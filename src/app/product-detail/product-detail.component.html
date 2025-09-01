@@ -541,7 +541,7 @@
         </svg>
       </div>
       <div class="title-section">
-        <h4 class="modal-title" id="modal-title">Confirm Your Delivery Address</h4>
+        <h4 class="modal-title" id="">Confirm Your Delivery Address</h4>
         <p class="modal-subtitle">Please fill in your details below</p>
       </div>
     </div>
@@ -564,7 +564,6 @@
         <div class="input-wrapper">
           <label for="division" class="col-lg-4">Select Division</label>
           <select
-            id="division"
             class="form-control"
             formControlName="divisionId"
             [class.error]="isFieldInvalid('division')"
@@ -586,7 +585,6 @@
         <div class="input-wrapper">
           <label for="district" class="col-lg-4">Select District</label>
           <select
-            id=""
             class="form-control"
             formControlName="districtId"
             [class.error]="isFieldInvalid('district')"
@@ -609,7 +607,7 @@
         <div class="input-wrapper">
           <label for="upazila" class="col-lg-4">Select Upazila</label>
           <select
-            id="" class="form-control"
+            class="form-control"
             formControlName="upazilaId"
             [class.error]="isFieldInvalid('upazila')"
             [disabled]="!upazilas?.length"
@@ -629,7 +627,6 @@
         <div class="input-wrapper textarea-wrapper">
           <label for="address" class="col-lg-4">Address</label>
           <textarea
-            id="address"
             class="form-control"
             formControlName="address"
             [class.error]="isFieldInvalid('address')"

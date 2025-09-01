@@ -13,6 +13,7 @@ import {Product} from '../model/product.model';
 import {environment} from '../../environments/environment';
 import {CreateOrderRequest} from '../model/CreateOrderRequest.moel';
 import {OrderService} from '../order.service';
+import {AlertService} from '../common-service/alert.service';
 
 
 @Component({
@@ -51,7 +52,8 @@ export class ProductDetailComponent implements OnInit {
               private fb: FormBuilder,
               private modalService: NgbModal,
               private productDetailsService: ProductDetailsService,
-              private orderService: OrderService
+              private orderService: OrderService,
+              private alertService : AlertService
   ) {
     this.contactForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
@@ -235,6 +237,7 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
+
   onSubmitDeliveryAddress(modal: any): void {
 
 
@@ -242,33 +245,12 @@ export class ProductDetailComponent implements OnInit {
 
       modal.close(this.deliveryAddressForm.value);
 
-      const userId = this.authService.getUserId();
-      const upazilaId = this.deliveryAddressForm.get('upazilaId')?.value;
-      const productId = this.product?.id;
-      const quantity = this.quantity;
-      const price = this.product?.price;
-      const totalPrice = price ? price * quantity : 0;
-
-      //prepare order request
-      this.orderRequest = {
-        upazilaId: upazilaId,
-        userId: userId,
-        orderItems: [{
-          productId: productId || 0, // Fallback to 0 if productId is undefined
-          quantity: quantity,
-          price: totalPrice
-        }]
-      };
-
-      //call api for order request
-      this.orderService.createOrder(this.orderRequest).subscribe({
-
-        next: (response) => {
-          console.log('Order created successfully:', response);
-          this.deliveryAddressForm.reset();
-        },
-        error: (error) => {
-          console.error('Error while creating order:', error);
+      this.alertService.confirm(
+        "Confirm Order",
+        "Are you sure you want to place the order?"
+      ).then((result) => {
+        if (result.isConfirmed) {
+          this.placeOrder();
         }
       });
     }
@@ -347,5 +329,41 @@ export class ProductDetailComponent implements OnInit {
     }else {
       return 'assets/images/no-image.png'; // Fallback image
     }
+  }
+
+  private placeOrder() {
+    const userId = this.authService.getUserId();
+    const upazilaId = this.deliveryAddressForm.get('upazilaId')?.value;
+    const productId = this.product?.id;
+    const quantity = this.quantity;
+    const price = this.product?.price;
+    const totalPrice = price ? price * quantity : 0;
+
+    //prepare order request
+    this.orderRequest = {
+      upazilaId: upazilaId,
+      userId: userId,
+      orderItems: [{
+        productId: productId || 0, // Fallback to 0 if productId is undefined
+        quantity: quantity,
+        price: totalPrice
+      }]
+    };
+
+    //call api for order request
+    this.orderService.createOrder(this.orderRequest).subscribe({
+
+      next: (response) => {
+        console.log('Order created successfully:', response);
+        this.alertService.success(
+          "Order Placed Successfully",
+          "Your order has been placed successfully!"
+        )
+        this.deliveryAddressForm.reset();
+      },
+      error: (error) => {
+        console.error('Error while creating order:', error);
+      }
+    });
   }
 }
