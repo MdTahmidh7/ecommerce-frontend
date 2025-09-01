@@ -19,7 +19,7 @@ interface RegisterResponse {
 })
 export class AuthService {
 
-  private readonly baseUrl = 'http://localhost:8080/api/auth';
+  private readonly baseUrl = 'http://localhost:8080/api';
   //private platformId = inject(PLATFORM_ID); // Inject PLATFORM_ID
   private _isAuthenticated = new BehaviorSubject<boolean>(false); // Initialize with false
 
@@ -59,81 +59,68 @@ export class AuthService {
     return this._isAuthenticated.asObservable();
   }
 
-  /**
-   * Simulates a login API call.
-   * @param phoneNumber
-   * @param password The user's password.
-   * @returns An Observable of LoginResponse or an error.
-   */
-  login(phoneNumber: string, password: string): Observable<LoginResponse> {
-    // Define the endpoint for login
+
+  login(name:string, phoneNumber: string): Observable<String> {
+
     const loginEndpoint = `${this.baseUrl}/login`;
+    const body = { name:name, phoneNumber: phoneNumber };
 
-    // Create the request body
-    const body = { phoneNumber: phoneNumber, password };
+    return this.http.post(loginEndpoint, body, { responseType: 'text' });
+  }
 
-    // Set HTTP headers, specifying content type as JSON
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
+  verifyOtp(phoneNumber: string, otp: string): Observable<LoginResponse> {
 
-    // Make the HTTP POST request to the backend
-    return this.http.post<LoginResponse>(loginEndpoint, body, { headers }).pipe(
+    const verifyOtpEndpoint = `${this.baseUrl}/login/verify-otp`;
+    const body = {phoneNumber:phoneNumber , otp: otp };
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+
+    return this.http.post<LoginResponse>(verifyOtpEndpoint, body, { headers }).pipe(
       tap((response: LoginResponse) => {
-        // On successful login, store the token and update authentication status
-        if (response.token) {
-          if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem('authToken', response.token);
-          }
-          this._isAuthenticated.next(true); // Emit true for authenticated
-          console.log('Login successful:', response.message || 'Token received.');
-        } else {
-          // If no token is received but the call was successful, something is off
-          console.warn('Login successful but no token received in response.');
-          throw new Error('Authentication failed: No token received.');
+
+        if (isPlatformBrowser(this.platformId)) {
+          localStorage.setItem('authToken', response.token);
         }
+        this._isAuthenticated.next(true); // Emit true for logged in
+        console.log('OTP verification successful, token stored.');
       }),
       catchError((error: HttpErrorResponse) => {
         // Handle errors from the backend API call
-        let errorMessage = 'An unknown error occurred during login.';
+        let errorMessage = 'An unknown error occurred during OTP verification.';
         if (error.error instanceof ErrorEvent) {
           // Client-side or network error
           errorMessage = `Network Error: ${error.error.message}`;
         } else {
           // Backend returned an unsuccessful response code
           console.error(`Backend returned code ${error.status}, body was: `, error.error);
-          if (error.status === 401) {
-            errorMessage = 'Invalid mobileNo or password. Please try again.';
+          if (error.status === 400) {
+            errorMessage = 'Invalid OTP. Please try again.';
           } else if (error.error && error.error.message) {
             // Assuming your backend sends an error message in the response body
             errorMessage = error.error.message;
           } else if (error.statusText) {
-            errorMessage = `Login failed: ${error.statusText}`;
+            errorMessage = `OTP verification failed: ${error.statusText}`;
           }
         }
-        // Emit false for authentication status on error
-        this._isAuthenticated.next(false);
-        console.error('Login error:', errorMessage);
+        console.error('OTP verification error:', errorMessage);
         // Re-throw the error so components can handle it
         return throwError(() => new Error(errorMessage));
       })
     );
   }
 
-  /**
-   * Simulates a registration API call.
-   * @returns An Observable of RegisterResponse or an error.
-   * @param user
-   */
+  reSendOtp(phoneNumber: string): Observable<any> {
+
+    const resendOtpEndpoint = `${this.baseUrl}/resend-otp`;
+    const body = { phoneNumber: phoneNumber };
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+
+    return this.http.post<any>(resendOtpEndpoint, body, { headers });
+  }
+
   register(user:any): Observable<RegisterResponse> {
 
-    // Define the endpoint for registration
     const registerEndpoint = `${environment.apiBaseUrl}/register`;
-
-    // Set HTTP headers, specifying content type as JSON
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
 
     // Make the HTTP POST request to the backend
     return this.http.post<RegisterResponse>(registerEndpoint, user, { headers }).pipe(
@@ -166,16 +153,14 @@ export class AuthService {
     );
   }
 
-  /**
-   * Logs out the user (simulated).
-   * In a real app, this would clear the token.
-   */
   logout(): void {
+
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('authToken');
     }
     this._isAuthenticated.next(false); // Emit false for logged out
     console.log('Simulated Logout');
+
   }
 
   isUserAuthenticated(): boolean {

@@ -26,7 +26,38 @@
           {{ errorMessage }}
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit(content)" class="login-form" novalidate>
+
+          <!--Name Input-->
+          <div class="input-group-custom">
+            <label for="phoneNo" class="form-label-custom">Name</label>
+            <div class="input-wrapper" [class.has-error]="isFieldInvalid('name')" [class.has-success]="isFieldValid('name')">
+              <div class="input-icon px-1">
+                <i class="fas fa-user"></i>
+              </div>
+              <input
+                type="text"
+                class="form-control-custom"
+                id="name"
+                formControlName="name"
+                placeholder="Enter your name"
+                [class.is-invalid]="isFieldInvalid('name')"
+                [class.is-valid]="isFieldValid('name')"
+              />
+
+              <div class="validation-icon" *ngIf="isFieldValid('name')">
+                <i class="fas fa-check"></i>
+              </div>
+            </div>
+
+            <!-- phoneNo Error Messages -->
+            <div class="input-error animate__animated animate__fadeInUp" *ngIf="loginForm.get('name')?.touched && loginForm.get('name')?.errors">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="loginForm.get('name')?.errors?.['required']">phoneNo is required</span>
+              <span *ngIf="loginForm.get('name')?.errors?.['name']">Please enter a valid phoneNo</span>
+            </div>
+          </div>
+
           <!-- Mobile Input -->
           <div class="input-group-custom">
             <label for="phoneNo" class="form-label-custom">Phone Number</label>
@@ -54,46 +85,6 @@
               <i class="fas fa-exclamation-circle"></i>
               <span *ngIf="loginForm.get('phoneNo')?.errors?.['required']">phoneNo is required</span>
               <span *ngIf="loginForm.get('phoneNo')?.errors?.['phoneNo']">Please enter a valid phoneNo</span>
-            </div>
-          </div>
-
-          <!-- Password Input -->
-          <div class="input-group-custom">
-            <label for="password" class="form-label-custom">Password</label>
-            <div class="input-wrapper" [class.has-error]="isFieldInvalid('password')" [class.has-success]="isFieldValid('password')">
-              <div class="input-icon px-1">
-                <i class="fas fa-lock"></i>
-              </div>
-              <input
-                [type]="showPassword ? 'text' : 'password'"
-                class="form-control-custom"
-                id="password"
-                formControlName="password"
-                placeholder="Enter your password"
-                autocomplete="current-password"
-                [class.is-invalid]="isFieldInvalid('password')"
-                [class.is-valid]="isFieldValid('password')"
-              />
-              <button
-                type="button"
-                class="password-toggle me-3"
-                (click)="togglePassword()"
-                [class.active]="showPassword"
-                tabindex="-1"
-                title="Toggle password visibility"
-              >
-                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-              </button>
-              <div class="validation-icon" *ngIf="isFieldValid('password')">
-                <i class="fas fa-check ms-3"></i>
-              </div>
-            </div>
-
-            <!-- Password Error Messages -->
-            <div class="input-error animate__animated animate__fadeInUp" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors">
-              <i class="fas fa-exclamation-circle"></i>
-              <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</span>
-              <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters long</span>
             </div>
           </div>
 
@@ -178,3 +169,48 @@
     </div>
   </div>
 </div>
+
+<!--modal for otp input-->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Enter Your OTP Here</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <!--OTP input field-->
+    <div class="form-group">
+      <div class="input-wrapper">
+        <label for="otp" class="col-lg-4">OTP</label>
+        <input
+          type="text"
+          id="otp"
+          class="form-control"
+          placeholder="Enter OTP"
+          maxlength="6"
+          [(ngModel)]="otp"
+          name="otp"
+        >
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="verifyOTP(c)"
+    >
+      Save
+    </button>
+    <!--reSend OTP Button-->
+    <button
+      type="button"
+      class="btn btn-outline-primary"
+      (click)="resendOTP()"
+      [disabled]="resendDisabled"
+    >
+      Resend OTP
+    </button>
+  </div>
+</ng-template>
+
+
