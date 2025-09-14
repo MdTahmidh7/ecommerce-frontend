@@ -117,40 +117,11 @@ export class AuthService {
     return this.http.post<any>(resendOtpEndpoint, body, { headers });
   }
 
-  register(user:any): Observable<RegisterResponse> {
+  register(user:any): Observable<string> {
 
     const registerEndpoint = `${environment.apiBaseUrl}/register`;
-    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    return this.http.post(registerEndpoint, user,{ responseType: 'text' });
 
-    // Make the HTTP POST request to the backend
-    return this.http.post<RegisterResponse>(registerEndpoint, user, { headers }).pipe(
-      tap((response: RegisterResponse) => {
-        console.log('Registration successful:', response.message);
-        window.location.href = '/login';
-      }),
-      catchError((error: HttpErrorResponse) => {
-        // Handle errors from the backend API call
-        let errorMessage = 'An unknown error occurred during registration.';
-        if (error.error instanceof ErrorEvent) {
-          // Client-side or network error
-          errorMessage = `Network Error: ${error.error.message}`;
-        } else {
-          // Backend returned an unsuccessful response code
-          console.error(`Backend returned code ${error.status}, body was: `, error.error);
-          if (error.status === 400) {
-            errorMessage = 'Invalid input. Please check your details and try again.';
-          } else if (error.error && error.error.message) {
-            // Assuming your backend sends an error message in the response body
-            errorMessage = error.error.message;
-          } else if (error.statusText) {
-            errorMessage = `Registration failed: ${error.statusText}`;
-          }
-        }
-        console.error('Registration error:', errorMessage);
-        // Re-throw the error so components can handle it
-        return throwError(() => new Error(errorMessage));
-      })
-    );
   }
 
   logout(): void {

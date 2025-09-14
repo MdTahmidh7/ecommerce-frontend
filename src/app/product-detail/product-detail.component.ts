@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@a
 import { CommonModule } from '@angular/common';
 import {RouterLink, ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../auth/auth.service';
-import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProductDetailsService} from './service/product-details.service';
 import {DivisionModel} from '../model/division.model';
@@ -19,28 +19,25 @@ import {AlertService} from '../common-service/alert.service';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, FormsModule],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
 })
 export class ProductDetailComponent implements OnInit {
 
   productId: string | null = null;
-  product: Product | undefined; // Product can be undefined initially
+  product: Product | undefined;
   orderRequest: CreateOrderRequest = null as any;
 
-  selectedColor: string = ''; // Initialize with empty string or default color
-  selectedSize: string = ''; // Initialize with empty string or default size
+  selectedColor: string = '';
+  selectedSize: string = '';
   currentImageIndex: number = 0;
   quantity: number = 1;
   activeTab: string = 'description';
-  // Removed review-related properties as they are not in the backend product response
   user: UserRegistrationRequest = null as any;
-
 
   contactForm: FormGroup;
   deliveryAddressForm: FormGroup;
-  private modal: any;
 
   divisions:DivisionModel[] = [];
   districts:DistrictsModel[] = [];
@@ -55,15 +52,11 @@ export class ProductDetailComponent implements OnInit {
               private orderService: OrderService,
               private alertService : AlertService
   ) {
+
     this.contactForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
-      address: ['', [Validators.required, Validators.minLength(5)]],
-      divisionId: ['', Validators.required],
-      districtId: ['', Validators.required],
       upazilaId: ['', Validators.required],
     });
 
@@ -77,6 +70,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.productId = this.route.snapshot.paramMap.get('id');
     if (this.productId) {
       this.productDetailsService.getProductById(this.productId).subscribe({
@@ -174,7 +168,8 @@ export class ProductDetailComponent implements OnInit {
   }
 
   openModal(modal: any) {
-    this.contactForm.reset(); // Reset form when opening
+
+    //this.contactForm.reset(); // Reset form when opening
 
     const modalRef = this.modalService.open(modal, {
       size: 'md',
@@ -198,7 +193,7 @@ export class ProductDetailComponent implements OnInit {
     );
   }
 
-  onSubmit(modal: any): void {
+  onSubmit(modal: any, verifyOtpModal: any): void {
 
     if (this.contactForm.valid) {
 
@@ -216,17 +211,17 @@ export class ProductDetailComponent implements OnInit {
 
       //call register API
       this.authService.register(this.user).subscribe({
-
         next: (response) => {
           console.log('Contact registered successfully:', response);
-          // Optionally, reset the form or show a success message
-          this.contactForm.reset();
-          //call order API
-
+          const modalRef = this.modalService.open(verifyOtpModal, {
+            size: 'md',
+            backdrop: 'static',
+            centered: true,
+            keyboard: false
+          });
         },
         error: (error) => {
           console.error('Error registering contact:', error);
-          // Optionally, show an error message to the user
         }
       });
     } else {
@@ -322,6 +317,8 @@ export class ProductDetailComponent implements OnInit {
   }
 
   protected  environment = environment;
+  otp: number | null = null;
+  resendDisabled: boolean = true;
 
   getCurrentImage() {
     if (this.product && this.product.imageUrls && this.product.imageUrls.length > 0) {
@@ -365,5 +362,36 @@ export class ProductDetailComponent implements OnInit {
         console.error('Error while creating order:', error);
       }
     });
+  }
+
+  verifyOTP(c: any) {
+
+    if (this.otp != null) {
+
+      console.log("Form values for user registration = ", this.contactForm.value)
+
+      console.log("Phone Number: ", this.contactForm.value.phoneNumber);
+      console.log("OTP: ", this.otp);
+
+      this.authService.verifyOtp(
+        this.contactForm.value.phoneNumber,
+        this.otp.toString()
+      ).subscribe({
+        next: (response) => {
+          // Handle successful OTP verification
+          console.log('OTP verified successfully:', response);
+        },
+        error: (error) => {
+          console.error('OTP Verification error:', error);
+        },
+        complete: () => {
+          //this.loading = false;
+        }
+      });
+    }
+  }
+
+  resendOTP() {
+    //handle resend otp
   }
 }

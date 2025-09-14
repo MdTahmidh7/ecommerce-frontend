@@ -244,7 +244,7 @@
   </div>
 
   <div class="modern-modal-body">
-    <form [formGroup]="contactForm" (ngSubmit)="onSubmit(modal)" class="contact-form">
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit(modal,verifyOtpModal)" class="contact-form">
 
       <div class="form-group">
         <div class="input-wrapper">
@@ -403,96 +403,6 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <div class="input-wrapper textarea-wrapper">
-          <label for="address" class="col-lg-4">Address</label>
-          <textarea
-            id="address"
-            class="form-control"
-            formControlName="address"
-            [class.error]="isFieldInvalid('address')"
-            [class.filled]="contactForm.get('address')?.value"
-            rows="4"
-            placeholder="Enter Full Address">
-          </textarea>
-        </div>
-        <div class="error-message" *ngIf="isFieldInvalid('address')">
-          <div *ngIf="contactForm.get('address')?.errors?.['required']">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Address is required
-          </div>
-          <div *ngIf="contactForm.get('address')?.errors?.['minlength']">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Address must be at least 5 characters
-          </div>
-        </div>
-      </div>
-
-      <!--password Input-->
-      <div class="form-group">
-        <div class="input-wrapper">
-          <label for="password" class="col-lg-4">Password</label>
-          <input
-            type="password"
-            id="password"
-            class="form-control"
-            formControlName="password"
-            [class.error]="isFieldInvalid('password')"
-            [class.filled]="contactForm.get('password')?.value"
-            placeholder="Enter Password">
-        </div>
-        <div class="error-message" *ngIf="isFieldInvalid('password')">
-          <div *ngIf="contactForm.get('password')?.errors?.['required']">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Password is required
-          </div>
-          <div *ngIf="contactForm.get('password')?.errors?.['minlength']">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Password must be at least 6 characters
-          </div>
-        </div>
-      </div>
-
-        <!--Confirm Password Input-->
-        <div class="input-wrapper">
-          <label for="confirmPassword" class="col-lg-4">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            class="form-control"
-            formControlName="confirmPassword"
-            [class.error]="isFieldInvalid('confirmPassword')"
-            [class.filled]="contactForm.get('confirmPassword')?.value"
-            placeholder="Confirm Password">
-        </div>
-        <div class="error-message" *ngIf="isFieldInvalid('confirmPassword')">
-          <div *ngIf="contactForm.get('confirmPassword')?.errors?.['required']">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Confirm Password is required
-          </div>
-          <div *ngIf="contactForm.get('confirmPassword')?.errors?.['passwordMismatch']">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-              <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Passwords do not match
-          </div>
-        </div>
     </form>
   </div>
 
@@ -512,7 +422,7 @@
       class="btn btn-gradient"
       [disabled]="contactForm.invalid"
       [class.loading]="isSubmitting"
-      (click)="onSubmit(modal)">
+      (click)="onSubmit(modal, verifyOtpModal)">
       <span *ngIf="!isSubmitting" class="btn-content">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M19 7L10 16L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -625,7 +535,7 @@
 
       <div class="form-group">
         <div class="input-wrapper textarea-wrapper">
-          <label for="address" class="col-lg-4">Address</label>
+          <label class="col-lg-4">Address</label>
           <textarea
             class="form-control"
             formControlName="address"
@@ -681,6 +591,49 @@
         </svg>
         Confirm Order
       </span>
+    </button>
+  </div>
+</ng-template>
+
+<!--modal for otp input-->
+<ng-template #verifyOtpModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Enter Your OTP Here</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <!--OTP input field-->
+    <div class="form-group">
+      <div class="input-wrapper">
+        <label for="otp" class="col-lg-4">OTP</label>
+        <input
+          type="text"
+          id="otp"
+          class="form-control"
+          placeholder="Enter OTP"
+          maxlength="6"
+          [(ngModel)]="otp"
+          name="otp"
+        >
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="verifyOTP(c)"
+    >
+      Save
+    </button>
+    <!--reSend OTP Button-->
+    <button
+      type="button"
+      class="btn btn-outline-primary"
+      (click)="resendOTP()"
+      [disabled]="resendDisabled"
+    >
+      Resend OTP
     </button>
   </div>
 </ng-template>
