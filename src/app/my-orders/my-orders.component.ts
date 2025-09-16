@@ -5,12 +5,12 @@ import { Order } from '../model/order.model';
 import {FormsModule} from '@angular/forms';
 import {OrderResponseDTO, OrderStatus} from '../model/order-response-dto.model';
 import {OrderSummary} from '../model/OrderSummary.model';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css'
 })
@@ -116,7 +116,7 @@ export class MyOrdersComponent implements OnInit {
     //redirect to order details page
     console.log("redirecting to order details page");
     console.log("order id", orderId);
-    this.router.navigate(['/admin/orders', orderId]);
+    this.router.navigate(['/my-orders', orderId]);
   }
 
   onPageChange(page: number): void {

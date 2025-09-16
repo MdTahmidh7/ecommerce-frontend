@@ -1,31 +1,31 @@
 import {Component, OnInit} from '@angular/core';
-import {OrderDetailsDTO} from '../../model/OrderDetails.model';
+import {CurrencyPipe, DatePipe, NgClass, NgIf} from '@angular/common';
+import {OrderDetailsDTO} from '../model/OrderDetails.model';
 import {ActivatedRoute} from '@angular/router';
-import {OrderService} from '../../order.service';
-import {CurrencyPipe, DatePipe, JsonPipe, NgClass, NgIf} from '@angular/common';
-import {environment} from '../../../environments/environment';
+import {OrderService} from '../order.service';
+import {environment} from '../../environments/environment';
 
 @Component({
-  selector: 'app-order-details',
+  selector: 'app-my-orders-details',
   standalone: true,
   imports: [
-    DatePipe,
     CurrencyPipe,
+    DatePipe,
     NgIf,
     NgClass
   ],
-  templateUrl: './order-details.component.html',
-  styleUrl: './order-details.component.css'
+  templateUrl: './my-orders-details.component.html',
+  styleUrl: './my-orders-details.component.css'
 })
-export class OrderDetailsComponent implements OnInit{
+export class MyOrdersDetailsComponent implements OnInit{
 
+  environment = environment;
   public orderDetails: OrderDetailsDTO | null = null;
   private orderId: number | null = null;
 
   constructor(private route: ActivatedRoute,
-              private orderService: OrderService) {
-
-  }
+              private orderService: OrderService
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -33,10 +33,6 @@ export class OrderDetailsComponent implements OnInit{
     });
     this.loadOrderDetails();
   }
-
-  //take order id from url
-
-
 
   loadOrderDetails(): void {
     if (this.orderId !== null) {
@@ -54,7 +50,6 @@ export class OrderDetailsComponent implements OnInit{
 
 
   onImageError($event: ErrorEvent) {
-
   }
 
   getTotalPrice() {
@@ -64,21 +59,4 @@ export class OrderDetailsComponent implements OnInit{
     return 0;
   }
 
-  protected readonly environment = environment;
-
-  updateOrderStatus(orderStatus: string) {
-    //call api to update order status
-    if (this.orderId !== null) {
-      this.orderService.updateOrderStatus(this.orderId, orderStatus).subscribe({
-        next: value => {
-          console.log("Order status updated successfully");
-          //reload order details
-          this.loadOrderDetails();
-        },
-        error: err => {
-          console.error("Failed to update order status", err);
-        }
-      });
-    }
-  }
 }

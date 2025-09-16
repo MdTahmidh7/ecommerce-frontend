@@ -364,12 +364,11 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
-  verifyOTP(c: any) {
+  verifyOTP(modal: any) {
 
     if (this.otp != null) {
 
       console.log("Form values for user registration = ", this.contactForm.value)
-
       console.log("Phone Number: ", this.contactForm.value.phoneNumber);
       console.log("OTP: ", this.otp);
 
@@ -378,6 +377,8 @@ export class ProductDetailComponent implements OnInit {
         this.otp.toString()
       ).subscribe({
         next: (response) => {
+          this.modalService.dismissAll();
+          this.alertService.success('Login Successful','Welcome back.');
           // Handle successful OTP verification
           console.log('OTP verified successfully:', response);
         },

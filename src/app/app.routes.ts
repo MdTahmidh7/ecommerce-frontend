@@ -12,6 +12,7 @@ import { AuthGuard } from './admin/auth.guard';
 import { MyOrdersComponent } from './my-orders/my-orders.component';
 import { AdminOrdersComponent } from './admin/admin-orders/admin-orders.component';
 import {OrderDetailsComponent} from './admin/order-details/order-details.component';
+import {MyOrdersDetailsComponent} from './my-orders-details/my-orders-details.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'products', component: ProductComponent },
   { path: 'products/:id', component: ProductDetailComponent },
   { path: 'my-orders', component: MyOrdersComponent },
+  { path: 'my-orders/:id', component: MyOrdersDetailsComponent },
   { path: 'admin/login', component: AdminLoginComponent },
   { path: 'admin/orders' , component: AdminOrdersComponent},
   { path: 'admin/orders/:id', component: OrderDetailsComponent },

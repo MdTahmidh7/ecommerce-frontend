@@ -5,7 +5,8 @@ import { Router, RouterLink } from '@angular/router';
 import {AuthService} from '../auth/auth.service';
 import {AppComponent} from '../app.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {verify} from 'node:crypto'; // For navigation
+import {verify} from 'node:crypto';
+import {AlertService} from '../common-service/alert.service'; // For navigation
 
 
 @Component({
@@ -39,7 +40,8 @@ export class LoginComponent implements OnInit {
   resendDisabled: boolean = true;
 
   constructor(
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private alertService : AlertService
   ) {}
 
   ngOnInit(): void {
@@ -158,7 +160,8 @@ export class LoginComponent implements OnInit {
         next: (response) => {
           this.successMessage = 'OTP verified successfully! Redirecting...';
           this.errorMessage = null;
-          // Navigate to dashboard or intended page
+          this.modalService.dismissAll();
+          this.alertService.success('Login Successful','Welcome back.');
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
