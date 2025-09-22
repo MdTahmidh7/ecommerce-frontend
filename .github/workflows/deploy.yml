@@ -37,7 +37,7 @@ jobs:
 
       # 6️⃣ Build static Angular project
       - name: Build Angular project
-        run: ng build --configuration production
+        run: npm run build -- --configuration production
         working-directory: ./  # adjust if Angular is in a subfolder
 
       # 7️⃣ Clean old frontend files on VM
