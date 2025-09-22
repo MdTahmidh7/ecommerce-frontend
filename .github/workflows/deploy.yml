@@ -50,7 +50,7 @@ jobs:
       # 8️⃣ Copy static build to VM
       - name: Copy build to VM
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/<project-name>/ ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/${{ secrets.VM_USER }}/frontend/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/ ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/${{ secrets.VM_USER }}/frontend/
 
       # 9️⃣ Serve with Nginx container
       - name: Serve Angular with Nginx
