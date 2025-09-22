@@ -74,8 +74,6 @@ jobs:
 
             client_max_body_size 10M;
           }
-            EOL
-            EOF
 
       # 🔟 Serve with Nginx container
       - name: Serve Angular with Nginx
