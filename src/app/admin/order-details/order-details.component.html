@@ -5,12 +5,12 @@
       <h1 class="order-title">Order Details</h1>
       <div class="order-number">
         <span class="order-label">Order #</span>
-        <span class="order-id">{{ orderDetails?.orderId }}</span>
+        <span class="order-id">{{ orderDetails.orderId }}</span>
       </div>
     </div>
-    <div class="status-badge" [ngClass]="'status-' + orderDetails?.status?.toLowerCase()">
+    <div class="status-badge" [ngClass]="'status-' + orderDetails.status.toLowerCase()">
       <span class="status-dot"></span>
-      {{ orderDetails?.status }}
+      {{ orderDetails.status }}
     </div>
   </div>
 
@@ -29,17 +29,17 @@
       <div class="card-content">
         <div class="info-row">
           <span class="info-label">Name:</span>
-          <span class="info-value">{{ orderDetails?.customerName }}</span>
+          <span class="info-value">{{ orderDetails.customerName }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">Phone:</span>
-          <span class="info-value">{{ orderDetails?.customerPhone }}</span>
+          <span class="info-value">{{ orderDetails.customerPhone }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">Address:</span>
           <span class="info-value">
-            {{ orderDetails?.address }}, {{ orderDetails?.upazilaName }},
-            {{ orderDetails?.districtName }}, {{ orderDetails?.divisionName }}
+            {{ orderDetails.address }}, {{ orderDetails.upazilaName }},
+            {{ orderDetails.districtName }}, {{ orderDetails.divisionName }}
           </span>
         </div>
       </div>
@@ -58,11 +58,11 @@
       <div class="card-content">
         <div class="info-row">
           <span class="info-label">Order Date:</span>
-          <span class="info-value">{{ orderDetails?.creationDate | date:'MMM dd, yyyy' }}</span>
+          <span class="info-value">{{ orderDetails.creationDate | date:'MMM dd, yyyy' }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">Order Time:</span>
-          <span class="info-value">{{ orderDetails?.creationDate | date:'h:mm a' }}</span>
+          <span class="info-value">{{ orderDetails.creationDate | date:'h:mm a' }}</span>
         </div>
       </div>
     </div>
@@ -76,23 +76,23 @@
 
     <div class="product-card">
       <div class="product-image-container">
-        <img [src]="environment.imageBaseUrl + '/' +orderDetails?.imageUrl"
-             [alt]="orderDetails?.productName"
+        <img [src]="environment.imageBaseUrl + '/' +orderDetails.imageUrl"
+             [alt]="orderDetails.productName"
              class="product-image"
              (error)="onImageError($event)" />
       </div>
 
       <div class="product-details">
-        <h4 class="product-name">{{ orderDetails?.productName }}</h4>
+        <h4 class="product-name">{{ orderDetails.productName }}</h4>
 
         <div class="product-specs">
           <div class="spec-item">
             <span class="spec-label">Unit Price:</span>
-            <span class="spec-value price">{{ orderDetails?.productPrice | currency }}</span>
+            <span class="spec-value price">{{ orderDetails.productPrice | currency }}</span>
           </div>
           <div class="spec-item">
             <span class="spec-label">Quantity:</span>
-            <span class="spec-value quantity">{{ orderDetails?.productCount }}</span>
+            <span class="spec-value quantity">{{ orderDetails.productCount }}</span>
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@
       </div>
       <div class="total-row grand-total">
         <span class="total-label">Total Amount:</span>
-        <span class="total-value">{{ orderDetails?.totalPrice | currency }}</span>
+        <span class="total-value">{{ orderDetails.totalPrice | currency }}</span>
       </div>
     </div>
   </div>
@@ -130,7 +130,7 @@
     <!--Confirm-->
     <button
       class="btn btn-primary"
-      [disabled]="orderDetails?.status !== 'PENDING'"
+      [disabled]="orderDetails.status !== 'PENDING'"
       (click)="updateOrderStatus('CONFIRMED')"
     >
       <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -142,7 +142,7 @@
     <!--Cancel-->
     <button
       class="btn btn-danger"
-      [disabled]="orderDetails?.status !== 'PENDING'"
+      [disabled]="orderDetails.status !== 'PENDING'"
       (click)="updateOrderStatus('CANCELLED')"
     >
       <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -154,7 +154,7 @@
     <!--Shipped-->
     <button
       class="btn "
-      [disabled]="orderDetails?.status == 'PENDING' || orderDetails?.status === 'CANCELLED' || orderDetails?.status === 'DELIVERED' || orderDetails?.status === 'SHIPPED'"
+      [disabled]="orderDetails.status == 'PENDING' || orderDetails.status === 'CANCELLED' || orderDetails.status === 'DELIVERED' || orderDetails.status === 'SHIPPED'"
       (click)="updateOrderStatus('SHIPPED')"
       style="background: #5cf6c8;"
     >
@@ -167,7 +167,7 @@
     <!--delivered-->
     <button
       class="btn btn-success"
-      [disabled]="orderDetails?.status !== 'SHIPPED'"
+      [disabled]="orderDetails.status !== 'SHIPPED'"
       (click)="updateOrderStatus('DELIVERED')"
     >
       <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
