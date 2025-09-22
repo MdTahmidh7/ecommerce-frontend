@@ -24,7 +24,7 @@ jobs:
       - name: Add VM to known_hosts
         run: ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
 
-      # 4️⃣ Setup Node.js (needed for npm/Angular CLI)
+      # 4️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -33,12 +33,12 @@ jobs:
       # 5️⃣ Install Angular dependencies
       - name: Install dependencies
         run: npm ci
-        working-directory: ./  # adjust if Angular is in a subfolder
+        working-directory: ./
 
-      # 6️⃣ Build static Angular project
+      # 6️⃣ Build Angular project
       - name: Build Angular project
         run: npm run build -- --configuration production
-        working-directory: ./  # adjust if Angular is in a subfolder
+        working-directory: ./
 
       # 7️⃣ Clean old frontend files on VM
       - name: Clean old frontend files on VM
@@ -47,20 +47,43 @@ jobs:
             rm -rf /home/${{ secrets.VM_USER }}/frontend/*
           EOF
 
-      # 8️⃣ Copy static build to VM
+      # 8️⃣ Copy build to VM
       - name: Copy build to VM
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/browser/ ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/${{ secrets.VM_USER }}/frontend/
 
-      # 9️⃣ Serve with Nginx container
+      # 9️⃣ Create Nginx config for Angular SPA
+      - name: Create Nginx config
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            cat > /home/${{ secrets.VM_USER }}/frontend/nginx.conf << 'EOL'
+            server {
+            listen 80;
+            server_name _;
+
+            root /usr/share/nginx/html;
+            index index.html;
+
+            location / {
+            try_files $uri /index.html;
+          }
+
+            location /assets/ {
+            try_files $uri =404;
+          }
+
+            client_max_body_size 10M;
+          }
+            EOL
+            EOF
+
+      # 🔟 Serve with Nginx container
       - name: Serve Angular with Nginx
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
-            # Remove old container if exists
             docker rm -f angular-frontend || true
-
-            # Run Nginx container serving static Angular files
             docker run --name angular-frontend -d -p 80:80 \
               -v /home/${{ secrets.VM_USER }}/frontend:/usr/share/nginx/html:ro \
+              -v /home/${{ secrets.VM_USER }}/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
               --restart always nginx:latest
           EOF
