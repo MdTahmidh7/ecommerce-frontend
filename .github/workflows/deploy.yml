@@ -37,12 +37,19 @@ jobs:
         run: npm run build -- --configuration production
         working-directory: ./   # adjust if your Angular project is in a subfolder
 
-      # 6️⃣ Copy build contents directly to VM folder (flatten)
+      # 6️⃣ Clean old build folder on VM
+      - name: Clean old frontend files on VM
+        run: |
+          ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+            rm -rf /home/${{ secrets.VM_USER }}/frontend/*
+          EOF
+
+      # 7️⃣ Copy new build to VM
       - name: Copy build to VM
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/<project-name>/ ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/${{ secrets.VM_USER }}/frontend/
 
-      # 7️⃣ Serve Angular with Nginx Docker container
+      # 8️⃣ Serve Angular with Nginx Docker container
       - name: Serve Angular with Nginx
         run: |
           ssh ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
