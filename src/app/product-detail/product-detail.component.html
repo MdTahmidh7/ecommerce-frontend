@@ -368,7 +368,7 @@
             class="form-control"
             formControlName="districtId"
             [class.error]="isFieldInvalid('district')"
-            [disabled]="!districts?.length"
+            [disabled]="!districts.length"
             (change)="onDistrictChange($event)"
           >
             <option value="">Select district</option>
