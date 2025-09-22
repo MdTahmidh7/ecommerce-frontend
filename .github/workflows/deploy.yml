@@ -1,10 +1,9 @@
 name: Deploy Angular Frontend
 
-# Trigger workflow on tag push
 on:
   push:
     tags:
-      - 'deploy-*'   # deploy when pushing a tag like deploy-v1.0
+      - 'deploy-*'   # Trigger on tags like deploy-v1.0
 
 jobs:
   deploy:
@@ -15,17 +14,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Set up SSH agent with private key
+      # 2️⃣ Set up SSH
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.VM_SSH_KEY }}
 
-      # 3️⃣ Add VM host to known_hosts to avoid host verification errors
+      # 3️⃣ Add VM host to known_hosts
       - name: Add VM to known_hosts
         run: ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
 
-      # 4️⃣ Setup Node.js
+      # 4️⃣ Setup Node.js (needed for npm/Angular CLI)
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -34,12 +33,12 @@ jobs:
       # 5️⃣ Install Angular dependencies
       - name: Install dependencies
         run: npm ci
-        working-directory: ./   # change if Angular is in a subfolder
+        working-directory: ./  # adjust if Angular is in a subfolder
 
-      # 6️⃣ Build Angular project
+      # 6️⃣ Build static Angular project
       - name: Build Angular project
-        run: npm run build -- --configuration production
-        working-directory: ./   # change if Angular is in a subfolder
+        run: ng build --configuration production
+        working-directory: ./  # adjust if Angular is in a subfolder
 
       # 7️⃣ Clean old frontend files on VM
       - name: Clean old frontend files on VM
@@ -48,19 +47,19 @@ jobs:
             rm -rf /home/${{ secrets.VM_USER }}/frontend/*
           EOF
 
-      # 8️⃣ Copy new build to VM
+      # 8️⃣ Copy static build to VM
       - name: Copy build to VM
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/ ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/${{ secrets.VM_USER }}/frontend/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/<project-name>/ ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/${{ secrets.VM_USER }}/frontend/
 
-      # 9️⃣ Serve Angular with Nginx
+      # 9️⃣ Serve with Nginx container
       - name: Serve Angular with Nginx
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
             # Remove old container if exists
             docker rm -f angular-frontend || true
 
-            # Run Nginx container serving Angular
+            # Run Nginx container serving static Angular files
             docker run --name angular-frontend -d -p 80:80 \
               -v /home/${{ secrets.VM_USER }}/frontend:/usr/share/nginx/html:ro \
               --restart always nginx:latest
