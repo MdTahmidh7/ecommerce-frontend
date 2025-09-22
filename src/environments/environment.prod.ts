@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://your-production-api.com/api',
-  imageBaseUrl: 'https://your-production-images.com/ecommerce-products'
+  apiBaseUrl: 'https://20.55.108.20:8080/api',
+  imageBaseUrl: 'https://20.55.108.20:9000/ecommerce-products'
 };

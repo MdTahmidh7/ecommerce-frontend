@@ -34,7 +34,7 @@ jobs:
 
       # 5️⃣ Build Angular project
       - name: Build Angular project
-        run: npm run build -- --prod
+        run: npm run build -- --configuration production
         working-directory: ./   # adjust if your Angular project is in a subfolder
 
       # 6️⃣ Copy build to VM
