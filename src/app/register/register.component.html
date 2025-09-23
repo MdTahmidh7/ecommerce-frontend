@@ -1,223 +1,157 @@
-<div class="modern-modal-header">
-  <div class="header-content">
-    <div class="title-section">
-      <h4 class="modal-title" id="modal-title">Registration Form</h4>
-      <div class="row">
-        <div class="col-8">
-          <p class="modal-subtitle">Already have an account?</p>
-        </div>
-        <div class="col-4">
+<div class="">
+  <div class="registration-card">
+    <!-- Header Section -->
+    <div class="card-header">
+      <div class="header-content">
+        <h3 class="modal-title" id="modal-title">Create an Account</h3>
+        <p class="modal-subtitle">Already have an account?
           <button
-            class="btn p-0 btn-sm text-white"
+            class="btn btn-sm text-white p-0 ms-1 bg-dark rounded-2 px-2"
             (click)="redirectToLogin()"
           >
             Login
           </button>
-        </div>
+        </p>
       </div>
+    </div>
+
+    <!-- Form Body -->
+    <div class="card-body">
+      <form [formGroup]="contactForm" class="contact-form">
+        <!-- First Name -->
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="firstName">First Name</label>
+            <input
+              type="text"
+              id="firstName" class="form-control"
+              formControlName="firstName"
+              placeholder="Enter your first name"
+            >
+            <div class="error-message" *ngIf="isFieldInvalid('firstName')">
+              <svg
+                class="error-icon"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span *ngIf="contactForm.get('firstName')?.errors?.['required']">First Name is required.</span>
+              <span *ngIf="contactForm.get('firstName')?.errors?.['minlength']">Must be at least 2 characters.</span>
+            </div>
+          </div>
+
+          <!-- Last Name -->
+          <div class="form-group col-md-6">
+            <label for="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              class="form-control"
+              formControlName="lastName"
+              placeholder="Enter your last name"
+            >
+            <div class="error-message" *ngIf="isFieldInvalid('lastName')">
+              <svg
+                class="error-icon"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span *ngIf="contactForm.get('lastName')?.errors?.['required']">Last Name is required.</span>
+              <span *ngIf="contactForm.get('lastName')?.errors?.['minlength']">Must be at least 2 characters.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number</label>
+          <input type="tel" id="phoneNumber" class="form-control" formControlName="phoneNumber"
+                 placeholder="01xxxxxxxxx">
+          <div class="error-message" *ngIf="isFieldInvalid('phoneNumber')">
+            <svg class="error-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            <span *ngIf="contactForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</span>
+            <span *ngIf="contactForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid phone number.</span>
+          </div>
+        </div>
+
+        <!-- Location Dropdowns -->
+        <div class="location-group">
+          <div class="form-group">
+            <label for="division">Select Division</label>
+            <select
+              id="division"
+              class="form-control"
+              (change)="onDivisionChange($event)"
+            >
+              <option value="">Select division</option>
+              <option *ngFor="let division of divisions" [value]="division.id">
+                {{ division.bnName }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="district">Select District</label>
+            <select
+              id="district" class="form-control"
+              [disabled]="!districts.length"
+              (change)="onDistrictChange($event)"
+            >
+              <option value="">Select district</option>
+              <option *ngFor="let district of districts" [value]="district.id">
+                {{ district.bnName }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="upazila">Select Upazila</label>
+            <select
+              id="upazila"
+              class="form-control"
+              formControlName="upazilaId"
+              [disabled]="!upazilas.length"
+            >
+              <option value="">Select upazila</option>
+              <option *ngFor="let upazila of upazilas" [value]="upazila.id">
+                {{ upazila.bnName }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="card-footer">
+      <button
+        type="button"
+        class="btn-sm btn btn-ghost"
+        (click)="redirectToLogin()"
+      >
+        <span>Cancel</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-sm btn-primary"
+        [disabled]="contactForm.invalid"
+        (click)="onSubmit(verifyOtpModal)"
+      >
+        <span>Register</span>
+      </button>
     </div>
   </div>
 </div>
 
-<div class="modern-modal-body">
-  <form [formGroup]="contactForm" (ngSubmit)="onSubmit(verifyOtpModal)" class="contact-form">
-    <div class="form-group">
-      <div class="input-wrapper">
-        <label for="firstName" class="col-lg-4">First Name</label>
-        <input
-          type="text"
-          id="firstName"
-          class="form-control"
-          formControlName="firstName"
-          [class.error]="isFieldInvalid('firstName')"
-          [class.filled]="contactForm.get('firstName')?.value"
-          placeholder="Type your First Name">
-      </div>
-      <div class="error-message" *ngIf="isFieldInvalid('firstName')">
-        <div *ngIf="contactForm.get('firstName')?.errors?.['required']">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          First Name is required
-        </div>
-        <div *ngIf="contactForm.get('firstName')?.errors?.['minlength']">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          First Name must be at least 2 characters
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="input-wrapper">
-        <label for="lastName" class="col-lg-4">Last Name</label>
-        <input
-          type="text"
-          id="lastName"
-          class="form-control"
-          formControlName="lastName"
-          [class.error]="isFieldInvalid('lastName')"
-          [class.filled]="contactForm.get('lastName')?.value"
-          placeholder="Type your last name">
-      </div>
-      <div class="error-message" *ngIf="isFieldInvalid('lastName')">
-        <div *ngIf="contactForm.get('lastName')?.errors?.['required']">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Last Name is required
-        </div>
-        <div *ngIf="contactForm.get('lastName')?.errors?.['minlength']">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Name must be at least 2 characters
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="input-wrapper">
-        <label for="phone" class="floating-label col-lg-4">Phone Number</label>
-        <input
-          type="tel"
-          id="phone"
-          class="form-control"
-          formControlName="phoneNumber"
-          [class.error]="isFieldInvalid('phone')"
-          [class.filled]="contactForm.get('phone')?.value"
-          placeholder="01*********"
-        >
-      </div>
-      <div class="error-message" *ngIf="isFieldInvalid('phone')">
-        <div *ngIf="contactForm.get('phone')?.errors?.['required']">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Phone number is required
-        </div>
-        <div *ngIf="contactForm.get('phone')?.errors?.['pattern']">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Please enter a valid phone number
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Division select -->
-    <div class="form-group">
-      <div class="input-wrapper">
-        <label for="division" class="col-lg-4">Select Division</label>
-        <select
-          id="division"
-          class="form-control"
-          formControlName="divisionId"
-          [class.error]="isFieldInvalid('division')"
-          (change)="onDivisionChange($event)"
-        >
-          <option value="" [selected]="true">Select division</option>
-          <option *ngFor="let division of divisions" [value]="division.id">
-            {{ division.bnName }}
-          </option>
-        </select>
-      </div>
-      <div class="error-message" *ngIf="isFieldInvalid('division')">
-        <span>Division is required</span>
-      </div>
-    </div>
-
-    <!-- Add District select -->
-    <div class="form-group">
-      <div class="input-wrapper">
-        <label for="district" class="col-lg-4">Select District</label>
-        <select
-          id="district"
-          class="form-control"
-          formControlName="districtId"
-          [class.error]="isFieldInvalid('district')"
-          [disabled]="!districts.length"
-          (change)="onDistrictChange($event)"
-        >
-          <option value="">Select district</option>
-          <option *ngFor="let district of districts" [value]="district.id">
-            {{ district.bnName }}
-          </option>
-        </select>
-      </div>
-      <div class="error-message" *ngIf="isFieldInvalid('district')">
-        <span>District is required</span>
-      </div>
-    </div>
-
-    <!-- Add Upazila select -->
-    <div class="form-group">
-      <div class="input-wrapper">
-        <label for="upazila" class="col-lg-4">Select Upazila</label>
-        <select
-          id="upazila" class="form-control"
-          formControlName="upazilaId"
-          [class.error]="isFieldInvalid('upazila')"
-          [disabled]="!upazilas.length"
-        >
-          <option value="">Select upazila</option>
-          <option *ngFor="let upazila of upazilas" [value]="upazila.id">
-            {{ upazila.bnName }}
-          </option>
-        </select>
-      </div>
-      <div class="error-message" *ngIf="isFieldInvalid('upazila')">
-        <span>Upazila is required</span>
-      </div>
-    </div>
-
-  </form>
-</div>
-
-
-<div class="modern-modal-footer">
-  <button
-    type="button"
-    class="btn btn-ghost"
-  >
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    Cancel
-  </button>
-  <button
-    type="button"
-    class="btn btn-gradient"
-    [disabled]="contactForm.invalid"
-    [class.loading]="isSubmitting"
-    (click)="onSubmit(verifyOtpModal)">
-      <span *ngIf="!isSubmitting" class="btn-content">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19 7L10 16L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Save Contact
-      </span>
-    <span *ngIf="isSubmitting" class="loading-spinner">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
-          <path d="M21 12C21 7.02944 16.9706 3 12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
-          </path>
-        </svg>
-        Saving...
-      </span>
-  </button>
-</div>
-
-
-<!--modal for otp input-->
+<!-- OTP Modal Template (reused from previous response) -->
 <ng-template #verifyOtpModal let-c="close" let-d="dismiss">
   <div class="modal-content border-0 rounded-4 shadow-lg">
     <div class="modal-header border-0 pb-0">
@@ -234,45 +168,16 @@
       </p>
 
       <div class="d-flex justify-content-center gap-2 mb-3 otp-input-container">
-        <input
-          #otp1 type="text" maxlength="1"
-          class="form-control text-center otp-input"
-          (input)="onOtpChange(otp1, otp2)"
-        >
-        <input
-          #otp2 type="text" maxlength="1"
-          class="form-control text-center otp-input"
-          (input)="onOtpChange(otp2, otp3)"
-        >
-        <input
-          #otp3 type="text" maxlength="1"
-          class="form-control text-center otp-input"
-          (input)="onOtpChange(otp3, otp4)"
-        >
-        <input
-          #otp4 type="text" maxlength="1"
-          class="form-control text-center otp-input"
-          (input)="onOtpChange(otp4, otp5)"
-        >
-        <input
-          #otp5 type="text" maxlength="1"
-          class="form-control text-center otp-input"
-          (input)="onOtpChange(otp5, otp6)"
-        >
-        <input
-          #otp6 type="text" maxlength="1"
-          class="form-control text-center otp-input"
-          (input)="onOtpChange(otp6, null)"
-        >
+        <input #otp1 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp1, otp2)">
+        <input #otp2 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp2, otp3)">
+        <input #otp3 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp3, otp4)">
+        <input #otp4 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp4, otp5)">
+        <input #otp5 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp5, otp6)">
+        <input #otp6 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp6, null)">
       </div>
       <div class="text-center small mt-3">
         Didn't receive the code?
-        <a
-          href="#"
-          class="text-decoration-none fw-bold"
-          (click)="resendOTP()"
-          [ngClass]="{'disabled-link': resendDisabled}"
-        >
+        <a href="#" class="text-decoration-none fw-bold" (click)="resendOTP()" [ngClass]="{'disabled-link': resendDisabled}">
           Resend OTP
         </a>
         <span *ngIf="resendDisabled" class="text-muted ms-1">(<span id="countdown">{{ countdown }}</span>s)</span>
@@ -282,12 +187,7 @@
       <button type="button" class="btn btn-outline-secondary rounded-pill flex-grow-1 me-2" (click)="d('Cross click')">
         Cancel
       </button>
-      <button
-        type="button"
-        class="btn btn-primary rounded-pill flex-grow-1 ms-2"
-        (click)="verifyOTP(verifyOtpModal)"
-        [disabled]="otp.length !== 6"
-      >
+      <button type="button" class="btn btn-primary rounded-pill flex-grow-1 ms-2" (click)="verifyOTP(verifyOtpModal)" [disabled]="otp.length !== 6">
         Verify
       </button>
     </div>

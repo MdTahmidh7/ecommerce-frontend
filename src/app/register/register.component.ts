@@ -85,7 +85,25 @@ export class RegisterComponent implements OnInit{
           });
         },
         error: (error) => {
-          console.error('Error registering contact:', error);
+          let errorMessage = 'An unexpected error occurred.';
+          if (error && error.error) {
+            // If the error body is already a JSON object
+            if (typeof error.error === 'object' && error.error.message) {
+              errorMessage = error.error.message;
+            }
+            // If the error body is a JSON string, attempt to parse it
+            else if (typeof error.error === 'string') {
+              try {
+                const parsedError = JSON.parse(error.error);
+                if (parsedError.message) {
+                  errorMessage = parsedError.message;
+                }
+              } catch (e) {
+                console.error('Failed to parse error response:', e);
+              }
+            }
+          }
+          this.alertService.error('Error', errorMessage);
         }
       });
     } else {
@@ -98,9 +116,6 @@ export class RegisterComponent implements OnInit{
 
   verifyOTP(modal: any) {
     if (this.otp != null) {
-      console.log("Form values for user registration = ", this.contactForm.value)
-      console.log("Phone Number: ", this.contactForm.value.phoneNumber);
-      console.log("OTP: ", this.otp);
 
       this.authService.verifyOtp(
         this.contactForm.value.phoneNumber,
@@ -109,8 +124,7 @@ export class RegisterComponent implements OnInit{
         next: (response) => {
           this.modalService.dismissAll();
           this.alertService.success('Login Successful','Welcome back.');
-          // Handle successful OTP verification
-          console.log('OTP verified successfully:', response);
+          this.router.navigate(['/']);
         },
         error: (error) => {
           this.errorMessage = error.message || 'OTP verification failed. Please try again.';
@@ -129,7 +143,6 @@ export class RegisterComponent implements OnInit{
 
   onOtpChange(currentInput: HTMLInputElement, nextInput: HTMLInputElement | null) {
     this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
-
     if (currentInput.value && nextInput) {
       nextInput.focus();
     }
@@ -172,7 +185,6 @@ export class RegisterComponent implements OnInit{
     if (!divisionId) {
       this.districts = [];
       this.upazilas = [];
-      this.contactForm.patchValue({ district: '', upazila: '' });
       return;
     }
     this.registerService.getAllDistrictByDivisionId(divisionId).subscribe({
