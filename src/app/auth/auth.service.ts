@@ -19,7 +19,8 @@ interface RegisterResponse {
 })
 export class AuthService {
 
-  private readonly baseUrl = 'http://localhost:8080/api';
+  //private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = environment.apiBaseUrl
   //private platformId = inject(PLATFORM_ID); // Inject PLATFORM_ID
   private _isAuthenticated = new BehaviorSubject<boolean>(false); // Initialize with false
 
