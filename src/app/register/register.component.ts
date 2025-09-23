@@ -77,6 +77,7 @@ export class RegisterComponent implements OnInit{
       this.authService.register(this.user).subscribe({
         next: (response) => {
           console.log('Contact registered successfully:', response);
+          this.errorMessage = null;
           const modalRef = this.modalService.open(verifyOtpModal, {
             size: 'md',
             backdrop: 'static',
@@ -141,11 +142,29 @@ export class RegisterComponent implements OnInit{
     //handle resend otp
   }
 
-  onOtpChange(currentInput: HTMLInputElement, nextInput: HTMLInputElement | null) {
-    this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
-    if (currentInput.value && nextInput) {
-      nextInput.focus();
+  onOtpChange(event: KeyboardEvent, nextInput: HTMLInputElement | null, prevInput: HTMLInputElement | null) {
+    const input = event.target as HTMLInputElement;
+
+    // Move backward on backspace
+    if (event.key === 'Backspace' && input.value === '') {
+      if (prevInput) {
+        prevInput.focus();
+      }
     }
+    // Move forward on digit entry
+    else if (event.key >= '0' && event.key <= '9') {
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+    // Update the final OTP string after the input changes
+    this.updateOtpString();
+  }
+
+  // A helper method to combine all input values into a single string
+  updateOtpString() {
+    this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
+    // You can now check this.otp.length here to disable/enable the button
   }
 
   startCountdown() {

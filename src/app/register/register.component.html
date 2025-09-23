@@ -168,12 +168,36 @@
       </p>
 
       <div class="d-flex justify-content-center gap-2 mb-3 otp-input-container">
-        <input #otp1 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp1, otp2)">
-        <input #otp2 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp2, otp3)">
-        <input #otp3 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp3, otp4)">
-        <input #otp4 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp4, otp5)">
-        <input #otp5 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp5, otp6)">
-        <input #otp6 type="text" maxlength="1" class="form-control text-center otp-input" (input)="onOtpChange(otp6, null)">
+        <input
+          #otp1 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (keyup)="onOtpChange($event, otp2, null)"
+        >
+        <input
+          #otp2 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (keyup)="onOtpChange($event, otp3, otp1)"
+        >
+        <input
+          #otp3 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (keyup)="onOtpChange($event, otp4, otp2)"
+        >
+        <input
+          #otp4 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (keyup)="onOtpChange($event, otp5, otp3)"
+        >
+        <input
+          #otp5 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (keyup)="onOtpChange($event, otp6, otp4)"
+        >
+        <input
+          #otp6 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (keyup)="onOtpChange($event, null, otp5)"
+        >
       </div>
       <div class="text-center small mt-3">
         Didn't receive the code?
