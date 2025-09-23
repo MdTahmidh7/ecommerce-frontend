@@ -1095,3 +1095,35 @@
     width: 100%;
   }
 }
+/*OTP MODAL CSS*/
+.modal-content {
+  background-color: #f8f9fa; /* Light gray background */
+}
+
+.modal-header,
+.modal-footer {
+  background-color: transparent;
+}
+
+.otp-input-container {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.otp-input {
+  width: 45px;
+  height: 45px;
+  font-size: 1.25rem;
+  border-radius: 0.5rem;
+  border-color: #dee2e6;
+}
+
+.otp-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.disabled-link {
+  pointer-events: none;
+  color: #6c757d !important;
+}

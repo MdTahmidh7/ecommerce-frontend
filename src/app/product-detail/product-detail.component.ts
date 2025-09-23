@@ -1,8 +1,8 @@
-import {Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {RouterLink, ActivatedRoute, Router} from '@angular/router';
+import {Component, ElementRef, OnInit, ViewChildren, inject} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth/auth.service';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProductDetailsService} from './service/product-details.service';
 import {DivisionModel} from '../model/division.model';
@@ -14,6 +14,7 @@ import {environment} from '../../environments/environment';
 import {CreateOrderRequest} from '../model/CreateOrderRequest.moel';
 import {OrderService} from '../order.service';
 import {AlertService} from '../common-service/alert.service';
+import {AppComponent} from '../app.component';
 
 
 @Component({
@@ -25,6 +26,7 @@ import {AlertService} from '../common-service/alert.service';
 })
 export class ProductDetailComponent implements OnInit {
 
+  private appComponent = inject(AppComponent);
   productId: string | null = null;
   product: Product | undefined;
   orderRequest: CreateOrderRequest = null as any;
@@ -39,9 +41,21 @@ export class ProductDetailComponent implements OnInit {
   contactForm: FormGroup;
   deliveryAddressForm: FormGroup;
 
+  protected readonly Math = Math;
+  protected readonly Number = Number;
+  isSubmitting: boolean = false;
+
   divisions:DivisionModel[] = [];
   districts:DistrictsModel[] = [];
-  upazilas:UpazilaModel[] = [];
+  upazilas:UpazilaModel[] = [];otp: string = '';
+
+  resendDisabled: boolean = false;
+  countdown: number = 60;
+  private countdownInterval: any;
+  // Use ViewChildren to access the OTP input elements
+  @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: ElementRef[];
+  protected  environment = environment;
+  errorMessage: string | null = null;
 
   constructor(private route: ActivatedRoute,
               private authService : AuthService,
@@ -160,13 +174,6 @@ export class ProductDetailComponent implements OnInit {
 
   }
 
-  // Removed displayedReviews and totalReviewPages getters as reviews are not part of product
-
-  changePage(page: number): void {
-    // This method is for reviews pagination, which is removed.
-    // If reviews are added back, this method will need to be re-implemented.
-  }
-
   openModal(modal: any) {
 
     //this.contactForm.reset(); // Reset form when opening
@@ -180,14 +187,9 @@ export class ProductDetailComponent implements OnInit {
 
     modalRef.result.then(
       (result) => {
-        // Handle successful form submission
         console.log('Form submitted successfully:', result);
-        //this.lastSubmittedData = result;
-        // Here you can call your API to save the data
-        // this.contactService.saveContact(result).subscribe(...);
       },
       (dismissed) => {
-        // Handle modal dismissal
         console.log('Modal dismissed:', dismissed);
       }
     );
@@ -196,10 +198,8 @@ export class ProductDetailComponent implements OnInit {
   onSubmit(modal: any, verifyOtpModal: any): void {
 
     if (this.contactForm.valid) {
-
       modal.close(this.contactForm.value);
       console.log("Form values for user registration = ", this.contactForm.value)
-
       this.user = {
         firstName: this.contactForm.value.firstName,
         lastName: this.contactForm.value.lastName,
@@ -234,8 +234,6 @@ export class ProductDetailComponent implements OnInit {
 
 
   onSubmitDeliveryAddress(modal: any): void {
-
-
     if (this.deliveryAddressForm.valid) {
       modal.close(this.deliveryAddressForm.value);
       this.alertService.confirm(
@@ -248,10 +246,6 @@ export class ProductDetailComponent implements OnInit {
       });
     }
   }
-
-  protected readonly Math = Math;
-  protected readonly Number = Number;
-  isSubmitting: boolean = false;
 
   private getAllDivisions() {
     this.productDetailsService.getAllDivisions().subscribe({
@@ -266,7 +260,6 @@ export class ProductDetailComponent implements OnInit {
   }
 
   onDivisionChange(event: Event) {
-
     const divisionId = (event.target as HTMLSelectElement).value;
     if (!divisionId) {
       this.districts = [];
@@ -311,10 +304,6 @@ export class ProductDetailComponent implements OnInit {
     return control && control.invalid && (control.dirty || control.touched);
   }
 
-  protected  environment = environment;
-  otp: number | null = null;
-  resendDisabled: boolean = true;
-
   getCurrentImage() {
     if (this.product && this.product.imageUrls && this.product.imageUrls.length > 0) {
       return this.product.imageUrls[this.currentImageIndex];
@@ -344,7 +333,6 @@ export class ProductDetailComponent implements OnInit {
 
     //call api for order request
     this.orderService.createOrder(this.orderRequest).subscribe({
-
       next: (response) => {
         console.log('Order created successfully:', response);
         this.alertService.success(
@@ -360,7 +348,6 @@ export class ProductDetailComponent implements OnInit {
   }
 
   verifyOTP(modal: any) {
-
     if (this.otp != null) {
       console.log("Form values for user registration = ", this.contactForm.value)
       console.log("Phone Number: ", this.contactForm.value.phoneNumber);
@@ -377,6 +364,7 @@ export class ProductDetailComponent implements OnInit {
           console.log('OTP verified successfully:', response);
         },
         error: (error) => {
+          this.errorMessage = error.message || 'OTP verification failed. Please try again.';
           console.error('OTP Verification error:', error);
         },
         complete: () => {
@@ -388,5 +376,33 @@ export class ProductDetailComponent implements OnInit {
 
   resendOTP() {
     //handle resend otp
+  }
+
+  onOtpChange(currentInput: HTMLInputElement, nextInput: HTMLInputElement | null) {
+    this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
+
+    if (currentInput.value && nextInput) {
+      nextInput.focus();
+    }
+  }
+
+  startCountdown() {
+    this.countdownInterval = setInterval(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        clearInterval(this.countdownInterval);
+        this.resendDisabled = false;
+      }
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    // Clear the interval when the component is destroyed
+    clearInterval(this.countdownInterval);
+  }
+
+  redirectToLogin() {
+    this.modalService.dismissAll();
+    this.router.navigate(['/login']);
   }
 }

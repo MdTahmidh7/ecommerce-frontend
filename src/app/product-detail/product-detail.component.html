@@ -210,7 +210,19 @@
       </div>
       <div class="title-section">
         <h4 class="modal-title" id="modal-title">Contact Information</h4>
-        <p class="modal-subtitle">Please fill in your details below</p>
+        <div class="row">
+          <div class="col-8">
+            <p class="modal-subtitle">Already have an account?</p>
+          </div>
+          <div class="col-4">
+            <button
+              class="btn p-0 btn-sm text-white"
+              (click)="redirectToLogin()"
+            >
+              Login
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <button
@@ -579,43 +591,77 @@
 
 <!--modal for otp input-->
 <ng-template #verifyOtpModal let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Enter Your OTP Here</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    <!--OTP input field-->
-    <div class="form-group">
-      <div class="input-wrapper">
-        <label for="otp" class="col-lg-4">OTP</label>
+  <div class="modal-content border-0 rounded-4 shadow-lg">
+    <div class="modal-header border-0 pb-0">
+      <h4 class="modal-title fw-bold" id="modal-basic-title">Enter Verification Code</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+    </div>
+    <div class="modal-body pt-0">
+      <div class="text-center alert alert-danger animate__animated animate__shakeX" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ errorMessage }}
+      </div>
+      <p class="text-muted text-center small">
+        A 6-digit code was sent to your phone.
+      </p>
+
+      <div class="d-flex justify-content-center gap-2 mb-3 otp-input-container">
         <input
-          type="text"
-          id="otp"
-          class="form-control"
-          placeholder="Enter OTP"
-          maxlength="6"
-          [(ngModel)]="otp"
-          name="otp"
+          #otp1 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp1, otp2)"
+        >
+        <input
+          #otp2 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp2, otp3)"
+        >
+        <input
+          #otp3 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp3, otp4)"
+        >
+        <input
+          #otp4 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp4, otp5)"
+        >
+        <input
+          #otp5 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp5, otp6)"
+        >
+        <input
+          #otp6 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp6, null)"
         >
       </div>
+      <div class="text-center small mt-3">
+        Didn't receive the code?
+        <a
+          href="#"
+          class="text-decoration-none fw-bold"
+          (click)="resendOTP()"
+          [ngClass]="{'disabled-link': resendDisabled}"
+        >
+          Resend OTP
+        </a>
+        <span *ngIf="resendDisabled" class="text-muted ms-1">(<span id="countdown">{{ countdown }}</span>s)</span>
+      </div>
     </div>
-  </div>
-  <div class="modal-footer">
-    <button
-      type="button"
-      class="btn btn-outline-secondary"
-      (click)="verifyOTP(verifyOtpModal)"
-    >
-      Save
-    </button>
-    <!--reSend OTP Button-->
-    <button
-      type="button"
-      class="btn btn-outline-primary"
-      (click)="resendOTP()"
-      [disabled]="resendDisabled"
-    >
-      Resend OTP
-    </button>
+    <div class="modal-footer border-0 pt-0 d-flex justify-content-between">
+      <button type="button" class="btn btn-outline-secondary rounded-pill flex-grow-1 me-2" (click)="d('Cross click')">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary rounded-pill flex-grow-1 ms-2"
+        (click)="verifyOTP(verifyOtpModal)"
+        [disabled]="otp.length !== 6"
+      >
+        Verify
+      </button>
+    </div>
   </div>
 </ng-template>

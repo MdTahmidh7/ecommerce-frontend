@@ -1,11 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common'; // For NgIf, NgClass
-import {ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, FormsModule} from '@angular/forms'; // For Reactive Forms
-import { Router, RouterLink } from '@angular/router';
+import {Component, ElementRef, inject, OnInit, ViewChildren} from '@angular/core';
+import {CommonModule} from '@angular/common'; // For NgIf, NgClass
+import {AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms'; // For Reactive Forms
+import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth/auth.service';
 import {AppComponent} from '../app.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {verify} from 'node:crypto';
 import {AlertService} from '../common-service/alert.service'; // For navigation
 
 
@@ -36,8 +35,12 @@ export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private appComponent = inject(AppComponent); // For global alerts (if needed, otherwise remove)
-  otp: number | null = null;
-  resendDisabled: boolean = true;
+  otp: string = '';
+  resendDisabled: boolean = false;
+  countdown: number = 60;
+  private countdownInterval: any;
+  // Use ViewChildren to access the OTP input elements
+  @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: ElementRef[];
 
   constructor(
     private modalService: NgbModal,
@@ -86,34 +89,49 @@ export class LoginComponent implements OnInit {
       // Call the authentication service
       this.authService.login(name, phoneNo).subscribe({
         next: (response) => {
-          // Handle successful login
+          //open modal for otp verification
+          const modalRef = this.modalService.open(modal, {
+            size: 'md',
+            backdrop: 'static',
+            centered: true,
+            keyboard: false
+          });
+
+          modalRef.result.then(
+            (result) => {
+              console.log('Form submitted successfully:', result);
+            },
+            (dismissed) => {
+              console.log('Modal dismissed:', dismissed);
+            }
+          );
         },
         error: (error) => {
-          this.errorMessage = error.message || 'An unexpected error occurred during login.';
-          console.error('Login error:', error);
+          let errorMessage = 'An unexpected error occurred.';
+          if (error && error.error) {
+            // If the error body is already a JSON object
+            if (typeof error.error === 'object' && error.error.message) {
+              errorMessage = error.error.message;
+            }
+            // If the error body is a JSON string, attempt to parse it
+            else if (typeof error.error === 'string') {
+              try {
+                const parsedError = JSON.parse(error.error);
+                if (parsedError.message) {
+                  errorMessage = parsedError.message;
+                }
+              } catch (e) {
+                console.error('Failed to parse error response:', e);
+              }
+            }
+          }
+          this.alertService.error('Error', errorMessage);
           this.loading = false;
         },
         complete: () => {
           this.loading = false;
         }
       });
-
-      //open modal for otp verification
-      const modalRef = this.modalService.open(modal, {
-        size: 'md',
-        backdrop: 'static',
-        centered: true,
-        keyboard: false
-      });
-
-      modalRef.result.then(
-        (result) => {
-          console.log('Form submitted successfully:', result);
-        },
-        (dismissed) => {
-          console.log('Modal dismissed:', dismissed);
-        }
-      );
     } else {
       this.errorMessage = 'Please correct the errors in the form.';
       this.appComponent.setMessage(this.errorMessage);
@@ -177,23 +195,34 @@ export class LoginComponent implements OnInit {
 
   }
 
+  onOtpChange(currentInput: HTMLInputElement, nextInput: HTMLInputElement | null) {
+    this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
+
+    if (currentInput.value && nextInput) {
+      nextInput.focus();
+    }
+  }
+
   resendOTP() {
     // Logic to resend OTP
-    this.loading = true;
-    this.authService.reSendOtp(this.loginForm.value.phoneNo).subscribe({
-      next: (response) => {
-        this.successMessage = 'OTP resent successfully! Please check your phone.';
-        this.errorMessage = null;
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'Failed to resend OTP. Please try again later.';
-        this.successMessage = null;
-        console.error('Resend OTP error:', error);
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
+    console.log('Resending OTP...');
+    this.resendDisabled = true;
+    this.countdown = 60; // Reset countdown
+    this.startCountdown();
+  }
 
+  startCountdown() {
+    this.countdownInterval = setInterval(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        clearInterval(this.countdownInterval);
+        this.resendDisabled = false;
+      }
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    // Clear the interval when the component is destroyed
+    clearInterval(this.countdownInterval);
   }
 }
