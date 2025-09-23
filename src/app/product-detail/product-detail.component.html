@@ -5,7 +5,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
         <li class="breadcrumb-item"><a routerLink="/products">Products</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product?.name }}</li>
       </ol>
     </nav>
 
@@ -16,7 +16,7 @@
           <!-- Main Image with Zoom -->
           <div class="main-image-container">
             <div class="image-zoom-wrapper">
-              <img [src]="environment.imageBaseUrl + '/' + getCurrentImage()" alt="{{ product.name }}" class="main-product-image img-fluid">
+              <img [src]="environment.imageBaseUrl + '/' + getCurrentImage()" alt="{{ product?.name }}" class="main-product-image img-fluid">
               <div class="image-zoom-lens"></div>
             </div>
 
@@ -35,10 +35,12 @@
 
           <!-- Thumbnail Gallery -->
           <div class="thumbnail-gallery">
-            <div *ngFor="let image of product.imageUrls; let i = index"
-                 class="thumbnail-item"
-                 [class.active]="i === currentImageIndex"
-                 (click)="selectImage(i)">
+            <div
+              *ngFor="let image of product.imageUrls; let i = index"
+              class="thumbnail-item"
+              [class.active]="i === currentImageIndex"
+              (click)="selectImage(i)"
+            >
               <img [src]="environment.imageBaseUrl + '/' + image" alt="Thumbnail {{ i + 1 }}" class="img-fluid">
             </div>
           </div>
@@ -98,13 +100,15 @@
     </div>
 
     <!-- Product Details Tabs -->
-    <div class="product-details-tabs mt-5 animate__animated animate__fadeIn animate__delay-2s">
+    <div class="product-details-tabs mt-5 mb-5">
       <ul class="nav nav-tabs" id="productTabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link"
-                  [class.active]="activeTab === 'description'"
-                  (click)="setActiveTab('description')"
-                  type="button">
+          <button
+            class="nav-link"
+            [class.active]="activeTab === 'description'"
+            (click)="setActiveTab('description')"
+            type="button"
+          >
             Description
           </button>
         </li>
@@ -113,13 +117,13 @@
       <div class="tab-content p-4 border border-top-0 rounded-bottom">
         <!-- Description Tab -->
         <div class="tab-pane fade" [class.show]="activeTab === 'description'" [class.active]="activeTab === 'description'">
-          <p class="product-description">{{ product.description }}</p>
+          <p class="product-description">{{ product?.description }}</p>
         </div>
       </div>
     </div>
 
     <!-- Customer Reviews Section -->
-    <div class="customer-reviews-section mt-5 animate__animated animate__fadeIn animate__delay-3s">
+    <div class="customer-reviews-section mt-5 ">
       <h2 class="section-title">Customer Reviews</h2>
       <div class="reviews-summary">
         <div class="overall-rating">
