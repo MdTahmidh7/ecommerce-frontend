@@ -47,8 +47,9 @@ export class ProductDetailComponent implements OnInit {
 
   divisions:DivisionModel[] = [];
   districts:DistrictsModel[] = [];
-  upazilas:UpazilaModel[] = [];otp: string = '';
+  upazilas:UpazilaModel[] = [];
 
+  otp: string = '';
   resendDisabled: boolean = false;
   countdown: number = 60;
   private countdownInterval: any;

@@ -1,13 +1,14 @@
-import { Component, inject } from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { AppComponent } from '../app.component';
+import {Component, ElementRef, inject, OnInit, ViewChildren} from '@angular/core';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth/auth.service';
 import {UserRegistrationRequest} from '../model/userRegistrationRequest.model';
 import {DivisionModel} from '../model/division.model';
 import {DistrictsModel} from '../model/districts.model';
 import {UpazilaModel} from '../model/upazila.model';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {AlertService} from '../common-service/alert.service';
 import {RegisterService} from './register.service'; // Import AppComponent to access setMessage
 
 @Component({
@@ -17,115 +18,168 @@ import {RegisterService} from './register.service'; // Import AppComponent to ac
   templateUrl: './register.component.html', // Referencing external HTML file
   styleUrls: ['./register.component.css'] // You can keep this for specific register styles
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit{
 
-  fullName = '';
-  email = '';
   password = '';
-  confirmPassword = '';
   loading = false;
   user: UserRegistrationRequest = null as any;
-  userRegistrationForm : FormGroup = new FormGroup({});
   isSubmitting: boolean = false;
-  showPassword = false;
 
   divisions:DivisionModel[] = [];
   districts:DistrictsModel[] = [];
   upazilas:UpazilaModel[] = [];
 
+  otp: string = '';
+  resendDisabled: boolean = false;
+  countdown: number = 60;
+  private countdownInterval: any;
+  // Use ViewChildren to access the OTP input elements
+  @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: ElementRef[];
+  errorMessage: string | null = null;
+
   private authService = inject(AuthService);
-  private appComponent = inject(AppComponent);
+  contactForm: FormGroup;
 
-  constructor(private fb: FormBuilder,
-              private registerService: RegisterService,
-              private router: Router
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private modalService: NgbModal,
+    private alertService: AlertService,
+    private registerService: RegisterService
   ) {
-    this.userRegistrationForm = this.fb.group(
-      {
-        phoneNumber: ['', [Validators.required, Validators.maxLength(20)]],
-        password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(40)]],
-        confirmPassword: ['', Validators.required],
-        firstName: [''],
-        lastName: [''],
-        address: ['', Validators.maxLength(500)],
-        upazilaId: [null, Validators.required],
-      },
-      {
-        validators: this.passwordMatchValidator,
-      }
-    );
+    this.contactForm = this.fb.group({
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
+      upazilaId: ['', Validators.required],
+    });
   }
 
-  get f() {
-    return this.userRegistrationForm.controls as {
-      phoneNumber: AbstractControl;
-      password: AbstractControl;
-      confirmPassword: AbstractControl;
-      firstName: AbstractControl;
-      lastName: AbstractControl;
-      address: AbstractControl;
-      upazilaId: AbstractControl;
-    };
+  ngOnInit(): void {
+    // Fetch divisions on component initialization
+    this.getAllDivisions();
   }
 
-  togglePassword() {
-    this.showPassword = !this.showPassword;
-  }
+  onSubmit( verifyOtpModal: any): void {
 
-  passwordMatchValidator(form: FormGroup) {
-    const password = form.get('password')?.value;
-    const confirm = form.get('confirmPassword')?.value;
-    return password === confirm ? null : { passwordMismatch: true };
-  }
+    if (this.contactForm.valid) {
+      console.log("Form values for user registration = ", this.contactForm.value)
+      this.user = {
+        firstName: this.contactForm.value.firstName,
+        lastName: this.contactForm.value.lastName,
+        password: this.contactForm.value.password,
+        phoneNumber: this.contactForm.value.phoneNumber,
+        address: this.contactForm.value.address,
+        upazilaId: this.contactForm.value.upazilaId
+      };
 
-  onSubmit() {
-
-    console.log("In onSubmit method of register component");
-    if (this.password !== this.confirmPassword) {
-      this.appComponent.setMessage('Passwords do not match.');
-      return;
+      //call register API
+      this.authService.register(this.user).subscribe({
+        next: (response) => {
+          console.log('Contact registered successfully:', response);
+          const modalRef = this.modalService.open(verifyOtpModal, {
+            size: 'md',
+            backdrop: 'static',
+            centered: true,
+            keyboard: false
+          });
+        },
+        error: (error) => {
+          console.error('Error registering contact:', error);
+        }
+      });
+    } else {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.contactForm.controls).forEach(key => {
+        this.contactForm.get(key)?.markAsTouched();
+      });
     }
+  }
 
-    this.loading = true;
-    this.appComponent.setMessage('');
+  verifyOTP(modal: any) {
+    if (this.otp != null) {
+      console.log("Form values for user registration = ", this.contactForm.value)
+      console.log("Phone Number: ", this.contactForm.value.phoneNumber);
+      console.log("OTP: ", this.otp);
 
-    console.log('Form Values:', this.userRegistrationForm.value);
+      this.authService.verifyOtp(
+        this.contactForm.value.phoneNumber,
+        this.otp.toString()
+      ).subscribe({
+        next: (response) => {
+          this.modalService.dismissAll();
+          this.alertService.success('Login Successful','Welcome back.');
+          // Handle successful OTP verification
+          console.log('OTP verified successfully:', response);
+        },
+        error: (error) => {
+          this.errorMessage = error.message || 'OTP verification failed. Please try again.';
+          console.error('OTP Verification error:', error);
+        },
+        complete: () => {
+          //this.loading = false;
+        }
+      });
+    }
+  }
 
-    this.authService.register(this.userRegistrationForm.value).subscribe({
+  resendOTP() {
+    //handle resend otp
+  }
 
-      next: (response) => {
-       //redirect to login page after successful registration
-        console.log("response from register api", response);
-        console.log("registration successful, redirecting to login page");
-        this.router.navigate(['/login']);
+  onOtpChange(currentInput: HTMLInputElement, nextInput: HTMLInputElement | null) {
+    this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
+
+    if (currentInput.value && nextInput) {
+      nextInput.focus();
+    }
+  }
+
+  startCountdown() {
+    this.countdownInterval = setInterval(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        clearInterval(this.countdownInterval);
+        this.resendDisabled = false;
+      }
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    // Clear the interval when the component is destroyed
+    clearInterval(this.countdownInterval);
+  }
+
+  isFieldInvalid(field: string) {
+    const control = this.contactForm.get(field);
+    return control && control.invalid && (control.dirty || control.touched);
+  }
+
+  private getAllDivisions() {
+    this.registerService.getAllDivisions().subscribe({
+      next: (data: any) => {
+        this.divisions = data.content || [];
+        console.log('Divisions fetched successfully:', this.divisions);
       },
-      error: (error) => {
-        this.appComponent.setMessage(error.message || 'Registration failed. Please try again.');
-        console.error('Registration error:', error);
-      },
-      complete: () => {
-        this.loading = false;
+      error: (error: any) => {
+        console.error('Error fetching divisions:', error);
       }
     });
   }
 
-
-
   onDivisionChange(event: Event) {
-
     const divisionId = (event.target as HTMLSelectElement).value;
-
     if (!divisionId) {
       this.districts = [];
       this.upazilas = [];
-      this.userRegistrationForm.patchValue({ district: '', upazila: '' });
+      this.contactForm.patchValue({ district: '', upazila: '' });
       return;
     }
     this.registerService.getAllDistrictByDivisionId(divisionId).subscribe({
       next: (data: any) => {
         this.districts = data.content || [];
         this.upazilas = [];
-        this.userRegistrationForm.patchValue({ district: '', upazila: '' });
+        this.contactForm.patchValue({ district: '', upazila: '' });
       },
       error: (error: any) => {
         console.error('Error fetching districts:', error);
@@ -134,19 +188,17 @@ export class RegisterComponent {
   }
 
   onDistrictChange(event: Event) {
-
     const districtId = (event.target as HTMLSelectElement).value;
     console.log('Selected District ID:', districtId);
-
     if (!districtId) {
       this.upazilas = [];
-      this.userRegistrationForm.patchValue({ upazila: '' });
+      this.contactForm.patchValue({ upazila: '' });
       return;
     }
     this.registerService.getAllUpazilaByDistrictId(districtId).subscribe({
       next: (data: any) => {
         this.upazilas = data.content || [];
-        this.userRegistrationForm.patchValue({ upazila: '' });
+        this.contactForm.patchValue({ upazila: '' });
       },
       error: (error: any) => {
         console.error('Error fetching upazilas:', error);
@@ -154,4 +206,7 @@ export class RegisterComponent {
     });
   }
 
+  redirectToLogin() {
+    this.router.navigate(['/login']);
+  }
 }

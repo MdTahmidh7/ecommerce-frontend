@@ -5,7 +5,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a routerLink="/home">Home</a></li>
         <li class="breadcrumb-item"><a routerLink="/products">Products</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ product?.name }}</li>
+        <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
       </ol>
     </nav>
 
@@ -16,7 +16,7 @@
           <!-- Main Image with Zoom -->
           <div class="main-image-container">
             <div class="image-zoom-wrapper">
-              <img [src]="environment.imageBaseUrl + '/' + getCurrentImage()" alt="{{ product?.name }}" class="main-product-image img-fluid">
+              <img [src]="environment.imageBaseUrl + '/' + getCurrentImage()" alt="{{ product.name }}" class="main-product-image img-fluid">
               <div class="image-zoom-lens"></div>
             </div>
 
@@ -117,7 +117,7 @@
       <div class="tab-content p-4 border border-top-0 rounded-bottom">
         <!-- Description Tab -->
         <div class="tab-pane fade" [class.show]="activeTab === 'description'" [class.active]="activeTab === 'description'">
-          <p class="product-description">{{ product?.description }}</p>
+          <p class="product-description">{{ product.description }}</p>
         </div>
       </div>
     </div>

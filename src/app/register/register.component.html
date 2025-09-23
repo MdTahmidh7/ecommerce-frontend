@@ -1,177 +1,295 @@
-<!--<div class="card p-4 shadow-sm w-100" style="max-width: 450px;">
-  <div class="card-body">
-    <h2 class="card-title text-center mb-4 display-5 fw-bold text-dark">Register</h2>
-    <form (ngSubmit)="onSubmit()" #userRegistrationForm="ngForm">
-      <div class="mb-3">
-        <label for="fullName" class="form-label">Full Name</label>
-        <div class="input-group">
-          <span class="input-group-text">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.28 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-            </svg>
-          </span>
-          <input
-            type="text"
-            class="form-control"
-            id="fullName"
-            name="fullName"
-            autocomplete="name"
-            required
-            [(ngModel)]="fullName"
-            placeholder="John Doe"
-          />
+<div class="modern-modal-header">
+  <div class="header-content">
+    <div class="title-section">
+      <h4 class="modal-title" id="modal-title">Registration Form</h4>
+      <div class="row">
+        <div class="col-8">
+          <p class="modal-subtitle">Already have an account?</p>
+        </div>
+        <div class="col-4">
+          <button
+            class="btn p-0 btn-sm text-white"
+            (click)="redirectToLogin()"
+          >
+            Login
+          </button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div class="mb-3">
-        <label for="email" class="form-label">Email address</label>
-        <div class="input-group">
-          <span class="input-group-text">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
-              <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.5L8 9.352 1 5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
-            </svg>
-          </span>
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            autocomplete="email"
-            required
-            [(ngModel)]="email"
-            placeholder="you@example.com"
-          />
+<div class="modern-modal-body">
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit(verifyOtpModal)" class="contact-form">
+    <div class="form-group">
+      <div class="input-wrapper">
+        <label for="firstName" class="col-lg-4">First Name</label>
+        <input
+          type="text"
+          id="firstName"
+          class="form-control"
+          formControlName="firstName"
+          [class.error]="isFieldInvalid('firstName')"
+          [class.filled]="contactForm.get('firstName')?.value"
+          placeholder="Type your First Name">
+      </div>
+      <div class="error-message" *ngIf="isFieldInvalid('firstName')">
+        <div *ngIf="contactForm.get('firstName')?.errors?.['required']">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          First Name is required
+        </div>
+        <div *ngIf="contactForm.get('firstName')?.errors?.['minlength']">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          First Name must be at least 2 characters
         </div>
       </div>
+    </div>
 
-      <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <div class="input-group">
-          <span class="input-group-text">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
-              <path d="M8 1a2 2 0 0 0-2 2v4H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H10V3a4 4 0 0 0-8 0v4H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H8V3zm-2 1v3h4V3a2 2 0 0 0-4 0"/>
-            </svg>
-          </span>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            name="password"
-            autocomplete="new-password"
-            required
-            [(ngModel)]="password"
-            placeholder="••••••••"
-          />
+    <div class="form-group">
+      <div class="input-wrapper">
+        <label for="lastName" class="col-lg-4">Last Name</label>
+        <input
+          type="text"
+          id="lastName"
+          class="form-control"
+          formControlName="lastName"
+          [class.error]="isFieldInvalid('lastName')"
+          [class.filled]="contactForm.get('lastName')?.value"
+          placeholder="Type your last name">
+      </div>
+      <div class="error-message" *ngIf="isFieldInvalid('lastName')">
+        <div *ngIf="contactForm.get('lastName')?.errors?.['required']">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Last Name is required
+        </div>
+        <div *ngIf="contactForm.get('lastName')?.errors?.['minlength']">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Name must be at least 2 characters
         </div>
       </div>
+    </div>
 
-      <div class="mb-3">
-        <label for="confirmPassword" class="form-label">Confirm Password</label>
-        <div class="input-group">
-          <span class="input-group-text">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
-              <path d="M8 1a2 2 0 0 0-2 2v4H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H10V3a4 4 0 0 0-8 0v4H3a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H8V3zm-2 1v3h4V3a2 2 0 0 0-4 0"/>
-            </svg>
-          </span>
-          <input
-            type="password"
-            class="form-control"
-            id="confirmPassword"
-            name="confirmPassword"
-            autocomplete="new-password"
-            required
-            [(ngModel)]="confirmPassword"
-            placeholder="••••••••"
-          />
-        </div>
-      </div>
-
-      <div class="d-grid gap-2">
-        <button
-          type="submit"
-          class="btn btn-success btn-lg"
-          [disabled]="loading || password !== confirmPassword"
+    <div class="form-group">
+      <div class="input-wrapper">
+        <label for="phone" class="floating-label col-lg-4">Phone Number</label>
+        <input
+          type="tel"
+          id="phone"
+          class="form-control"
+          formControlName="phoneNumber"
+          [class.error]="isFieldInvalid('phone')"
+          [class.filled]="contactForm.get('phone')?.value"
+          placeholder="01*********"
         >
-          <span *ngIf="!loading">Register</span>
-          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          <span *ngIf="loading">Registering...</span>
-        </button>
       </div>
-    </form>
-    <div class="text-center mt-3">
-      <p class="text-muted">
-        Already have an account?
-        <a routerLink="/login" class="text-decoration-none">Login</a>
+      <div class="error-message" *ngIf="isFieldInvalid('phone')">
+        <div *ngIf="contactForm.get('phone')?.errors?.['required']">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Phone number is required
+        </div>
+        <div *ngIf="contactForm.get('phone')?.errors?.['pattern']">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Please enter a valid phone number
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Division select -->
+    <div class="form-group">
+      <div class="input-wrapper">
+        <label for="division" class="col-lg-4">Select Division</label>
+        <select
+          id="division"
+          class="form-control"
+          formControlName="divisionId"
+          [class.error]="isFieldInvalid('division')"
+          (change)="onDivisionChange($event)"
+        >
+          <option value="" [selected]="true">Select division</option>
+          <option *ngFor="let division of divisions" [value]="division.id">
+            {{ division.bnName }}
+          </option>
+        </select>
+      </div>
+      <div class="error-message" *ngIf="isFieldInvalid('division')">
+        <span>Division is required</span>
+      </div>
+    </div>
+
+    <!-- Add District select -->
+    <div class="form-group">
+      <div class="input-wrapper">
+        <label for="district" class="col-lg-4">Select District</label>
+        <select
+          id="district"
+          class="form-control"
+          formControlName="districtId"
+          [class.error]="isFieldInvalid('district')"
+          [disabled]="!districts.length"
+          (change)="onDistrictChange($event)"
+        >
+          <option value="">Select district</option>
+          <option *ngFor="let district of districts" [value]="district.id">
+            {{ district.bnName }}
+          </option>
+        </select>
+      </div>
+      <div class="error-message" *ngIf="isFieldInvalid('district')">
+        <span>District is required</span>
+      </div>
+    </div>
+
+    <!-- Add Upazila select -->
+    <div class="form-group">
+      <div class="input-wrapper">
+        <label for="upazila" class="col-lg-4">Select Upazila</label>
+        <select
+          id="upazila" class="form-control"
+          formControlName="upazilaId"
+          [class.error]="isFieldInvalid('upazila')"
+          [disabled]="!upazilas.length"
+        >
+          <option value="">Select upazila</option>
+          <option *ngFor="let upazila of upazilas" [value]="upazila.id">
+            {{ upazila.bnName }}
+          </option>
+        </select>
+      </div>
+      <div class="error-message" *ngIf="isFieldInvalid('upazila')">
+        <span>Upazila is required</span>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+
+<div class="modern-modal-footer">
+  <button
+    type="button"
+    class="btn btn-ghost"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Cancel
+  </button>
+  <button
+    type="button"
+    class="btn btn-gradient"
+    [disabled]="contactForm.invalid"
+    [class.loading]="isSubmitting"
+    (click)="onSubmit(verifyOtpModal)">
+      <span *ngIf="!isSubmitting" class="btn-content">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 7L10 16L5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Save Contact
+      </span>
+    <span *ngIf="isSubmitting" class="loading-spinner">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.3"/>
+          <path d="M21 12C21 7.02944 16.9706 3 12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
+          </path>
+        </svg>
+        Saving...
+      </span>
+  </button>
+</div>
+
+
+<!--modal for otp input-->
+<ng-template #verifyOtpModal let-c="close" let-d="dismiss">
+  <div class="modal-content border-0 rounded-4 shadow-lg">
+    <div class="modal-header border-0 pb-0">
+      <h4 class="modal-title fw-bold" id="modal-basic-title">Enter Verification Code</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+    </div>
+    <div class="modal-body pt-0">
+      <div class="text-center alert alert-danger animate__animated animate__shakeX" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ errorMessage }}
+      </div>
+      <p class="text-muted text-center small">
+        A 6-digit code was sent to your phone.
       </p>
+
+      <div class="d-flex justify-content-center gap-2 mb-3 otp-input-container">
+        <input
+          #otp1 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp1, otp2)"
+        >
+        <input
+          #otp2 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp2, otp3)"
+        >
+        <input
+          #otp3 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp3, otp4)"
+        >
+        <input
+          #otp4 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp4, otp5)"
+        >
+        <input
+          #otp5 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp5, otp6)"
+        >
+        <input
+          #otp6 type="text" maxlength="1"
+          class="form-control text-center otp-input"
+          (input)="onOtpChange(otp6, null)"
+        >
+      </div>
+      <div class="text-center small mt-3">
+        Didn't receive the code?
+        <a
+          href="#"
+          class="text-decoration-none fw-bold"
+          (click)="resendOTP()"
+          [ngClass]="{'disabled-link': resendDisabled}"
+        >
+          Resend OTP
+        </a>
+        <span *ngIf="resendDisabled" class="text-muted ms-1">(<span id="countdown">{{ countdown }}</span>s)</span>
+      </div>
+    </div>
+    <div class="modal-footer border-0 pt-0 d-flex justify-content-between">
+      <button type="button" class="btn btn-outline-secondary rounded-pill flex-grow-1 me-2" (click)="d('Cross click')">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary rounded-pill flex-grow-1 ms-2"
+        (click)="verifyOTP(verifyOtpModal)"
+        [disabled]="otp.length !== 6"
+      >
+        Verify
+      </button>
     </div>
   </div>
-</div>-->
-
-<form [formGroup]="userRegistrationForm" (ngSubmit)="onSubmit()" class="form-container">
-  <h2>Create an Account</h2>
-
-  <!-- Phone Number -->
-  <div class="form-group">
-    <label><i class="fas fa-phone"></i> Phone Number</label>
-    <input type="text" formControlName="phoneNumber" placeholder="Enter phone number" />
-    <div class="error" *ngIf="f.phoneNumber.touched && f.phoneNumber.invalid">
-      Phone number is required (max 20 characters).
-    </div>
-  </div>
-
-  <!-- Password -->
-  <div class="form-group">
-    <label><i class="fas fa-lock"></i> Password</label>
-    <div class="password-wrapper">
-      <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Enter password" />
-      <i (click)="togglePassword()" [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-    </div>
-    <div class="error" *ngIf="f.password.touched && f.password.invalid">
-      Password must be between 6 and 40 characters.
-    </div>
-  </div>
-
-  <!-- Confirm Password -->
-  <div class="form-group">
-    <label><i class="fas fa-lock"></i> Confirm Password</label>
-    <input type="password" formControlName="confirmPassword" placeholder="Confirm password" />
-    <div class="error" *ngIf="f.confirmPassword.touched && f.confirmPassword.invalid">
-      Confirm Password is required.
-    </div>
-    <div class="error" *ngIf="userRegistrationForm.errors?.['passwordMismatch'] && f.confirmPassword.touched">
-      Passwords do not match.
-    </div>
-  </div>
-
-  <!-- First Name -->
-  <div class="form-group">
-    <label><i class="fas fa-user"></i> First Name</label>
-    <input type="text" formControlName="firstName" placeholder="Enter first name" />
-  </div>
-
-  <!-- Last Name -->
-  <div class="form-group">
-    <label><i class="fas fa-user"></i> Last Name</label>
-    <input type="text" formControlName="lastName" placeholder="Enter last name" />
-  </div>
-
-  <!-- Address -->
-  <div class="form-group">
-    <label><i class="fas fa-map-marker-alt"></i> Address</label>
-    <textarea formControlName="address" rows="2" placeholder="Enter address"></textarea>
-  </div>
-
-  <!-- Upazila ID -->
-  <div class="form-group">
-    <label><i class="fas fa-map-pin"></i> Upazila ID</label>
-    <input type="number" formControlName="upazilaId" placeholder="Enter Upazila ID" />
-    <div class="error" *ngIf="f.upazilaId.touched && f.upazilaId.invalid">
-      Upazila ID is required.
-    </div>
-  </div>
-
-  <button type="submit" [disabled]="userRegistrationForm.invalid">Register</button>
-</form>
-
-
-
+</ng-template>
