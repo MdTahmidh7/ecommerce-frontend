@@ -237,9 +237,7 @@ export class ProductDetailComponent implements OnInit {
 
 
     if (this.deliveryAddressForm.valid) {
-
       modal.close(this.deliveryAddressForm.value);
-
       this.alertService.confirm(
         "Confirm Order",
         "Are you sure you want to place the order?"
@@ -270,7 +268,6 @@ export class ProductDetailComponent implements OnInit {
   onDivisionChange(event: Event) {
 
     const divisionId = (event.target as HTMLSelectElement).value;
-
     if (!divisionId) {
       this.districts = [];
       this.upazilas = [];
@@ -290,10 +287,8 @@ export class ProductDetailComponent implements OnInit {
   }
 
   onDistrictChange(event: Event) {
-
     const districtId = (event.target as HTMLSelectElement).value;
     console.log('Selected District ID:', districtId);
-
     if (!districtId) {
       this.upazilas = [];
       this.contactForm.patchValue({ upazila: '' });
@@ -367,7 +362,6 @@ export class ProductDetailComponent implements OnInit {
   verifyOTP(modal: any) {
 
     if (this.otp != null) {
-
       console.log("Form values for user registration = ", this.contactForm.value)
       console.log("Phone Number: ", this.contactForm.value.phoneNumber);
       console.log("OTP: ", this.otp);

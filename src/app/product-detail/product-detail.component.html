@@ -1,5 +1,5 @@
 <div class="product-detail-container">
-  <div class="container py-5" *ngIf="product">
+  <div class="container" *ngIf="product">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4 animate__animated animate__fadeIn">
       <ol class="breadcrumb">
@@ -47,7 +47,7 @@
 
       <!-- Product Info - Right Column -->
       <div class="col-lg-6">
-        <div class="product-info animate__animated animate__fadeIn animate__delay-1s">
+        <div class="product-info">
           <!-- Product Header -->
           <div class="product-header">
             <div class="brand-name">{{ product.category.name }}</div>
@@ -55,7 +55,8 @@
 
             <!-- Price -->
             <div class="product-price">
-              <span class="current-price">${{ product.price}}</span>
+              <img style="width: 30px" src="./assets/images/taka.png">
+              <span class="current-price">{{ product.price}}</span>
             </div>
 
             <!-- Availability -->
@@ -78,13 +79,13 @@
 
           <!-- Action Buttons -->
           <div class="product-actions">
-            <button class="btn btn-primary add-to-cart-btn disabled" (click)="addToCart()">
+            <!--<button class="btn btn-primary add-to-cart-btn disabled" (click)="addToCart()">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus me-2" viewBox="0 0 16 16">
                 <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z"/>
                 <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 1H2a.5.5 0 0 0 0-1h1a2 2 0 1 0 0 1h6a2 2 0 1 0 0 1H4a.5.5 0 0 0 0-1h8a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5H5.5l-.13-.648.61-1.307 1.44-3.942 1.21-2.5A.5.5 0 0 0 9 2.5h3.5a.5.5 0 0 0 0-1H2.89l-.405-1.621A.5.5 0 0 0 2 0H.5zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM9 5.5V7h1.5a.5.5 0 0 1 0 1H9v1.5a.5.5 0 0 1-1 0V8H6.5a.5.5 0 0 1 0-1H8V5.5a.5.5 0 0 1 1 0z"/>
               </svg>
               Add to Cart
-            </button>
+            </button>-->
             <button class="btn btn-secondary buy-now-btn" (click)="buyNow(contactModal,deliveryAddressModal)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lightning-fill me-2" viewBox="0 0 16 16">
                 <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z"/>
@@ -139,21 +140,6 @@
       <div class="reviews-list">
         <p class="text-center text-muted">No reviews yet. Be the first to review this product!</p>
       </div>
-
-      <!-- Pagination -->
-      <nav aria-label="Reviews pagination" class="reviews-pagination">
-        <ul class="pagination justify-content-center">
-          <li class="page-item disabled">
-            <a class="page-link" href="javascript:void(0)">Previous</a>
-          </li>
-          <li class="page-item active">
-            <a class="page-link" href="javascript:void(0)">1</a>
-          </li>
-          <li class="page-item disabled">
-            <a class="page-link" href="javascript:void(0)">Next</a>
-          </li>
-        </ul>
-      </nav>
     </div>
 
     <!-- Related Products Section -->
@@ -208,16 +194,8 @@
   </div>
 </div>
 
-<div>
-
-  images =
-  <img style="width: 50vw" [src]="environment.imageBaseUrl + '/Palestine.jpg'" alt="Palestine" />
-</div>
-
 
 <!--Modal for not logged in User-->
-<!-- Modal -->
-<!-- Modal Template with Reference Variable -->
 <ng-template #contactModal let-modal>
   <div class="modern-modal-header">
     <div class="header-content">
