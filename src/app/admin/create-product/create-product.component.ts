@@ -89,7 +89,7 @@ export class CreateProductComponent implements OnInit {
 
       this.productAdminService.createProduct(formData as any).subscribe({
         next: (response) => {
-          console.log('Product created successfully', response);
+          this.alertService.success("Product created successfully!"," The product has been added to the catalog.");
           this.productForm.reset();
           this.selectedFiles = []; // Clear selected images after successful submission
         },
