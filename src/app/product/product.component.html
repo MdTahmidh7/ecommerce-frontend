@@ -1,8 +1,7 @@
-<div class="container">
-  <div class="hero-section">
-    <h1 class="hero-title">Premium Collection</h1>
-    <p class="hero-subtitle">Discover our curated selection of cutting-edge products</p>
-  </div>
+<div class="">
+<!--  <div class="hero-section">-->
+<!--    <h1 class="hero-title">Premium Collection</h1>-->
+<!--  </div>-->
 
   <div class="products-container">
     <!-- Loading State -->
@@ -15,40 +14,37 @@
     <div *ngIf="!isLoading" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div class="col" *ngFor="let product of products; let i = index">
         <div class="card h-100">
-
           <!-- Product Image -->
           <div class="image-container">
             <img [src]="environment.imageBaseUrl + '/' + product.imageUrl"
                  class="card-img-top"
                  [alt]="product.name"
-                 loading="lazy">
-            <div class="image-overlay">
-              <span class="category-tag">{{ product.category.name }}</span>
-            </div>
+                 loading="lazy"
+            >
           </div>
 
           <div class="card-body">
             <!-- Product Title -->
             <h5 class="card-title">{{ product.name }}</h5>
-
             <!-- Product Description -->
             <p class="card-text">{{ product.description }}</p>
-
-            <!-- Price Section -->
             <div class="price-section">
-              <div class="price-container">
-                <span class="price">${{ product.price }}</span>
+              <div class="price">
+                {{ product.price | currency:'TK':'symbol':'1.2-2' }}
               </div>
-              <div class="stock-status" [ngClass]="product.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'">
+              <div
+                class="stock-status"
+                [ngClass]="product.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'"
+              >
                 <i class="fas" [ngClass]="product.stockQuantity > 0 ? 'fa-check-circle' : 'fa-times-circle'"></i>
                 {{ product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
               </div>
             </div>
-
-            <!-- Add to Cart Button -->
-            <button class="btn btn-add-cart w-100"
-                    [disabled]="product.stockQuantity === 0"
-                    (click)="navigateToProductDetailsPage(product)">
+            <button
+              class="btn btn-add-cart w-100"
+              [disabled]="product.stockQuantity === 0"
+              (click)="navigateToProductDetailsPage(product)"
+            >
               <i class="fa-solid fa-truck-fast me-2"></i>
               <span *ngIf="product.stockQuantity > 0; else outOfStockText">Order Now</span>
               <ng-template #outOfStockText>Out of Stock</ng-template>

@@ -19,31 +19,21 @@ interface RegisterResponse {
 })
 export class AuthService {
 
-  //private readonly baseUrl = 'http://localhost:8080/api';
   private readonly baseUrl = environment.apiBaseUrl
-  //private platformId = inject(PLATFORM_ID); // Inject PLATFORM_ID
   private _isAuthenticated = new BehaviorSubject<boolean>(false); // Initialize with false
 
-  // Use a local variable to store the authentication status
-  // It will be updated by checkAuthenticationStatus only on the browser
   public isAuthenticated: boolean = false;
 
   constructor(
     private http: HttpClient, // Inject HttpClient
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // Check for token in localStorage on service initialization
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('authToken');
-      this._isAuthenticated.next(!!token); // Set initial auth state based on token presence
+      this._isAuthenticated.next(!!token);
     }
   }
 
-  /**
-   * Checks the initial authentication status from localStorage.
-   * This method should only be called in a browser environment.
-   * @returns boolean indicating authentication status.
-   */
   private checkAuthenticationStatus(): boolean {
     // Ensure this is only called in the browser
     if (isPlatformBrowser(this.platformId)) {
@@ -52,20 +42,14 @@ export class AuthService {
     return false; // Return false if not in browser
   }
 
-  /**
-   * Returns an observable of the authentication status.
-   * Components can subscribe to this to react to changes.
-   */
   get isAuthenticated$(): Observable<boolean> {
     return this._isAuthenticated.asObservable();
   }
 
 
   login(name:string, phoneNumber: string): Observable<String> {
-
     const loginEndpoint = `${this.baseUrl}/login`;
     const body = { name:name, phoneNumber: phoneNumber };
-
     return this.http.post(loginEndpoint, body, { responseType: 'text' });
   }
 
@@ -110,29 +94,23 @@ export class AuthService {
   }
 
   reSendOtp(phoneNumber: string): Observable<any> {
-
     const resendOtpEndpoint = `${this.baseUrl}/resend-otp`;
     const body = { phoneNumber: phoneNumber };
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
-
     return this.http.post<any>(resendOtpEndpoint, body, { headers });
   }
 
   register(user:any): Observable<string> {
-
     const registerEndpoint = `${environment.apiBaseUrl}/register`;
     return this.http.post(registerEndpoint, user,{ responseType: 'text' });
-
   }
 
   logout(): void {
-
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('authToken');
     }
     this._isAuthenticated.next(false); // Emit false for logged out
     console.log('Simulated Logout');
-
   }
 
   isUserAuthenticated(): boolean {
@@ -175,6 +153,6 @@ export class AuthService {
         }
       }
     }
-    return null; // Default if no token or not in browser
+    return null;
   }
 }

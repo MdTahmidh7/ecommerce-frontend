@@ -66,12 +66,12 @@
         <!-- Right Side Navigation -->
         <ul class="navbar-nav align-items-center">
           <!-- Shopping Cart -->
-          <li class="nav-item me-3" *ngIf="isAuthenticated && !isAdmin">
+          <!--<li class="nav-item me-3" *ngIf="isAuthenticated && !isAdmin">
             <a class="nav-link cart-link" routerLink="/cart" title="Shopping Cart">
               <i class="fas fa-shopping-cart"></i>
               <span class="cart-badge">3</span>
             </a>
-          </li>
+          </li>-->
 
           <!-- Authentication Links -->
           <ng-container *ngIf="!isAuthenticated && !isAdmin">
@@ -97,9 +97,9 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end user-menu" aria-labelledby="navbarDropdown">
               <ng-container *ngIf="!isAdmin">
-                <li><a class="dropdown-item" routerLink="/profile"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
-                <li><a class="dropdown-item" routerLink="/my-orders"><i class="fas fa-box me-2"></i>My Orders</a></li>
-                <li><a class="dropdown-item" routerLink="/wishlist"><i class="fas fa-heart me-2"></i>Wishlist</a></li>
+<!--                <li><a class="dropdown-item" routerLink="/profile"><i class="fas fa-user-circle me-2"></i>Profile</a></li>-->
+<!--                <li><a class="dropdown-item" routerLink="/my-orders"><i class="fas fa-box me-2"></i>My Orders</a></li>-->
+<!--                <li><a class="dropdown-item" routerLink="/wishlist"><i class="fas fa-heart me-2"></i>Wishlist</a></li>-->
                 <li><hr class="dropdown-divider"></li>
               </ng-container>
               <li><button class="dropdown-item logout-btn" (click)="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</button></li>
