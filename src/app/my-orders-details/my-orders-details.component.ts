@@ -23,8 +23,9 @@ export class MyOrdersDetailsComponent implements OnInit{
   public orderDetails: OrderDetailsDTO | null = null;
   private orderId: number | null = null;
 
-  constructor(private route: ActivatedRoute,
-              private orderService: OrderService
+  constructor(
+    private route: ActivatedRoute,
+    private orderService: OrderService
   ) {}
 
   ngOnInit(): void {

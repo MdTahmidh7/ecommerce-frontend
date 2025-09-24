@@ -16,8 +16,11 @@ export class OrderService {
 
   constructor(private http: HttpClient) { }
 
-  getOrdersForUser(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.apiUrl}/me`);
+  getOrdersForUser(page:number=0,size:number=10): Observable<Order[]> {
+    let params = new HttpParams();
+    params = params.set('page', page.toString());
+    params = params.set('size', size.toString());
+    return this.http.get<Order[]>(`${this.apiUrl}/me`,{params});
   }
 
   createOrder(orderRequest: CreateOrderRequest) {
@@ -59,10 +62,9 @@ export class OrderService {
     }
     /*if (categoryId) {
       params = params.append('categoryId', categoryId.toString());
-    }
+    } */
     params = params.append('page', page.toString());
     params = params.append('size', size.toString());
-    */
 
     return this.http.get<any>(`${this.apiUrl}/me`, { params });
   }
