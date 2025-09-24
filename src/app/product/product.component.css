@@ -1,8 +1,13 @@
+.product-list-container {
+  padding: 2rem 0;
+}
+
 .products-container {
   max-width: 1200px;
   margin: 0 auto;
 }
 
+/* --- Loading and Empty States --- */
 .loading-container,
 .empty-state {
   display: flex;
@@ -43,38 +48,27 @@
   margin-bottom: 0.5rem;
 }
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  margin-left: -0.5rem;
-  margin-right: -0.5rem;
+/* --- Product Grid Layout (The Fix) --- */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 .col {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  /* No need for complex flex-basis or flex-grow here thanks to CSS Grid */
 }
 
-@media (min-width: 768px) {
-  .row-cols-md-2 > * {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-}
-
-@media (min-width: 992px) {
-  .row-cols-lg-3 > * {
-    flex: 0 0 33.333333%;
-    max-width: 33.333333%;
-  }
-}
-
+/* --- Product Card Styling --- */
 .card {
   border: 1px solid #e0e0e0;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: flex; /* Makes the card body fill the height */
+  flex-direction: column;
+  background: #f3f9fd;
 }
 
 .card:hover {
@@ -160,7 +154,7 @@
 }
 
 .btn-add-cart {
-  background-color: #0d6efd;
+  background: linear-gradient(#7642b0, #62438f);
   color: white;
   border: none;
   padding: 0.75rem;
@@ -188,6 +182,7 @@
   font-style: italic;
 }
 
+/* --- Pagination Styling --- */
 .pagination-rounded .page-item {
   margin: 0 4px;
 }

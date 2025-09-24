@@ -1,16 +1,13 @@
-<div class="">
+<div class="product-list-container">
   <div class="products-container">
-    <!-- Loading State -->
     <div *ngIf="isLoading" class="loading-container">
       <div class="loading-spinner"></div>
       <p class="loading-text">Loading amazing products...</p>
     </div>
 
-    <!-- Products Grid -->
-    <div *ngIf="!isLoading && products.length > 0" class="row flex-wrap m-0 p-0" style="width: 100%; min-width: 90vw;">
-      <div class="col-lg-4 col-md-6 col-12 mt-3" *ngFor="let product of products; let i = index">
+    <div *ngIf="!isLoading && products.length > 0" class="products-grid">
+      <div class="col" *ngFor="let product of products; let i = index">
         <div class="card h-100">
-          <!-- Product Image -->
           <div class="image-container">
             <img
               [src]="environment.imageBaseUrl + '/' + product.imageUrl"
@@ -21,9 +18,7 @@
           </div>
 
           <div class="card-body">
-            <!-- Product Title -->
             <h5 class="card-title">{{ product.name }}</h5>
-            <!-- Product Description -->
             <p class="card-text">{{ product.description }}</p>
             <div class="price-section">
               <div class="price">
@@ -51,7 +46,6 @@
       </div>
     </div>
 
-    <!-- Pagination Controls -->
     <nav *ngIf="!isLoading && totalPages > 1" aria-label="Product list pagination" class="d-flex justify-content-center mt-4">
       <ul class="pagination pagination-rounded">
         <li class="page-item" [class.disabled]="currentPage === 0">
@@ -66,7 +60,6 @@
       </ul>
     </nav>
 
-    <!-- Empty State -->
     <div *ngIf="!isLoading && products.length === 0" class="empty-state">
       <i class="fas fa-box-open"></i>
       <h3>No Products Available</h3>
