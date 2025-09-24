@@ -16,6 +16,10 @@ export class ProductComponent implements OnInit {
 
   products: Product[] = [];
   isLoading = true;
+  page: number = 0;
+  size: number = 10;
+
+  protected  environment = environment;
 
   constructor(private router: Router, private productService: ProductService) { }
 
@@ -24,7 +28,7 @@ export class ProductComponent implements OnInit {
   }
 
   private loadProducts(): void {
-    this.productService.getProducts().subscribe({
+    this.productService.getProducts(this.page,this.size).subscribe({
       next: (data: any) => {
         this.products = data.content;
         this.isLoading = false;
@@ -36,11 +40,8 @@ export class ProductComponent implements OnInit {
     });
   }
 
-
-
   navigateToProductDetailsPage(product: Product) {
     this.router.navigate(['/products', product.id]);
   }
 
-  protected  environment = environment;
 }

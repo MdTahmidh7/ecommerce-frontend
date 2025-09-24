@@ -1,8 +1,4 @@
 <div class="">
-<!--  <div class="hero-section">-->
-<!--    <h1 class="hero-title">Premium Collection</h1>-->
-<!--  </div>-->
-
   <div class="products-container">
     <!-- Loading State -->
     <div *ngIf="isLoading" class="loading-container">
@@ -16,10 +12,11 @@
         <div class="card h-100">
           <!-- Product Image -->
           <div class="image-container">
-            <img [src]="environment.imageBaseUrl + '/' + product.imageUrl"
-                 class="card-img-top"
-                 [alt]="product.name"
-                 loading="lazy"
+            <img
+              [src]="environment.imageBaseUrl + '/' + product.imageUrl"
+              class="card-img-top"
+              [alt]="product.name"
+              loading="lazy"
             >
           </div>
 
