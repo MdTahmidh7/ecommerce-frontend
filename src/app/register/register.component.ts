@@ -51,7 +51,7 @@ export class RegisterComponent implements OnInit{
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      upazilaId: ['', Validators.required],
+      upazilaId: [{value: '', disabled: true}, Validators.required],
     });
   }
 
@@ -200,6 +200,7 @@ export class RegisterComponent implements OnInit{
   }
 
   onDivisionChange(event: Event) {
+    this.contactForm.get('upazilaId')?.disable();
     const divisionId = (event.target as HTMLSelectElement).value;
     if (!divisionId) {
       this.districts = [];
@@ -230,6 +231,8 @@ export class RegisterComponent implements OnInit{
       next: (data: any) => {
         this.upazilas = data.content || [];
         this.contactForm.patchValue({ upazila: '' });
+        // Enable the upazila select field
+        this.contactForm.get('upazilaId')?.enable();
       },
       error: (error: any) => {
         console.error('Error fetching upazilas:', error);
