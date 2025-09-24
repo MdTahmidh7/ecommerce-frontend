@@ -1,3 +1,4 @@
+/* --- Base Container Styles --- */
 .product-list-container {
   padding: 2rem 0;
 }
@@ -51,12 +52,23 @@
 /* --- Product Grid Layout (The Fix) --- */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  /* Default to a single column on extra small screens */
+  grid-template-columns: 1fr;
   gap: 1.5rem;
 }
 
-.col {
-  /* No need for complex flex-basis or flex-grow here thanks to CSS Grid */
+/* For screens 576px and wider, show 2 columns */
+@media (min-width: 576px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* For screens 992px and wider, show 3 columns */
+@media (min-width: 992px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* --- Product Card Styling --- */
@@ -66,9 +78,8 @@
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  display: flex; /* Makes the card body fill the height */
+  display: flex;
   flex-direction: column;
-  background: #f3f9fd;
 }
 
 .card:hover {
@@ -154,7 +165,7 @@
 }
 
 .btn-add-cart {
-  background: linear-gradient(#7642b0, #62438f);
+  background: linear-gradient(135deg, #4a64f6 0%, #a560f5 50%, #f259fc 100%);
   color: white;
   border: none;
   padding: 0.75rem;
@@ -164,7 +175,7 @@
 }
 
 .btn-add-cart:hover {
-  background-color: #0a58ca;
+  background: linear-gradient(135deg, #223abe 0%, #7d35cb 50%, #c929d3 100%);
   transform: translateY(-2px);
 }
 
@@ -201,7 +212,7 @@
 }
 
 .pagination-rounded .page-item.active .page-link {
-  background-color: #0d6efd;
+  background: linear-gradient(135deg, #5b73ef 0%, #b889f5 50%, #f299fa 100%);
   border-color: #0d6efd;
   color: white;
   box-shadow: 0 2px 5px rgba(13, 110, 253, 0.2);

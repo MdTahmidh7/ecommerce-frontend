@@ -1,4 +1,4 @@
-import {Component, ElementRef, inject, OnInit, ViewChildren} from '@angular/core';
+import {Component, ElementRef, inject, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
@@ -185,7 +185,7 @@ export class RegisterComponent implements OnInit{
     clearInterval(this.countdownInterval);
   }
 
-  isFieldInvalid(field: string) {
+  public isFieldInvalid(field: string) {
     const control = this.contactForm.get(field);
     return control && control.invalid && (control.dirty || control.touched);
   }
