@@ -32,10 +32,10 @@ export class AdminOrderService {
     }
     /*if (categoryId) {
       params = params.append('categoryId', categoryId.toString());
-    }
+    }*/
     params = params.append('page', page.toString());
     params = params.append('size', size.toString());
-    */
+
 
     return this.http.get<any>(this.apiUrl, { params });
   }

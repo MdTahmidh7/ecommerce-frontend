@@ -1,3 +1,138 @@
 .container{
   width: 100vw;
 }
+/*General Page Styling */
+.my-orders-container {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Card and Shadow Effects */
+.card, .order-card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 1rem;
+  background: #eceae2;
+}
+
+.order-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.filter-header-bg{
+  background: linear-gradient(45deg, #c0b39b, #aba789);
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+/* Form and Filter Styling */
+.form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.form-control, .form-select {
+  border-radius: 0.5rem;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Buttons */
+.btn-primary {
+  border-radius: 0.5rem;
+  font-weight: 600;
+  background: linear-gradient(45deg, #c0b39b, #aba789);
+  border: none;
+}
+
+.btn-secondary {
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+/* Order Grid (Responsive Layout) */
+.order-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 576px) {
+  .order-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .order-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Specific Card Elements */
+.order-card .card-header {
+  background-color: #e0d7b9;
+  font-weight: bold;
+  padding: .5rem;
+}
+
+.order-card .card-body strong {
+  color: #34495e;
+}
+
+/* Badges */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.5em 0.8em;
+  border-radius: 1rem;
+  font-weight: 600;
+}
+
+/* Empty State */
+.empty-state {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.empty-state img {
+  filter: grayscale(1);
+  opacity: 0.8;
+}
+
+/* Pagination */
+.pagination {
+  --bs-pagination-border-radius: 0.5rem;
+}
+
+.page-link {
+  color: #d0c19f;
+  font-weight: 500;
+  margin: 0 0.25rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.page-item.active .page-link {
+  background: linear-gradient(45deg, #ada285, #858363);
+  border-color: #ffffff;
+  color: white;
+  z-index: 1;
+}
+
+.page-item.disabled .page-link {
+  color: #afb8c0;
+  cursor: not-allowed;
+  background-color: #d3d3d5;
+}

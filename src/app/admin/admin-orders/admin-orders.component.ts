@@ -2,26 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminOrderService } from '../admin-order.service';
-import { OrderResponseDTO, OrderStatus } from '../../model/order-response-dto.model';
-import {OrderSummary} from '../../model/OrderSummary.model';
-import {Router} from '@angular/router';
+import { OrderStatus } from '../../model/order-response-dto.model';
+import { OrderSummary } from '../../model/OrderSummary.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-orders',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-orders.component.html',
-  styleUrl: './admin-orders.component.css'
+  styleUrls: ['./admin-orders.component.css']
 })
 export class AdminOrdersComponent implements OnInit {
-  orders: OrderResponseDTO[] = [];
-  orderSummery: OrderSummary[] = [];
+
+  orderSummaries: OrderSummary[] = [];
   loading: boolean = true;
   error: string | null = null;
 
   // Filter properties
-  fromDate: string;
-  toDate: string;
+  fromDate: string | null = null;
+  toDate: string | null = null;
   selectedStatus: OrderStatus | 'ALL' = 'ALL';
   selectedCategory: number | 'ALL' = 'ALL';
 
@@ -30,18 +30,18 @@ export class AdminOrdersComponent implements OnInit {
   pageSize: number = 10;
   totalPages: number = 0;
   totalElements: number = 0;
+  pageLinksToShow: number = 5;
 
   orderStatuses = Object.values(OrderStatus);
   categories: any[] = [
     { id: 1, name: 'Electronics' },
     { id: 2, name: 'Books' },
     { id: 3, name: 'Clothing' }
-  ]; // Placeholder for categories
+  ];
 
   constructor(
     private adminOrderService: AdminOrderService,
     private router: Router
-
   ) {
     const today = new Date();
     const oneMonthAgo = new Date();
@@ -52,29 +52,29 @@ export class AdminOrdersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.applyFilters();
+    this.fetchOrders();
   }
 
-  applyFilters(): void {
+  private fetchOrders(): void {
     this.loading = true;
     this.error = null;
 
-    const status = this.selectedStatus === 'ALL' ? undefined : this.selectedStatus;
-    const categoryId = this.selectedCategory === 'ALL' ? undefined : this.selectedCategory;
+    // Convert 'ALL' to undefined for the service call
+    const statusParam = this.selectedStatus === 'ALL' ? undefined : this.selectedStatus;
+    const categoryParam = this.selectedCategory === 'ALL' ? undefined : this.selectedCategory;
 
     this.adminOrderService.getAllOrdersForAdmin(
-      status,
-      this.fromDate,
-      this.toDate,
-      categoryId,
+      statusParam,
+      this.fromDate as any,
+      this.toDate as any,
+      categoryParam,
       this.currentPage,
       this.pageSize
     ).subscribe({
-      next: (data) => {
-        // this.orders = data.content;
-        this.orderSummery = data;
-        this.totalPages = data.totalPages;
-        this.totalElements = data.totalElements;
+      next: (pageData: any) => {
+        this.orderSummaries = pageData.content;
+        this.totalPages = pageData.totalPages;
+        this.totalElements = pageData.totalElements;
         this.loading = false;
       },
       error: (err) => {
@@ -85,32 +85,36 @@ export class AdminOrdersComponent implements OnInit {
     });
   }
 
+  applyFilters(): void {
+    this.currentPage = 0; // Reset to the first page on new filter
+    this.fetchOrders();
+  }
+
   onPageChange(page: number): void {
-    this.currentPage = page;
-    this.applyFilters();
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      this.fetchOrders();
+    }
   }
 
   resetFilters(): void {
-    const today = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(today.getMonth() - 1);
-
-    this.toDate = today.toISOString().split('T')[0];
-    this.fromDate = oneMonthAgo.toISOString().split('T')[0];
     this.selectedStatus = 'ALL';
     this.selectedCategory = 'ALL';
     this.currentPage = 0;
-    this.applyFilters();
+    this.fetchOrders();
   }
 
   getPages(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i);
+    const startPage = Math.max(0, this.currentPage - Math.floor(this.pageLinksToShow / 2));
+    const endPage = Math.min(this.totalPages - 1, startPage + this.pageLinksToShow - 1);
+    const pages: number[] = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 
   viewOrderDetails(orderId: number) {
-    //redirect to order details page
-    console.log("redirecting to order details page");
-    console.log("order id", orderId);
     this.router.navigate(['/admin/orders', orderId]);
   }
 }
