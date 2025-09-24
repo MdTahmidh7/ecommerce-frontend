@@ -5,7 +5,8 @@ import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth/auth.service';
 import {AppComponent} from '../app.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {AlertService} from '../common-service/alert.service'; // For navigation
+import {AlertService} from '../common-service/alert.service';
+import {environment} from '../../environments/environment'; // For navigation
 
 
 @Component({
@@ -36,8 +37,9 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private appComponent = inject(AppComponent); // For global alerts (if needed, otherwise remove)
   otp: string = '';
-  resendDisabled: boolean = false;
-  countdown: number = 60;
+  resendDisabled: boolean = true;
+  countdown: number = environment.otpExpiryTimeInMin*60; // Countdown in seconds
+  maxCountdown: number = environment.otpExpiryTimeInMin*60;
   private countdownInterval: any;
   // Use ViewChildren to access the OTP input elements
   @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: ElementRef[];
@@ -89,6 +91,7 @@ export class LoginComponent implements OnInit {
       // Call the authentication service
       this.authService.login(name, phoneNo).subscribe({
         next: (response) => {
+          this.startCountdown();
           //open modal for otp verification
           const modalRef = this.modalService.open(modal, {
             size: 'md',

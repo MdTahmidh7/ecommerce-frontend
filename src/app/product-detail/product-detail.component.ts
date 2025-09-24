@@ -50,8 +50,9 @@ export class ProductDetailComponent implements OnInit {
   upazilas:UpazilaModel[] = [];
 
   otp: string = '';
-  resendDisabled: boolean = false;
-  countdown: number = 60;
+  resendDisabled: boolean = true;
+  countdown: number = environment.otpExpiryTimeInMin*60;
+  maxCountdown: number = environment.otpExpiryTimeInMin*60;
   private countdownInterval: any;
   // Use ViewChildren to access the OTP input elements
   @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: ElementRef[];
@@ -72,7 +73,7 @@ export class ProductDetailComponent implements OnInit {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      upazilaId: ['', Validators.required],
+      upazilaId: [{ value:'',disabled:true }, Validators.required],
     });
 
     this.deliveryAddressForm = this.fb.group({
@@ -199,7 +200,6 @@ export class ProductDetailComponent implements OnInit {
   onSubmit(modal: any, verifyOtpModal: any): void {
 
     if (this.contactForm.valid) {
-      modal.close(this.contactForm.value);
       console.log("Form values for user registration = ", this.contactForm.value)
       this.user = {
         firstName: this.contactForm.value.firstName,
@@ -220,9 +220,29 @@ export class ProductDetailComponent implements OnInit {
             centered: true,
             keyboard: false
           });
+          modal.close(this.contactForm.value);
+          this.startCountdown();
         },
         error: (error) => {
-          console.error('Error registering contact:', error);
+          let errorMessage = 'An unexpected error occurred.';
+          if (error && error.error) {
+            // If the error body is already a JSON object
+            if (typeof error.error === 'object' && error.error.message) {
+              errorMessage = error.error.message;
+            }
+            // If the error body is a JSON string, attempt to parse it
+            else if (typeof error.error === 'string') {
+              try {
+                const parsedError = JSON.parse(error.error);
+                if (parsedError.message) {
+                  errorMessage = parsedError.message;
+                }
+              } catch (e) {
+                console.error('Failed to parse error response:', e);
+              }
+              this.alertService.error('Login Failed', errorMessage);
+            }
+          }
         }
       });
     } else {
@@ -261,6 +281,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   onDivisionChange(event: Event) {
+    this.contactForm.get('upazilaId')?.disable();
     const divisionId = (event.target as HTMLSelectElement).value;
     if (!divisionId) {
       this.districts = [];
@@ -283,6 +304,7 @@ export class ProductDetailComponent implements OnInit {
   onDistrictChange(event: Event) {
     const districtId = (event.target as HTMLSelectElement).value;
     console.log('Selected District ID:', districtId);
+    this.contactForm.get('upazilaId')?.enable();
     if (!districtId) {
       this.upazilas = [];
       this.contactForm.patchValue({ upazila: '' });
@@ -379,12 +401,29 @@ export class ProductDetailComponent implements OnInit {
     //handle resend otp
   }
 
-  onOtpChange(currentInput: HTMLInputElement, nextInput: HTMLInputElement | null) {
-    this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
+  onOtpChange(event: KeyboardEvent, nextInput: HTMLInputElement | null, prevInput: HTMLInputElement | null) {
+    const input = event.target as HTMLInputElement;
 
-    if (currentInput.value && nextInput) {
-      nextInput.focus();
+    // Move backward on backspace
+    if (event.key === 'Backspace' && input.value === '') {
+      if (prevInput) {
+        prevInput.focus();
+      }
     }
+    // Move forward on digit entry
+    else if (event.key >= '0' && event.key <= '9') {
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+    // Update the final OTP string after the input changes
+    this.updateOtpString();
+  }
+
+  // A helper method to combine all input values into a single string
+  updateOtpString() {
+    this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');
+    // You can now check this.otp.length here to disable/enable the button
   }
 
   startCountdown() {

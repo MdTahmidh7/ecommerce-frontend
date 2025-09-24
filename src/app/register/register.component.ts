@@ -9,7 +9,8 @@ import {DistrictsModel} from '../model/districts.model';
 import {UpazilaModel} from '../model/upazila.model';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AlertService} from '../common-service/alert.service';
-import {RegisterService} from './register.service'; // Import AppComponent to access setMessage
+import {RegisterService} from './register.service';
+import {environment} from '../../environments/environment'; // Import AppComponent to access setMessage
 
 @Component({
   selector: 'app-register',
@@ -30,8 +31,9 @@ export class RegisterComponent implements OnInit{
   upazilas:UpazilaModel[] = [];
 
   otp: string = '';
-  resendDisabled: boolean = false;
-  countdown: number = 60;
+  resendDisabled: boolean = true;
+  countdown: number = environment.otpExpiryTimeInMin*60;
+  maxCountdown: number = environment.otpExpiryTimeInMin*60;
   private countdownInterval: any;
   // Use ViewChildren to access the OTP input elements
   @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: ElementRef[];
@@ -76,6 +78,7 @@ export class RegisterComponent implements OnInit{
       //call register API
       this.authService.register(this.user).subscribe({
         next: (response) => {
+          this.startCountdown();
           console.log('Contact registered successfully:', response);
           this.errorMessage = null;
           const modalRef = this.modalService.open(verifyOtpModal, {
