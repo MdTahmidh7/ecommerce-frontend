@@ -7,8 +7,8 @@
     </div>
 
     <!-- Products Grid -->
-    <div *ngIf="!isLoading" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      <div class="col" *ngFor="let product of products; let i = index">
+    <div *ngIf="!isLoading && products.length > 0" class="row flex-wrap m-0 p-0" style="width: 100%; min-width: 90vw;">
+      <div class="col-4 mt-3" *ngFor="let product of products; let i = index">
         <div class="card h-100">
           <!-- Product Image -->
           <div class="image-container">
@@ -50,6 +50,21 @@
         </div>
       </div>
     </div>
+
+    <!-- Pagination Controls -->
+    <nav *ngIf="!isLoading && totalPages > 1" aria-label="Product list pagination" class="d-flex justify-content-center mt-4">
+      <ul class="pagination pagination-rounded">
+        <li class="page-item" [class.disabled]="currentPage === 0">
+          <a class="page-link" (click)="goToPage(currentPage - 1)">Previous</a>
+        </li>
+        <li class="page-item" *ngFor="let page of pageNumbers" [class.active]="page === currentPage">
+          <a class="page-link" (click)="goToPage(page)">{{ page + 1 }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+          <a class="page-link" (click)="goToPage(currentPage + 1)">Next</a>
+        </li>
+      </ul>
+    </nav>
 
     <!-- Empty State -->
     <div *ngIf="!isLoading && products.length === 0" class="empty-state">

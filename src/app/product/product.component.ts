@@ -16,32 +16,43 @@ export class ProductComponent implements OnInit {
 
   products: Product[] = [];
   isLoading = true;
-  page: number = 0;
-  size: number = 10;
+  currentPage = 0;
+  itemsPerPage = 10;
+  totalPages = 0;
+  pageNumbers: number[] = [];
 
-  protected  environment = environment;
+  environment = environment;
 
-  constructor(private router: Router, private productService: ProductService) { }
+  constructor(private productService: ProductService, private router: Router) { }
 
   ngOnInit(): void {
-    this.loadProducts();
+    this.fetchProducts();
   }
 
-  private loadProducts(): void {
-    this.productService.getProducts(this.page,this.size).subscribe({
-      next: (data: any) => {
-        this.products = data.content;
+  fetchProducts(): void {
+    this.isLoading = true;
+    this.productService.getProducts(this.currentPage, this.itemsPerPage).subscribe({
+      next: (response: any) => {
+        this.products = response.content;
+        this.totalPages = response.totalPages;
+        this.pageNumbers = Array.from({ length: this.totalPages }, (_, i) => i);
         this.isLoading = false;
       },
-      error: (error) => {
-        console.error('Error fetching products:', error);
+      error: (err) => {
+        console.error('Error fetching products:', err);
         this.isLoading = false;
       }
     });
   }
 
-  navigateToProductDetailsPage(product: Product) {
-    this.router.navigate(['/products', product.id]);
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      this.fetchProducts();
+    }
   }
 
+  navigateToProductDetailsPage(product: Product): void {
+    this.router.navigate(['/products', product.id]);
+  }
 }
