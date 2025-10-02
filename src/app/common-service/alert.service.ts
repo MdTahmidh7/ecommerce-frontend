@@ -18,14 +18,25 @@ export class AlertService {
     });
   }
 
-  public confirm(title: string, text: string): Promise<SweetAlertResult> {
+  public confirm(
+    title: string,
+    text: string,
+    confirmButtonText?: string,
+    cancelButtonText?: string ,
+    icon?: SweetAlertIcon
+  ): Promise<SweetAlertResult> {
+
+    const finalConfirmButtonText = confirmButtonText ?? 'Yes, proceed!';
+    const finalCancelButtonText = cancelButtonText ?? 'Cancel';
+    const finalIcon = icon ?? 'question';
+
     return Swal.fire({
-      icon: 'warning',
+      icon: finalIcon,
       title: title,
       text: text,
       showCancelButton: true,
-      confirmButtonText: 'Yes, proceed!',
-      cancelButtonText: 'Cancel'
+      confirmButtonText: finalConfirmButtonText,
+      cancelButtonText: finalCancelButtonText
     });
   }
 

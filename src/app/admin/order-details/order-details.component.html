@@ -36,10 +36,15 @@
           <span class="info-value">{{ orderDetails.customerPhone }}</span>
         </div>
         <div class="info-row">
-          <span class="info-label">Address:</span>
+          <span class="info-label">District:</span>
           <span class="info-value">
-            {{ orderDetails.address }}, {{ orderDetails.upazilaName }},
-            {{ orderDetails.districtName }}, {{ orderDetails.divisionName }}
+            {{ orderDetails.districtName }}
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Upazila:</span>
+          <span class="info-value">
+            {{ orderDetails.upazilaName }}
           </span>
         </div>
       </div>
@@ -88,7 +93,7 @@
         <div class="product-specs">
           <div class="spec-item">
             <span class="spec-label">Unit Price:</span>
-            <span class="spec-value price">{{ orderDetails.productPrice | currency }}</span>
+            <span class="spec-value price">TK {{ orderDetails.productPrice}}</span>
           </div>
           <div class="spec-item">
             <span class="spec-label">Quantity:</span>
@@ -104,15 +109,15 @@
     <div class="total-card">
       <div class="total-row subtotal">
         <span class="total-label">Subtotal:</span>
-        <span class="total-value">{{ getTotalPrice() | currency }}</span>
+        <span class="total-value">TK {{ getProductPrice()}}</span>
       </div>
       <div class="total-row shipping">
         <span class="total-label">Shipping:</span>
-        <span class="total-value">Free</span>
+        <span class="total-value">{{shippingCost}}</span>
       </div>
       <div class="total-row grand-total">
         <span class="total-label">Total Amount:</span>
-        <span class="total-value">{{ orderDetails.totalPrice | currency }}</span>
+        <span class="total-value">TK {{ getTotalPrice() }}</span>
       </div>
     </div>
   </div>
