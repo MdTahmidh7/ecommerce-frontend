@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {OrderDetailsDTO} from '../../model/OrderDetails.model';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {OrderService} from '../../order.service';
 import {CurrencyPipe, DatePipe, JsonPipe, NgClass, NgIf} from '@angular/common';
 import {environment} from '../../../environments/environment';
@@ -22,8 +22,11 @@ export class OrderDetailsComponent implements OnInit{
   public orderDetails: OrderDetailsDTO | null = null;
   private orderId: number | null = null;
 
-  constructor(private route: ActivatedRoute,
-              private orderService: OrderService) {
+  constructor(
+    private route: ActivatedRoute,
+    private orderService: OrderService,
+    private router: Router
+  ) {
 
   }
 
@@ -80,5 +83,9 @@ export class OrderDetailsComponent implements OnInit{
         }
       });
     }
+  }
+
+  redirectToAdminOrderListPage() {
+    this.router.navigate(['/admin/orders']);
   }
 }
