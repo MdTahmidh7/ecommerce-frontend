@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-// Make sure these models and services exist in your project
 import { OrderService } from '../order.service';
 import { OrderSummary } from '../model/OrderSummary.model';
 import { OrderStatus } from '../model/order-response-dto.model';
+import {AlertService} from '../common-service/alert.service';
 
 @Component({
   selector: 'app-my-orders',
@@ -43,7 +43,8 @@ export class MyOrdersComponent implements OnInit {
 
   constructor(
     private orderService: OrderService,
-    private router: Router
+    private router: Router,
+    private alertService: AlertService
   ) { }
 
   ngOnInit(): void {
@@ -72,10 +73,28 @@ export class MyOrdersComponent implements OnInit {
         this.totalElements = pageData.totalElements;
         this.loading = false;
       },
-      error: (err) => {
-        this.error = 'Failed to load orders. Please try again later.';
+      error: (error) => {
+        // Handle error appropriately
+        let errorMessage = 'An unexpected error occurred.';
+        if (error && error.error) {
+          // If the error body is already a JSON object
+          if (typeof error.error === 'object' && error.error.message) {
+            errorMessage = error.error.message;
+          }
+          // If the error body is a JSON string, attempt to parse it
+          else if (typeof error.error === 'string') {
+            try {
+              const parsedError = JSON.parse(error.error);
+              if (parsedError.message) {
+                errorMessage = parsedError.message;
+              }
+            } catch (e) {
+              console.error('Failed to parse error response:', e);
+            }
+          }
+        }
+        this.alertService.error('Error', errorMessage);
         this.loading = false;
-        console.error('Error fetching orders:', err);
       }
     });
   }
