@@ -155,4 +155,11 @@ export class AuthService {
     }
     return null;
   }
+
+  clearToken() {
+    //clear token from local storage
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('authToken');
+    }
+  }
 }

@@ -365,7 +365,32 @@ export class ProductDetailComponent implements OnInit {
         this.deliveryAddressForm.reset();
       },
       error: (error) => {
-        console.error('Error while creating order:', error);
+        console.error('Error creating order:', error);
+        // is staus is 401 or 403 then logout the user and redirect to login page
+        if (error.status === 401 || error.status === 403) {
+          this.authService.logout();
+          this.router.navigate(['/products']);
+        } else {
+          let errorMessage = 'An unexpected error occurred while placing the order.';
+          if (error && error.error) {
+            // If the error body is already a JSON object
+            if (typeof error.error === 'object' && error.error.message) {
+              errorMessage = error.error.message;
+            }
+            // If the error body is a JSON string, attempt to parse it
+            else if (typeof error.error === 'string') {
+              try {
+                const parsedError = JSON.parse(error.error);
+                if (parsedError.message) {
+                  errorMessage = parsedError.message;
+                }
+              } catch (e) {
+                console.error('Failed to parse error response:', e);
+              }
+            }
+          }
+          this.alertService.error('Order Failed', errorMessage);
+        }
       }
     });
   }
