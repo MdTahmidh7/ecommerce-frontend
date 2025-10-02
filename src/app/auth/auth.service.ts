@@ -130,7 +130,7 @@ export class AuthService {
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
-          return payload.lastName || 'Guest'; // Return userName or 'Guest' if not available
+          return payload.name || 'Guest'; // Return userName or 'Guest' if not available
         } catch (e) {
           console.error('Error parsing token:', e);
           return 'Guest';

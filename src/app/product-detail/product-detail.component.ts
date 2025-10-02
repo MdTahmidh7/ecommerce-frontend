@@ -202,9 +202,7 @@ export class ProductDetailComponent implements OnInit {
     if (this.contactForm.valid) {
       console.log("Form values for user registration = ", this.contactForm.value)
       this.user = {
-        firstName: this.contactForm.value.firstName,
-        lastName: this.contactForm.value.lastName,
-        password: this.contactForm.value.password,
+        name: this.contactForm.value.firstName,
         phoneNumber: this.contactForm.value.phoneNumber,
         address: this.contactForm.value.address,
         upazilaId: this.contactForm.value.upazilaId

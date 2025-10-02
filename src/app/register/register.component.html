@@ -17,42 +17,20 @@
 
     <!-- Form Body -->
     <div class="card-body">
-      <form [formGroup]="contactForm" class="contact-form">
-        <!-- First Name -->
+      <form [formGroup]="registrationForm" class="contact-form">
+
         <div class="row">
+          <!-- Name -->
           <div class="form-group col-md-6">
-            <label for="firstName">First Name</label>
+            <label for="firstName">Name</label>
             <input
               type="text"
-              id="firstName" class="form-control"
-              formControlName="firstName"
-              placeholder="Enter your first name"
-            >
-            <div class="error-message" *ngIf="isFieldInvalid('firstName')">
-              <svg
-                class="error-icon"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-              </svg>
-              <span *ngIf="contactForm.get('firstName')?.errors?.['required']">First Name is required.</span>
-              <span *ngIf="contactForm.get('firstName')?.errors?.['minlength']">Must be at least 2 characters.</span>
-            </div>
-          </div>
-
-          <!-- Last Name -->
-          <div class="form-group col-md-6">
-            <label for="lastName">Last Name</label>
-            <input
-              type="text"
-              id="lastName"
+              id="name"
               class="form-control"
-              formControlName="lastName"
-              placeholder="Enter your last name"
+              formControlName="name"
+              placeholder="Enter your name"
             >
-            <div class="error-message" *ngIf="isFieldInvalid('lastName')">
+            <div class="error-message" *ngIf="isFieldInvalid('name')">
               <svg
                 class="error-icon"
                 fill="currentColor"
@@ -61,28 +39,33 @@
               >
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
               </svg>
-              <span *ngIf="contactForm.get('lastName')?.errors?.['required']">Last Name is required.</span>
-              <span *ngIf="contactForm.get('lastName')?.errors?.['minlength']">Must be at least 2 characters.</span>
+              <span *ngIf="registrationForm.get('name')?.errors?.['required']">Name is required.</span>
+              <span *ngIf="registrationForm.get('name')?.errors?.['minlength']">Must be at least 2 characters.</span>
+            </div>
+          </div>
+          <!-- Phone Number -->
+          <div class="form-group col-md-6">
+            <label for="phoneNumber">Phone Number</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              class="form-control"
+              formControlName="phoneNumber"
+              placeholder="01xxxxxxxxx">
+            <div class="error-message" *ngIf="isFieldInvalid('phoneNumber')">
+              <svg class="error-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</span>
+              <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid phone number.</span>
             </div>
           </div>
         </div>
 
-        <!-- Phone Number -->
-        <div class="form-group">
-          <label for="phoneNumber">Phone Number</label>
-          <input type="tel" id="phoneNumber" class="form-control" formControlName="phoneNumber"
-                 placeholder="01xxxxxxxxx">
-          <div class="error-message" *ngIf="isFieldInvalid('phoneNumber')">
-            <svg class="error-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-            </svg>
-            <span *ngIf="contactForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</span>
-            <span *ngIf="contactForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid phone number.</span>
-          </div>
-        </div>
 
         <!-- Location Dropdowns -->
-        <div class="location-group">
+        <!--For new register approach user must type DistrictName and UpazilaName-->
+        <!--<div class="location-group">
           <div class="form-group">
             <label for="division">Select Division</label>
             <select
@@ -96,7 +79,6 @@
               </option>
             </select>
           </div>
-
           <div class="form-group">
             <label for="district">Select District</label>
             <select
@@ -110,7 +92,6 @@
               </option>
             </select>
           </div>
-
           <div class="form-group">
             <label for="upazila">Select Upazila</label>
             <select
@@ -125,7 +106,47 @@
               </option>
             </select>
           </div>
+        </div>-->
+
+        <div class="row">
+          <!--districtName Input-->
+          <div class="form-group col-md-6">
+            <label for="phoneNumber">District Name</label>
+            <input
+              type="text"
+              id="districtName"
+              class="form-control"
+              formControlName="districtName"
+              placeholder="Type district name here"
+            >
+            <div class="error-message" *ngIf="isFieldInvalid('districtName')">
+              <svg class="error-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span *ngIf="registrationForm.get('districtName')?.errors?.['required']">District Name number is required.</span>
+              <span *ngIf="registrationForm.get('districtName')?.errors?.['pattern']">Please enter a valid District Name</span>
+            </div>
+          </div>
+          <!--upazilaName Input-->
+          <div class="form-group col-md-6">
+            <label for="phoneNumber">Upazila Name</label>
+            <input
+              type="text"
+              id="upazilaName"
+              class="form-control"
+              formControlName="upazilaName"
+              placeholder="Type upazila name here"
+            >
+            <div class="error-message" *ngIf="isFieldInvalid('upazilaName')">
+              <svg class="error-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span *ngIf="registrationForm.get('upazilaName')?.errors?.['required']">Upazila Name number is required.</span>
+              <span *ngIf="registrationForm.get('upazilaName')?.errors?.['pattern']">Please enter a valid Upazila Name</span>
+            </div>
+          </div>
         </div>
+
       </form>
     </div>
 
@@ -142,7 +163,7 @@
       <button
         type="button"
         class="btn btn-sm btn-primary"
-        [disabled]="contactForm.invalid"
+        [disabled]="registrationForm.invalid"
         (click)="onSubmit(verifyOtpModal)"
       >
         <span>Register</span>
