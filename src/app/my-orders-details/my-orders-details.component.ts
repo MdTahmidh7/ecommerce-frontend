@@ -4,6 +4,7 @@ import {OrderDetailsDTO} from '../model/OrderDetails.model';
 import {ActivatedRoute} from '@angular/router';
 import {OrderService} from '../order.service';
 import {environment} from '../../environments/environment';
+import {AlertService} from '../common-service/alert.service';
 
 @Component({
   selector: 'app-my-orders-details',
@@ -22,10 +23,12 @@ export class MyOrdersDetailsComponent implements OnInit{
   environment = environment;
   public orderDetails: OrderDetailsDTO | null = null;
   private orderId: number | null = null;
+  shippingCost: number = environment.shippingCost;
 
   constructor(
     private route: ActivatedRoute,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -42,8 +45,27 @@ export class MyOrdersDetailsComponent implements OnInit{
           this.orderDetails = value;
           console.log("Order Details = ", this.orderDetails);
         },
-        error: err => {
-          console.error("Failed to load order details", err);
+        error: error => {
+          // Handle error appropriately
+          let errorMessage = 'An unexpected error occurred.';
+          if (error && error.error) {
+            // If the error body is already a JSON object
+            if (typeof error.error === 'object' && error.error.message) {
+              errorMessage = error.error.message;
+            }
+            // If the error body is a JSON string, attempt to parse it
+            else if (typeof error.error === 'string') {
+              try {
+                const parsedError = JSON.parse(error.error);
+                if (parsedError.message) {
+                  errorMessage = parsedError.message;
+                }
+              } catch (e) {
+                console.error('Failed to parse error response:', e);
+              }
+            }
+          }
+          this.alertService.error('Error', errorMessage);
         }
       });
     }
@@ -53,11 +75,15 @@ export class MyOrdersDetailsComponent implements OnInit{
   onImageError($event: ErrorEvent) {
   }
 
-  getTotalPrice() {
+  getProductPrice() {
     if (this.orderDetails && this.orderDetails.productCount > 0) {
       return this.orderDetails.productCount * this.orderDetails.productPrice
     }
     return 0;
+  }
+
+  getTotalPrice() {
+    return this.getProductPrice() + this.shippingCost;
   }
 
 }
