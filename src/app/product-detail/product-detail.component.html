@@ -458,7 +458,7 @@
 
   <div class="modern-modal-body">
     <form [formGroup]="deliveryAddressForm" class="delivery-address-form">
-      <!-- Add Division select -->
+      <!-- Add Division select
       <div class="form-group">
         <div class="input-wrapper">
           <label for="division" class="col-lg-4">Select Division</label>
@@ -478,8 +478,7 @@
           <span>Division is required</span>
         </div>
       </div>
-
-      <!-- Add District select -->
+      &lt;!&ndash; Add District select &ndash;&gt;
       <div class="form-group">
         <div class="input-wrapper">
           <label for="district" class="col-lg-4">Select District</label>
@@ -500,8 +499,7 @@
           <span>District is required</span>
         </div>
       </div>
-
-      <!-- Add Upazila select -->
+      &lt;!&ndash; Add Upazila select &ndash;&gt;
       <div class="form-group">
         <div class="input-wrapper">
           <label for="upazila" class="col-lg-4">Select Upazila</label>
@@ -520,7 +518,44 @@
         <div class="error-message" *ngIf="isFieldInvalid('upazila')">
           <span>Upazila is required</span>
         </div>
+      </div>-->
+
+      <!--District Name Input-->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label class="col-lg-4">District Name</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="districtName"
+            [class.error]="isFieldInvalid('districtName')"
+            [class.filled]="deliveryAddressForm.get('districtName')?.value"
+            placeholder="Enter District Name"
+          />
+          <div class="error-message" *ngIf="isFieldInvalid('districtName')">
+            <span>District Name is required</span>
+          </div>
+        </div>
       </div>
+
+      <!--Upazila Name Input-->
+      <div class="form-group">
+        <div class="input-wrapper">
+          <label class="col-lg-4">Upazila Name</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="upazilaName"
+            [class.error]="isFieldInvalid('upazilaName')"
+            [class.filled]="deliveryAddressForm.get('upazilaName')?.value"
+            placeholder="Enter Upazila Name"
+          />
+          <div class="error-message" *ngIf="isFieldInvalid('upazilaName')">
+            <span>Upazila Name is required</span>
+          </div>
+        </div>
+      </div>
+
 
       <div class="form-group">
         <div class="input-wrapper textarea-wrapper">

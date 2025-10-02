@@ -77,10 +77,9 @@ export class ProductDetailComponent implements OnInit {
     });
 
     this.deliveryAddressForm = this.fb.group({
-      address: ['',],
-      divisionId: ['', Validators.required],
-      districtId: ['', Validators.required],
-      upazilaId: ['', Validators.required],
+      districtName: ['',Validators.required],
+      upazilaName: ['',Validators.required],
+      address: ['',]
     });
 
   }
@@ -334,6 +333,9 @@ export class ProductDetailComponent implements OnInit {
   }
 
   private placeOrder() {
+
+    const districtName = this.deliveryAddressForm.get('districtName')?.value;
+    const upazilaName = this.deliveryAddressForm.get('upazilaName')?.value;
     const userId = this.authService.getUserId();
     const upazilaId = this.deliveryAddressForm.get('upazilaId')?.value;
     const productId = this.product?.id;
@@ -343,6 +345,8 @@ export class ProductDetailComponent implements OnInit {
 
     //prepare order request
     this.orderRequest = {
+      districtName: districtName,
+      upazilaName: upazilaName,
       upazilaId: upazilaId,
       userId: userId,
       orderItems: [{
