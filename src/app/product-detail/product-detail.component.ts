@@ -38,7 +38,7 @@ export class ProductDetailComponent implements OnInit {
   activeTab: string = 'description';
   user: UserRegistrationRequest = null as any;
 
-  contactForm: FormGroup;
+  registrationForm: FormGroup;
   deliveryAddressForm: FormGroup;
 
   protected readonly Math = Math;
@@ -69,11 +69,11 @@ export class ProductDetailComponent implements OnInit {
               private alertService : AlertService
   ) {
 
-    this.contactForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
+    this.registrationForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      upazilaId: [{ value:'',disabled:true }, Validators.required],
+      districtName: ['',Validators.required],
+      upazilaName: ['',Validators.required]
     });
 
     this.deliveryAddressForm = this.fb.group({
@@ -198,13 +198,15 @@ export class ProductDetailComponent implements OnInit {
 
   onSubmit(modal: any, verifyOtpModal: any): void {
 
-    if (this.contactForm.valid) {
-      console.log("Form values for user registration = ", this.contactForm.value)
+    if (this.registrationForm.valid) {
+      console.log("Form values for user registration = ", this.registrationForm.value)
       this.user = {
-        name: this.contactForm.value.firstName,
-        phoneNumber: this.contactForm.value.phoneNumber,
-        address: this.contactForm.value.address,
-        upazilaId: this.contactForm.value.upazilaId
+        name: this.registrationForm.value.name,
+        phoneNumber: this.registrationForm.value.phoneNumber,
+        address: this.registrationForm.value.address,
+        upazilaId: this.registrationForm.value.upazilaId,
+        districtName: this.registrationForm.value.districtName,
+        upazilaName: this.registrationForm.value.upazilaName
       };
 
       //call register API
@@ -217,7 +219,7 @@ export class ProductDetailComponent implements OnInit {
             centered: true,
             keyboard: false
           });
-          modal.close(this.contactForm.value);
+          modal.close(this.registrationForm.value);
           this.startCountdown();
         },
         error: (error) => {
@@ -244,8 +246,8 @@ export class ProductDetailComponent implements OnInit {
       });
     } else {
       // Mark all fields as touched to show validation errors
-      Object.keys(this.contactForm.controls).forEach(key => {
-        this.contactForm.get(key)?.markAsTouched();
+      Object.keys(this.registrationForm.controls).forEach(key => {
+        this.registrationForm.get(key)?.markAsTouched();
       });
     }
   }
@@ -278,19 +280,19 @@ export class ProductDetailComponent implements OnInit {
   }
 
   onDivisionChange(event: Event) {
-    this.contactForm.get('upazilaId')?.disable();
+    this.registrationForm.get('upazilaId')?.disable();
     const divisionId = (event.target as HTMLSelectElement).value;
     if (!divisionId) {
       this.districts = [];
       this.upazilas = [];
-      this.contactForm.patchValue({ district: '', upazila: '' });
+      this.registrationForm.patchValue({ district: '', upazila: '' });
       return;
     }
     this.productDetailsService.getAllDistrictByDivisionId(divisionId).subscribe({
       next: (data: any) => {
         this.districts = data.content || [];
         this.upazilas = [];
-        this.contactForm.patchValue({ district: '', upazila: '' });
+        this.registrationForm.patchValue({ district: '', upazila: '' });
       },
       error: (error: any) => {
         console.error('Error fetching districts:', error);
@@ -301,16 +303,16 @@ export class ProductDetailComponent implements OnInit {
   onDistrictChange(event: Event) {
     const districtId = (event.target as HTMLSelectElement).value;
     console.log('Selected District ID:', districtId);
-    this.contactForm.get('upazilaId')?.enable();
+    this.registrationForm.get('upazilaId')?.enable();
     if (!districtId) {
       this.upazilas = [];
-      this.contactForm.patchValue({ upazila: '' });
+      this.registrationForm.patchValue({ upazila: '' });
       return;
     }
     this.productDetailsService.getAllUpazilaByDistrictId(districtId).subscribe({
       next: (data: any) => {
         this.upazilas = data.content || [];
-        this.contactForm.patchValue({ upazila: '' });
+        this.registrationForm.patchValue({ upazila: '' });
       },
       error: (error: any) => {
         console.error('Error fetching upazilas:', error);
@@ -320,7 +322,7 @@ export class ProductDetailComponent implements OnInit {
 
 // Update your form validity checks as needed:
   isFieldInvalid(field: string) {
-    const control = this.contactForm.get(field);
+    const control = this.registrationForm.get(field);
     return control && control.invalid && (control.dirty || control.touched);
   }
 
@@ -399,12 +401,12 @@ export class ProductDetailComponent implements OnInit {
 
   verifyOTP(modal: any) {
     if (this.otp != null) {
-      console.log("Form values for user registration = ", this.contactForm.value)
-      console.log("Phone Number: ", this.contactForm.value.phoneNumber);
+      console.log("Form values for user registration = ", this.registrationForm.value)
+      console.log("Phone Number: ", this.registrationForm.value.phoneNumber);
       console.log("OTP: ", this.otp);
 
       this.authService.verifyOtp(
-        this.contactForm.value.phoneNumber,
+        this.registrationForm.value.phoneNumber,
         this.otp.toString()
       ).subscribe({
         next: (response) => {
