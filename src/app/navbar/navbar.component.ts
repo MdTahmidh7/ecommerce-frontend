@@ -54,4 +54,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
     }
   }
+
+  closeNavbar() {
+    //close navbar on click
+    const navbarToggler = document.querySelector('.navbar-toggler') as HTMLElement;
+    if (navbarToggler && getComputedStyle(navbarToggler).display !== 'none') {
+      navbarToggler.click();
+    }
+  }
 }
