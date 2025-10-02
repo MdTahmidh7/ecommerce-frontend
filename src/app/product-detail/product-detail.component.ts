@@ -15,6 +15,7 @@ import {CreateOrderRequest} from '../model/CreateOrderRequest.moel';
 import {OrderService} from '../order.service';
 import {AlertService} from '../common-service/alert.service';
 import {AppComponent} from '../app.component';
+import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
 
 @Component({
@@ -58,15 +59,18 @@ export class ProductDetailComponent implements OnInit {
   @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: ElementRef[];
   protected  environment = environment;
   errorMessage: string | null = null;
+  safeDescription!: SafeHtml;
 
-  constructor(private route: ActivatedRoute,
-              private authService : AuthService,
-              private router: Router,
-              private fb: FormBuilder,
-              private modalService: NgbModal,
-              private productDetailsService: ProductDetailsService,
-              private orderService: OrderService,
-              private alertService : AlertService
+  constructor(
+    private route: ActivatedRoute,
+    private authService : AuthService,
+    private router: Router,
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    private productDetailsService: ProductDetailsService,
+    private orderService: OrderService,
+    private alertService : AlertService,
+    private sanitizer: DomSanitizer
   ) {
 
     this.registrationForm = this.fb.group({
@@ -91,6 +95,9 @@ export class ProductDetailComponent implements OnInit {
       this.productDetailsService.getProductById(this.productId).subscribe({
         next: (data: Product) => {
           this.product = data;
+
+          this.safeDescription = this.sanitizer.bypassSecurityTrustHtml(this.product.description || '');
+
           // Initialize selected color/size if variants exist
           if (this.product.imageUrls && this.product.imageUrls.length > 0) {
             this.selectedColor = this.product.imageUrls[0]; // Assuming first image URL implies a color

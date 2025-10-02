@@ -117,7 +117,7 @@
       <div class="tab-content p-4 border border-top-0 rounded-bottom">
         <!-- Description Tab -->
         <div class="tab-pane fade" [class.show]="activeTab === 'description'" [class.active]="activeTab === 'description'">
-          <p class="product-description">{{ product.description }}</p>
+          <div [innerHTML]="safeDescription" style="width: 70vw"></div>
         </div>
       </div>
     </div>

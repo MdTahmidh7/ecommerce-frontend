@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ProductAdminService } from '../product.service';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import {AlertService} from '../../common-service/alert.service';
 import {CategoryResponse} from '../../model/categoryResponse.model';
+
+import { NgxEditorModule, Editor, Toolbar, toHTML } from 'ngx-editor';
 
 interface ImageFile {
   file: File;
@@ -15,14 +17,29 @@ interface ImageFile {
 @Component({
   selector: 'app-create-product',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  // ADD NgxEditorModule to imports
+  imports: [ReactiveFormsModule, CommonModule, NgxEditorModule],
   templateUrl: './create-product.component.html',
   styleUrls: ['./create-product.component.css']
 })
-export class CreateProductComponent implements OnInit {
+export class CreateProductComponent implements OnInit, OnDestroy {
   productForm: FormGroup;
   selectedFiles: ImageFile[] = [];
   categories: CategoryResponse[] = [];
+
+  // NGX-EDITOR PROPERTIES
+  editor!: Editor;
+  toolbar: Toolbar = [
+    ['bold', 'italic'],
+    ['underline', 'strike'],
+    ['code', 'blockquote'],
+    ['ordered_list', 'bullet_list'],
+    [{ heading: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
+    ['link', 'image'],
+    ['text_color', 'background_color'],
+    ['align_left', 'align_center', 'align_right', 'align_justify'],
+    ['horizontal_rule', 'history'],
+  ] as any;
 
   constructor(
     private fb: FormBuilder,
@@ -32,17 +49,25 @@ export class CreateProductComponent implements OnInit {
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
-      description: ['', Validators.required],
+      // Description is now set to an empty HTML string
+      description: ['<p>Add rich description here...</p>', Validators.required],
       price: ['', Validators.required],
       stockQuantity: ['', Validators.required],
       categoryId: [null, Validators.required]
     });
+    // Initialize the editor
+    this.editor = new Editor();
   }
 
   ngOnInit(): void {
     this.selectedFiles = [];
     this.productForm.reset();
     this.getAllCategories();
+  }
+
+  // IMPORTANT: Clean up the editor on component destruction
+  ngOnDestroy(): void {
+    this.editor.destroy();
   }
 
   onFileSelect(event: any): void {
@@ -81,8 +106,22 @@ export class CreateProductComponent implements OnInit {
 
   onSubmit(): void {
     if (this.productForm.valid && this.selectedFiles.length > 0 && this.selectedFiles.length <= 5) {
+
+      // 1. Get the current product form value
+      const productData = this.productForm.value;
+
+      // 2. CONVERT Ngx-Editor JSON content to a raw HTML string
+      // This is the CRITICAL fix for the backend error.
+      productData.description = toHTML(productData.description);
+
+      // 3. Create FormData object
       const formData = new FormData();
-      formData.append('product', new Blob([JSON.stringify(this.productForm.value)], { type: 'application/json' }));
+
+
+      // Append the product data (now with HTML description string)
+      formData.append('product', new Blob([JSON.stringify(productData)], { type: 'application/json' }));
+
+      // Append images
       this.selectedFiles.forEach(item => {
         formData.append('images', item.file, item.name);
       });
@@ -112,3 +151,4 @@ export class CreateProductComponent implements OnInit {
     });
   }
 }
+
