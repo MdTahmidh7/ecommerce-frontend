@@ -74,12 +74,12 @@
 /* Navigation Links */
 .nav-link-custom {
   color: rgba(255, 255, 255, 0.9) !important;
-  font-weight: 500;
-  padding: 0.75rem 1.25rem !important;
+  font-weight: 300;
+  padding: 0.45rem .75rem !important;
   border-radius: 25px;
   transition: all 0.3s ease;
   position: relative;
-  margin: 0 0.25rem;
+  margin: 0 0.15rem;
 }
 
 .nav-link-custom:hover {
@@ -243,7 +243,7 @@
   }
 
   .navbar-collapse {
-    background: rgba(255, 255, 255, 0.95);
+    background: #e5e3ee;
     margin-top: 1rem;
     border-radius: 15px;
     padding: 1rem;
@@ -252,7 +252,7 @@
 
   .nav-link-custom {
     color: #333 !important;
-    margin: 0.25rem 0;
+    /*margin: 0.25rem 0;*/
   }
 
   .nav-link-custom:hover,
@@ -287,10 +287,10 @@
   transform: translateY(20px);
 }
 
-.navbar-nav .nav-item:nth-child(1) { animation-delay: 0.1s; }
-.navbar-nav .nav-item:nth-child(2) { animation-delay: 0.2s; }
-.navbar-nav .nav-item:nth-child(3) { animation-delay: 0.3s; }
-.navbar-nav .nav-item:nth-child(4) { animation-delay: 0.4s; }
+/*.navbar-nav .nav-item:nth-child(1) { animation-delay: 0.1s; }*/
+/*.navbar-nav .nav-item:nth-child(2) { animation-delay: 0.2s; }*/
+/*.navbar-nav .nav-item:nth-child(3) { animation-delay: 0.3s; }*/
+/*.navbar-nav .nav-item:nth-child(4) { animation-delay: 0.4s; }*/
 
 @keyframes fadeInUp {
   to {
