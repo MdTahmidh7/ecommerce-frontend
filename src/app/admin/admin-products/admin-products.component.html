@@ -1,0 +1,73 @@
+<div class="product-list-container">
+  <div class="products-container">
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Loading amazing products...</p>
+    </div>
+
+    <div *ngIf="!isLoading && products.length > 0" class="products-grid">
+      <div class="col" *ngFor="let product of products; let i = index">
+        <div class="card h-100">
+          <div class="image-container">
+            <img
+              [src]="environment.imageBaseUrl + '/' + product.imageUrl"
+              class="card-img-top"
+              [alt]="product.name"
+              loading="lazy"
+            >
+          </div>
+
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.description }}</p>
+            <div class="price-section">
+              <div class="price">
+                {{ product.price | currency:'TK':'symbol':'1.2-2' }}
+              </div>
+              <div
+                class="stock-status"
+                [ngClass]="product.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'"
+              >
+                <i class="fas" [ngClass]="product.stockQuantity > 0 ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                {{ product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' }}
+              </div>
+            </div>
+            <button
+              class="btn btn-add-cart w-100"
+              [disabled]="product.stockQuantity === 0"
+              (click)="navigateToProductDetailsPage(product)"
+            >
+              <i class="fa-solid fa-truck-fast me-2"></i>
+              <span *ngIf="product.stockQuantity > 0; else outOfStockText">Order Now</span>
+              <ng-template #outOfStockText>Out of Stock</ng-template>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav *ngIf="!isLoading && totalPages > 1" aria-label="Product list pagination" class="d-flex justify-content-center mt-4">
+      <ul class="pagination pagination-rounded">
+        <li class="page-item" [class.disabled]="currentPage === 0">
+          <a class="page-link" (click)="goToPage(currentPage - 1)">Previous</a>
+        </li>
+        <li class="page-item" *ngFor="let page of pageNumbers" [class.active]="page === currentPage">
+          <a class="page-link" (click)="goToPage(page)">{{ page + 1 }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+          <a class="page-link" (click)="goToPage(currentPage + 1)">Next</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div *ngIf="!isLoading && products.length === 0" class="empty-state">
+      <i class="fas fa-box-open"></i>
+      <h3>No Products Available</h3>
+      <p>Check back soon for amazing deals!</p>
+    </div>
+  </div>
+
+  <div class="footer-text">
+    <p><i class="fas fa-sparkles me-2"></i>More amazing products coming soon!</p>
+  </div>
+</div>

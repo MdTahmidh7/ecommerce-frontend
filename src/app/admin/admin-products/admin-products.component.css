@@ -1,0 +1,225 @@
+/* --- Base Container Styles --- */
+.product-list-container {
+  padding: 2rem 0;
+}
+
+.products-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* --- Loading and Empty States --- */
+.loading-container,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #0d6efd;
+  animation: spin 1s ease infinite;
+}
+
+.loading-text {
+  margin-top: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: #6c757d;
+}
+
+.empty-state h3 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* --- Product Grid Layout (The Fix) --- */
+.products-grid {
+  display: grid;
+  /* Default to a single column on extra small screens */
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* For screens 576px and wider, show 2 columns */
+@media (min-width: 576px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* For screens 992px and wider, show 3 columns */
+@media (min-width: 992px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --- Product Card Styling --- */
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+
+.card-img-top {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card-img-top:hover {
+  transform: scale(1.05);
+}
+
+.card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: #666;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.price-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.stock-status {
+  font-weight: 500;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.in-stock {
+  color: #28a745;
+}
+
+.out-of-stock {
+  color: #dc3545;
+}
+
+.stock-status .fas {
+  margin-right: 0.5rem;
+}
+
+.btn-add-cart {
+  background: linear-gradient(135deg, #4a64f6 0%, #a560f5 50%, #f259fc 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-add-cart:hover {
+  background: linear-gradient(135deg, #223abe 0%, #7d35cb 50%, #c929d3 100%);
+  transform: translateY(-2px);
+}
+
+.btn-add-cart:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.footer-text {
+  text-align: center;
+  margin-top: 2rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* --- Pagination Styling --- */
+.pagination-rounded .page-item {
+  margin: 0 4px;
+}
+
+.pagination-rounded .page-link {
+  border-radius: 50px;
+  padding: 8px 16px;
+  color: #0d6efd;
+  border: 1px solid #dee2e6;
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.pagination-rounded .page-link:hover {
+  background-color: #e9ecef;
+}
+
+.pagination-rounded .page-item.active .page-link {
+  background: linear-gradient(135deg, #5b73ef 0%, #b889f5 50%, #f299fa 100%);
+  border-color: #0d6efd;
+  color: white;
+  box-shadow: 0 2px 5px rgba(13, 110, 253, 0.2);
+}
+
+.pagination-rounded .page-item.disabled .page-link {
+  color: #6c757d;
+  cursor: not-allowed;
+  background-color: #fff;
+}

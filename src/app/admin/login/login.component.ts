@@ -28,7 +28,7 @@ export class AdminLoginComponent implements OnInit {
     if (this.loginForm.valid) {
       const { username, phoneNumber, password } = this.loginForm.value;
       if (this.authService.loginAdmin(username, phoneNumber, password)) {
-        this.router.navigate(['/admin']);
+        this.router.navigate(['/admin/create-product']);
       } else {
         alert('Invalid credentials');
       }
