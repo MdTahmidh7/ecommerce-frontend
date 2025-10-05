@@ -123,13 +123,6 @@
   color: #007bff;
 }
 
-/* Image Preview Container (Flexbox for responsiveness) */
-.image-preview-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem; /* Spacing between images */
-  margin-top: 1rem;
-}
 
 .image-preview {
   position: relative;

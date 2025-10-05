@@ -3,13 +3,18 @@
     <div class="card product-form-card shadow-lg border-0 mx-auto">
       <div class="card-body p-4 p-md-5">
         <h2 class="card-title text-center mb-4 pb-2 border-bottom">
-          <i class="fas fa-box-open me-2 text-primary"></i>
-          Create New Product
+          <i class="fas fa-edit me-2 text-primary"></i>
+          Update Product (ID: {{ productId }})
         </h2>
 
-        <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        <div *ngIf="isLoading" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-3 text-muted">Loading product details...</p>
+        </div>
 
-          <!-- Row 1: Name -->
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
           <div class="row g-3 mb-3">
             <div class="col-12">
               <label for="name" class="form-label required">Product Name</label>
@@ -17,12 +22,10 @@
             </div>
           </div>
 
-          <!-- Row 1 B: Description (Rich Text Editor) -->
           <div class="row g-3 mb-3">
             <div class="col-12">
               <label class="form-label required">Description</label>
 
-              <!-- NGX-EDITOR INTEGRATION -->
               <div class="rich-text-editor-wrapper">
                 <ngx-editor-menu [editor]="editor" [toolbar]="toolbar" class="modern-toolbar"></ngx-editor-menu>
                 <ngx-editor
@@ -32,12 +35,9 @@
                   class="rich-text-body"
                 ></ngx-editor>
               </div>
-              <!-- END NGX-EDITOR INTEGRATION -->
-
             </div>
           </div>
 
-          <!-- Row 2: Price and Stock Quantity -->
           <div class="row g-3 mb-4">
             <div class="col-md-6">
               <label for="price" class="form-label required">Price</label>
@@ -52,53 +52,50 @@
             </div>
           </div>
 
-          <!-- Row 3: Category -->
-          <div class="row mb-4">
-            <div class="col-12">
-              <label for="categoryId" class="form-label required">Category</label>
-              <select id="categoryId" formControlName="categoryId" class="form-select">
-                <option [value]="null" disabled selected>Select a product category</option>
-                <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
-              </select>
-            </div>
-          </div>
+<!--          <div class="row mb-4">-->
+<!--            <div class="col-12">-->
+<!--              <label for="categoryId" class="form-label required">Category</label>-->
+<!--              <select id="categoryId" formControlName="categoryId" class="form-select">-->
+<!--                <option [value]="null" disabled>Select a product category</option>-->
+<!--                <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>-->
+<!--              </select>-->
+<!--            </div>-->
+<!--          </div>-->
 
-          <!-- Row 4: Image Upload -->
           <div class="row mb-5">
             <div class="col-12 image-upload-group">
               <label class="form-label required">Product Images (Max 5)</label>
 
-              <!-- Hidden File Input -->
               <input
                 type="file"
                 #fileInput
                 id="images"
-                class="file-input-hidden"
+                class="form-control"
                 (change)="onFileSelect($event)"
                 multiple accept="image/*"
               >
 
-              <!-- Custom Upload Area (Drag & Drop Zone) -->
               <div class="file-upload-area" (click)="fileInput.click()">
-                <i class="fas fa-cloud-upload-alt display-6 mb-2 text-primary"></i>
-                <p class="mb-1">Drag & drop or <span class="text-primary fw-bold">click to browse</span></p>
-                <small class="text-muted" *ngIf="selectedFiles.length === 0">JPG, PNG, GIF up to 5MB each</small>
+                <p class="mb-1">Drag & drop or <span class="text-primary fw-bold">click to add new images</span></p>
+                <small class="text-muted" *ngIf="selectedFiles.length === 0">No images selected</small>
                 <small class="text-success fw-bold" *ngIf="selectedFiles.length > 0">
-                  {{ selectedFiles.length }} of 5 images selected
+                  {{ selectedFiles.length }} of 5 images selected ({{ newImageCount() }} new)
                 </small>
               </div>
 
-              <!-- Image Preview Container -->
-              <div class="image-preview-container mt-3">
-                <div *ngFor="let file of selectedFiles" class="image-preview shadow-sm" [ngClass]="{'error-border': selectedFiles.length > 5}">
-                  <img [src]="file.url" [alt]="file.name" class="img-fluid">
+              <div class="mt-3 row justify-content-center align-items-center">
+                <div *ngFor="let file of selectedFiles"
+                     class="image-preview shadow-sm col-lg-2 col-md-3 col-12"
+                     [ngClass]="{'new-image-border': file.isNew}"
+                >
+                  <img [src]="file.url" [alt]="file.name" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
                   <span class="remove-image" (click)="removeImage(file.name)">
                     <i class="fas fa-times-circle"></i>
                   </span>
+                  <span *ngIf="file.isNew" class="badge bg-success new-badge">NEW</span>
                 </div>
               </div>
 
-              <!-- Error Messages -->
               <div *ngIf="selectedFiles.length > 5" class="alert alert-danger mt-3 p-2 animate__animated animate__shakeX error-message" role="alert">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 You can select up to 5 images only.
@@ -106,15 +103,14 @@
             </div>
           </div>
 
-          <!-- Submit Button -->
           <div class="d-grid gap-2">
             <button
               type="submit"
               [disabled]="productForm.invalid || selectedFiles.length === 0 || selectedFiles.length > 5"
-              class="btn btn-primary btn-lg create-btn animate__animated animate__pulse"
+              class="btn btn-warning btn-lg update-btn animate__animated animate__pulse"
             >
-              <i class="fas fa-check-circle me-2"></i>
-              Create Product
+              <i class="fas fa-save me-2"></i>
+              Update Product
             </button>
           </div>
         </form>

@@ -23,4 +23,18 @@ export class ProductAdminService {
   getAllCategories(): Observable<any> {
     return this.http.get(`${environment.apiBaseUrl}/categories`);
   }
+
+  getProductById(id: number) {
+    // Assuming the backend endpoint is /products/{id}
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  updateProduct(productId: number, formData1: any) {
+    // Assuming the backend endpoint is /products/{id}
+    return this.http.put(`${this.apiUrl}/${productId}`, formData1, {
+      headers: {
+        'Accept': '*/*'
+      }
+    });
+  }
 }

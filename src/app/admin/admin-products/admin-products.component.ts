@@ -53,7 +53,7 @@ export class AdminProductsComponent implements OnInit {
     }
   }
 
-  navigateToProductDetailsPage(product: Product): void {
-    this.router.navigate(['/products', product.id]);
+  navigateToUpdateProductPage(product: Product): void {
+    this.router.navigate(['/admin/update-products', product.id]);
   }
 }

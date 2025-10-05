@@ -35,10 +35,10 @@
             <button
               class="btn btn-add-cart w-100"
               [disabled]="product.stockQuantity === 0"
-              (click)="navigateToProductDetailsPage(product)"
+              (click)="navigateToUpdateProductPage(product)"
             >
-              <i class="fa-solid fa-truck-fast me-2"></i>
-              <span *ngIf="product.stockQuantity > 0; else outOfStockText">Order Now</span>
+              <i class="fa-solid fa-edit me-2"></i>
+              <span *ngIf="product.stockQuantity > 0; else outOfStockText">Update</span>
               <ng-template #outOfStockText>Out of Stock</ng-template>
             </button>
           </div>
