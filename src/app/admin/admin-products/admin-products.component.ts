@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {Product} from '../../model/product.model';
 import {ProductService} from '../../product/product.service';
 import {environment} from '../../../environments/environment';
+import {DomSanitizer} from '@angular/platform-browser';
 
 
 @Component({
@@ -24,7 +25,11 @@ export class AdminProductsComponent implements OnInit {
 
   environment = environment;
 
-  constructor(private productService: ProductService, private router: Router) { }
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private sanitizer: DomSanitizer
+  ) { }
 
   ngOnInit(): void {
     this.fetchProducts();
@@ -55,5 +60,9 @@ export class AdminProductsComponent implements OnInit {
 
   navigateToUpdateProductPage(product: Product): void {
     this.router.navigate(['/admin/update-products', product.id]);
+  }
+
+  getSafeProductDescription(product: any): any {
+    return  this.sanitizer.bypassSecurityTrustHtml(product.description || '');
   }
 }

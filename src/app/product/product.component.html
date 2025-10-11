@@ -19,7 +19,7 @@
 
           <div class="card-body">
             <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text">{{ product.description }}</p>
+            <div class="card-text" [innerHTML]="getSafeProductDescription(product)"></div>
             <div class="price-section">
               <div class="price">
                 {{ product.price | currency:'TK':'symbol':'1.2-2' }}

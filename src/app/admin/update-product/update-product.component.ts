@@ -171,37 +171,29 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.productForm.valid && this.selectedFiles.length > 0 && this.selectedFiles.length <= 5) {
-
       const productData = this.productForm.value;
 
-      // 1. Convert Ngx-Editor JSON content to HTML string
-      productData.description = toHTML(productData.description);
+      try {
+        // Convert only if it's JSON, not already HTML or text
+        if (typeof productData.description === 'object') {
+          productData.description = toHTML(productData.description);
+        }
+      } catch (error) {
+        console.warn('Skipping toHTML conversion, invalid JSON:', error);
+      }
 
-      // 2. Filter out existing images (file: null) and only send new ones
       const newImageFiles = this.selectedFiles.filter(item => item.isNew && item.file) as ImageFile[];
 
       const formData = new FormData();
-
-      // Append the product data (including product ID)
       formData.append('product', new Blob([JSON.stringify(productData)], { type: 'application/json' }));
 
-      // Append only the NEW images
       newImageFiles.forEach(item => {
         formData.append('images', item.file!, item.name);
       });
 
-      // OPTIONAL: Append a list of existing image URLs to keep, if your backend requires it
-      const existingImageUrls = this.selectedFiles
-        .filter(item => !item.isNew && item.file === null)
-        .map(item => item.url.toString()); // Convert SafeUrl back to string if necessary
-
-      // formData.append('existingImageUrls', new Blob([JSON.stringify(existingImageUrls)], { type: 'application/json' }));
-
-      // Call the UPDATE API
       this.productAdminService.updateProduct(this.productId, formData as any).subscribe({
-        next: (response) => {
-          this.alertService.success("Product updated successfully!"," The product details have been saved.");
-          // No reset needed, stay on page or navigate back
+        next: () => {
+          this.alertService.success("Product updated successfully!", "The product details have been saved.");
         },
         error: (error) => {
           console.error('Error updating product', error);
