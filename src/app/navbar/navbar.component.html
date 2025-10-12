@@ -42,23 +42,23 @@
             </li>
             <!--My orders-->
             <li class="nav-item" *ngIf="isAuthenticated">
-              <a class="nav-link nav-link-custom" routerLink="/my-orders" routerLinkActive="active" ariaCurrentWhenActive="page">
+              <a (click)="closeNavbar()" class="nav-link nav-link-custom" routerLink="/my-orders" routerLinkActive="active" ariaCurrentWhenActive="page">
                 <i class="fas fa-shopping-bag me-1"></i>My Orders
               </a>
             </li>
           </ng-container>
           <ng-container *ngIf="isAdmin">
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" routerLink="/admin/create-product" routerLinkActive="active">Create Product</a>
+              <a (click)="closeNavbar()" class="nav-link nav-link-custom" routerLink="/admin/create-product" routerLinkActive="active">Create Product</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" routerLink="/admin/products" routerLinkActive="active">Show all products</a>
+              <a (click)="closeNavbar()" class="nav-link nav-link-custom" routerLink="/admin/products" routerLinkActive="active">Show all products</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" routerLink="/admin/orders" routerLinkActive="active">Show all orders</a>
+              <a (click)="closeNavbar()" class="nav-link nav-link-custom" routerLink="/admin/orders" routerLinkActive="active">Show all orders</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" routerLink="/admin/analytics" routerLinkActive="active">Analytics</a>
+              <a (click)="closeNavbar()" class="nav-link nav-link-custom" routerLink="/admin/analytics" routerLinkActive="active">Analytics</a>
             </li>
           </ng-container>
         </ul>

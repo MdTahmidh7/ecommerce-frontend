@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService as UserAuthService } from '../auth/auth.service';
+import {AuthService, AuthService as UserAuthService} from '../auth/auth.service';
 import { AuthService as AdminAuthService } from '../admin/auth.service';
 import { Subscription } from 'rxjs';
 
@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   private authSubscription: Subscription | null = null;
   private userAuthService = inject(UserAuthService);
-  private adminAuthService = inject(AdminAuthService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   userName: string = '';
 
@@ -35,7 +35,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
           this.userName = 'Guest';
         }
       });
-    this.isAdmin = this.adminAuthService.isAdminUser();
+    this.isAdmin = this.authService.isAdminUser();
+    console.log(`Navbar initialized. isAdmin: ${this.isAdmin}`);
   }
 
   ngOnDestroy(): void {
@@ -46,7 +47,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout() {
     if (this.isAdmin) {
-      this.adminAuthService.logoutAdmin();
+      this.authService.logoutAdmin();
       this.router.navigate(['/admin/login']);
     } else {
       this.userAuthService.logout();

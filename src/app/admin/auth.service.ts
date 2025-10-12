@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import {environment} from '../../environments/environment';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -6,7 +8,7 @@ import { Injectable } from '@angular/core';
 export class AuthService {
   private token: string | null = null;
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   setToken(token: string): void {
     this.token = token;
@@ -16,16 +18,12 @@ export class AuthService {
     return this.token;
   }
 
-  loginAdmin(username: string, phoneNumber: string, password: string): boolean {
-    // This is a placeholder for actual authentication logic.
-    // In a real application, you would send credentials to a backend
-    // and receive a JWT token upon successful authentication.
-    if (username === 'admin' && phoneNumber === '1234567890' && password === 'password') {
-      // Simulate token reception
-      this.setToken('fake-jwt-token'); // Replace with actual token from backend
-      return true;
-    }
-    return false;
+  loginAdmin(name: string, phoneNumber: string) {
+    return this.http.post(`${environment.apiBaseUrl}/login`, { name, phoneNumber });
+  }
+
+  verifyAdminOtp(phoneNumber: string, otp: string) {
+    return this.http.post(`${environment.apiBaseUrl}/login/verify-otp`, { phoneNumber, otp });
   }
 
   isAdminUser(): boolean {

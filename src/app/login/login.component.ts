@@ -195,7 +195,6 @@ export class LoginComponent implements OnInit {
         }
       });
     }
-
   }
 
   onOtpChange(currentInput: HTMLInputElement, nextInput: HTMLInputElement | null) {

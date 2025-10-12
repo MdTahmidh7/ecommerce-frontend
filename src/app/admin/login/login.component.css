@@ -1,88 +1,161 @@
-/* Custom styles for modern look with Bootstrap */
-body {
-  font-family: 'Inter', sans-serif; /* Using a modern sans-serif font */
-  background-color: #f8f9fa; /* Light background for the page */
+/*
+.admin-login-container {
+  background: linear-gradient(to right, #f8f9fa, #e9ecef);
 }
 
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 15px; /* Padding for small screens */
-}
-
-.login-card {
+.card {
   border: none;
-  border-radius: 1rem; /* More rounded corners */
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* Soft shadow */
-  max-width: 450px; /* Max width for the card */
-  width: 100%;
 }
 
-.card-title {
-  color: #343a40; /* Darker text for title */
-  font-size: 2rem; /* Larger font size for title */
+.otp-input {
+  width: 40px;
+  height: 50px;
+  font-size: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ced4da;
 }
 
-.form-label {
-  font-weight: 500; /* Slightly bolder labels */
-  color: #495057;
-}
-
-.input-group-text {
-  background-color: #e9ecef; /* Light background for icon container */
-  border-right: none;
-  border-radius: 0.25rem 0 0 0.25rem; /* Rounded left side */
-  border-color: #ced4da;
-}
-
-.form-control {
-  border-left: none;
-  border-radius: 0 0.25rem 0.25rem 0; /* Rounded right side */
-  padding-left: 0.75rem; /* Adjust padding for text next to icon */
-}
-
-.form-control:focus {
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); /* Bootstrap's default focus ring */
-  border-color: #86b7fe; /* Bootstrap's default focus border */
-}
-
-.login-icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 45px; /* Fixed width for the icon background */
-}
-
-.login-icon {
-  height: 20px;
-  width: 20px;
-  color: #6c757d; /* Gray color for icons */
-}
-
-.login-button {
-  background-color: #0d6efd; /* Primary blue */
+.otp-input:focus {
   border-color: #0d6efd;
-  font-weight: 600;
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
 
-.login-button:hover {
-  background-color: #0b5ed7; /* Darker blue on hover */
-  border-color: #0a58ca;
+.btn-primary {
+  transition: all 0.3s ease;
 }
 
-.login-button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
+.btn-primary:hover {
+  background-color: #0b5ed7;
 }
 
-/* Custom invalid feedback styling to match Bootstrap's look */
-.invalid-feedback {
-  display: block; /* Ensure it's always block to take space */
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875em;
-  color: #dc3545; /* Bootstrap's default red for invalid feedback */
+.modal-content {
+  padding: 1.5rem;
 }
+
+@media (max-width: 576px) {
+  .otp-input {
+    width: 35px;
+    height: 45px;
+    font-size: 1.2rem;
+  }
+}
+*/
+
+
+  /* 1. Global/Container Styles */
+body {
+  /* Bright, subtle background for the entire page */
+  background-color: #f7f9fd;
+  color: #343a40; /* Dark text */
+}
+
+/* Define the light futuristic accent color */
+:root {
+  /* Use a rich, deep blue for a high-tech/clean look */
+  --accent-color: #007bff; /* Standard Bootstrap Blue, or a custom one like #0056b3 */
+  --card-bg: #ffffff; /* Pure white card background */
+}
+
+.admin-login-container {
+  /* The col-xl-5 in the HTML already restricts width,
+     but setting the card's container is key for mobile-first centering. */
+  min-height: 100vh;
+}
+
+/* 2. Card Styling */
+.card-light-futuristic {
+  background-color: var(--card-bg);
+  border: 1px solid rgba(0, 123, 255, 0.1);
+  /* Soft, subtle shadow for elevation */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease-in-out;
+}
+/* Focus on Mobile/Small Screen Experience */
+@media (max-width: 768px) {
+  .card-light-futuristic {
+    /* Remove extra padding on the outside for a clean mobile edge-to-edge look */
+    padding: 2rem 1.5rem !important;
+  }
+}
+
+
+/* Adjust text for visibility on light background */
+.text-accent {
+  color: var(--accent-color) !important;
+  text-shadow: 0 0 5px rgba(0, 123, 255, 0.2); /* Soft blue glow */
+}
+.text-accent-link {
+  color: var(--accent-color) !important;
+}
+.text-accent-link:hover {
+  color: #0056b3 !important;
+}
+
+
+/* 3. Input Fields */
+.light-futuristic-input {
+  background-color: #f0f4f8; /* Very light gray/blue background for inputs */
+  border: 1px solid #dcdfe6; /* Light border */
+  color: #343a40;
+  height: 3rem; /* Taller inputs for mobile tap target */
+  transition: all 0.3s ease;
+}
+
+.light-futuristic-input:focus {
+  background-color: #ffffff;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Accent glow on focus */
+}
+
+/* 4. Light Glow Button (Primary Action) */
+.light-glow-btn {
+  background-color: var(--accent-color);
+  border: none;
+  color: #252222;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  /* Soft glow effect for the button */
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.light-glow-btn:hover:not(:disabled) {
+  color: white;
+  background-color: #0056b3;
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.light-glow-btn:disabled {
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+
+/* 5. OTP Modal Specifics */
+.light-otp-field {
+  width: 45px;
+  height: 45px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  background-color: #f0f4f8;
+  border: 1px solid #dcdfe6;
+  color: var(--accent-color);
+  caret-color: var(--accent-color);
+  transition: all 0.2s ease;
+}
+.light-otp-field:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+  background-color: #ffffff;
+}
+
+/* Mobile Responsiveness for OTP inputs */
+@media (max-width: 576px) {
+  .light-otp-field {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+}
+
