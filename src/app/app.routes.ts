@@ -28,19 +28,18 @@ export const routes: Routes = [
   { path: 'my-orders', component: MyOrdersComponent },
   { path: 'my-orders/:id', component: MyOrdersDetailsComponent },
   { path: 'admin/login', component: AdminLoginComponent },
-  { path: 'admin/orders' , component: AdminOrdersComponent},
-  { path: 'admin/orders/:id', component: OrderDetailsComponent },
-  { path: 'admin/create-product', component: CreateProductComponent},
-  { path: 'admin/products', component: AdminProductsComponent},
-  { path: 'admin/update-products/:id', component: UpdateProductComponent },
-  { path: 'admin/analytics', component:DashboardComponent},
+
   {
     path: 'admin',
     component: AdminComponent,
     canActivate: [AuthGuard],
     children: [
       { path: 'create-product', component: CreateProductComponent },
-      { path: 'orders', component: AdminOrdersComponent }
+      { path: 'orders', component: AdminOrdersComponent },
+      { path: 'admin/orders/:id', component: OrderDetailsComponent },
+      { path: 'admin/update-products/:id', component: UpdateProductComponent },
+      { path: 'admin/analytics', component:DashboardComponent},
+      { path: 'admin/products', component: AdminProductsComponent},
     ]
   },
   { path: '**', redirectTo: '/home' }
