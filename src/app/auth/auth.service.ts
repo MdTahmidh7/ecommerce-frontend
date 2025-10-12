@@ -191,4 +191,35 @@ export class AuthService {
       localStorage.removeItem('authToken');
     }
   }
+
+  getUserRole() {
+    // Get user role from token
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const roles = payload.roles || [];
+          if (Array.isArray(roles) && roles.length > 0) {
+            return roles;
+          } else {
+            return null;
+          }
+        } catch (e) {
+          console.error('Error parsing token:', e);
+          return null;
+        }
+      }
+    }
+    return null; // Default if no token or not in browser
+  }
+
+  isLoggedIn() {
+    // Check if user is logged in based on token presence
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+      return !!token;
+    }
+    return false;
+  }
 }
