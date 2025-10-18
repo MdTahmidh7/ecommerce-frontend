@@ -52,8 +52,16 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Initialize the login form with FormControls and Validators
     this.loginForm = new FormGroup({
-      name: new FormControl('', [Validators.required]),
-      phoneNo: new FormControl('', [Validators.required]),
+      name: new FormControl('', [
+          Validators.required,
+          Validators.pattern('^[a-zA-Z0-9 ]+$'),
+          Validators.minLength(2)
+        ]),
+      phoneNo: new FormControl('', [
+        Validators.required,
+        Validators.pattern('^(?:\\+88|88)?01[3-9]\\d{8}$'),
+        Validators.maxLength(11),
+      ]),
       rememberMe: new FormControl(false) // For the "Remember me" checkbox
     });
   }

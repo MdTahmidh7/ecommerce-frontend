@@ -74,10 +74,30 @@ export class ProductDetailComponent implements OnInit {
   ) {
 
     this.registrationForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10,15}$/)]],
-      districtName: ['',Validators.required],
-      upazilaName: ['',Validators.required]
+      name: ['', [
+        Validators.required,
+        Validators.pattern('^[a-zA-Z0-9 ]+$'),
+        Validators.minLength(2)]
+      ],
+      phoneNumber: ['',
+        [
+          Validators.required,
+          Validators.pattern('^(?:\\+88|88)?01[3-9]\\d{8}$'),
+          Validators.maxLength(11),
+        ]
+      ],
+      districtName: ['',
+        [
+          Validators.required,
+          Validators.pattern('^[a-zA-Z0-9 ]+$')
+        ]
+      ],
+      upazilaName: ['',
+        [
+          Validators.required,
+          Validators.pattern('^[a-zA-Z0-9 ]+$')
+        ]
+      ]
     });
 
     this.deliveryAddressForm = this.fb.group({
@@ -216,6 +236,8 @@ export class ProductDetailComponent implements OnInit {
         upazilaName: this.registrationForm.value.upazilaName
       };
 
+      this.isSubmitting = true;
+
       //call register API
       this.authService.register(this.user).subscribe({
         next: (response) => {
@@ -227,9 +249,11 @@ export class ProductDetailComponent implements OnInit {
             keyboard: false
           });
           modal.close(this.registrationForm.value);
+          this.isSubmitting = false;
           this.startCountdown();
         },
         error: (error) => {
+          this.isSubmitting = false;
           let errorMessage = 'An unexpected error occurred.';
           if (error && error.error) {
             // If the error body is already a JSON object
@@ -268,7 +292,9 @@ export class ProductDetailComponent implements OnInit {
         "Are you sure you want to place the order?"
       ).then((result) => {
         if (result.isConfirmed) {
+          this.isSubmitting = true;
           this.placeOrder();
+          this.isSubmitting = false;
         }
       });
     }

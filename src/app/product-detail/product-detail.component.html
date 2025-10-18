@@ -256,6 +256,7 @@
               </svg>
               <span *ngIf="registrationForm.get('name')?.errors?.['required']">Name is required.</span>
               <span *ngIf="registrationForm.get('name')?.errors?.['minlength']">Must be at least 2 characters.</span>
+              <span *ngIf="registrationForm.get('name')?.errors?.['pattern']">Special characters are not allowed.</span>
             </div>
           </div>
           <!-- Phone Number -->
@@ -267,6 +268,7 @@
               class="form-control"
               formControlName="phoneNumber"
               placeholder="01xxxxxxxxx"
+              [maxLength]="11"
             />
             <div
               class="error-message"
@@ -283,7 +285,7 @@
                 />
               </svg>
               <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</span>
-              <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid phone number.</span>
+              <span *ngIf="registrationForm.get('phoneNumber')?.errors?.['pattern']">Enter 11 digit valid phone number.</span>
             </div>
           </div>
         </div>
@@ -363,7 +365,7 @@
         <div class="row">
           <!--District Name Input-->
           <div class="form-group col-md-6">
-            <label for="phoneNumber">District Name</label>
+            <label for="districtName">District Name</label>
             <input
               type="tel"
               id="districtName"
@@ -387,12 +389,13 @@
               </svg>
               <span *ngIf="registrationForm.get('districtName')?.errors?.['required']">District name is required.</span>
               <span *ngIf="registrationForm.get('districtName')?.errors?.['pattern']">Please enter a valid District name.</span>
+              <span *ngIf="registrationForm.get('districtName')?.errors?.['pattern']">Special characters are not allowed.</span>
             </div>
           </div>
 
           <!--Upazila Name Input-->
           <div class="form-group col-md-6">
-            <label for="phoneNumber">Upazila Name</label>
+            <label for="upazilaName">Upazila Name</label>
             <input
               type="tel"
               id="upazilaName"
@@ -416,6 +419,7 @@
               </svg>
               <span *ngIf="registrationForm.get('upazilaName')?.errors?.['required']">Upazila name is required.</span>
               <span *ngIf="registrationForm.get('upazilaName')?.errors?.['pattern']">Please enter a valid Upazila name.</span>
+              <span *ngIf="registrationForm.get('upazilaName')?.errors?.['pattern']">Special characters are not allowed.</span>
             </div>
           </div>
 

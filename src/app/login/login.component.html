@@ -48,8 +48,9 @@
             <!-- phoneNo Error Messages -->
             <div class="input-error animate__animated animate__fadeInUp" *ngIf="loginForm.get('name')?.touched && loginForm.get('name')?.errors">
               <i class="fas fa-exclamation-circle"></i>
-              <span *ngIf="loginForm.get('name')?.errors?.['required']">phoneNo is required</span>
-              <span *ngIf="loginForm.get('name')?.errors?.['name']">Please enter a valid phoneNo</span>
+              <span *ngIf="loginForm.get('name')?.errors?.['required']">Name is required</span>
+              <span *ngIf="loginForm.get('name')?.errors?.['minlength']">Min length is 2 character.</span>
+              <span *ngIf="loginForm.get('name')?.errors?.['pattern']">Special characters are not allowed.</span>
             </div>
           </div>
 
@@ -79,7 +80,8 @@
             <div class="input-error animate__animated animate__fadeInUp" *ngIf="loginForm.get('phoneNo')?.touched && loginForm.get('phoneNo')?.errors">
               <i class="fas fa-exclamation-circle"></i>
               <span *ngIf="loginForm.get('phoneNo')?.errors?.['required']">phoneNo is required</span>
-              <span *ngIf="loginForm.get('phoneNo')?.errors?.['phoneNo']">Please enter a valid phoneNo</span>
+              <span *ngIf="loginForm.get('phoneNo')?.errors?.['minlength']">Please enter a valid phoneNo</span>
+              <span *ngIf="loginForm.get('phoneNo')?.errors?.['pattern']">Enter a valid 11 digit phoneNo</span>
             </div>
           </div>
 
