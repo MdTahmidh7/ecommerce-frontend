@@ -38,16 +38,15 @@ jobs:
           ssh-private-key: ${{
             steps.set-env.outputs.env_name == 'test' && secrets.VM_SSH_KEY ||
             secrets.PROD_VM_SSH_KEY
-        }}
+            }}
 
       # 4️⃣ Add host to known_hosts (Uses direct conditional access for the host)
       - name: Add VM to known_hosts
-        # Select the correct VM Host based on the tag
         env:
           VM_HOST: ${{
             steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST ||
             secrets.PROD_VM_HOST
-        }}
+            }}
         run: ssh-keyscan -H ${{ env.VM_HOST }} >> ~/.ssh/known_hosts
 
       # 5️⃣ Setup Node.js
@@ -70,10 +69,7 @@ jobs:
             npm run build -- --configuration production
           fi
 
-      # Configure SSH variables for all subsequent deployment steps
-      # Using an env block in each step is the only reliable way to use dynamic secrets in 'run' commands.
-
-      # 8️⃣ Clean old frontend files on VM
+      # 8️⃣ Clean old frontend files on VM (INDENTATION FIXED)
       - name: Clean old frontend files
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
@@ -84,7 +80,7 @@ jobs:
             rm -rf /home/${VM_USER_REMOTE}/frontend/*
           EOF
 
-      # 9️⃣ Copy build files to VM
+      # 9️⃣ Copy build files to VM (INDENTATION FIXED)
       - name: Copy build to VM
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
@@ -93,7 +89,7 @@ jobs:
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/browser/ \
           ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/
 
-      # 🔟 Create Nginx config
+      # 🔟 Create Nginx config (INDENTATION FIXED)
       - name: Create Nginx config
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
@@ -130,7 +126,7 @@ jobs:
             EOL
           EOF
 
-      # 11️⃣ Run Nginx container
+      # 11️⃣ Run Nginx container (INDENTATION FIXED)
       - name: Serve Angular with Nginx
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
