@@ -96,7 +96,9 @@ jobs:
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
-            cat > /home/${{ secrets.VM_USER }}/frontend/nginx.conf << 'EOL'
+            VM_USER_REMOTE=$(whoami)
+            mkdir -p /home/${VM_USER_REMOTE}/frontend
+            cat > /home/${VM_USER_REMOTE}/frontend/nginx.conf << 'EOL'
             server {
             listen 80;
             server_name _;
