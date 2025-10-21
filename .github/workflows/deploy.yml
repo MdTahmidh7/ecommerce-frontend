@@ -10,43 +10,55 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    # Define environment variables once based on the tag
+    # This block maps the dynamic logic to static, accessible environment variables for use in run steps.
+    env:
+      # Use a conditional expression to select the correct VM_HOST
+      SELECTED_VM_HOST: ${{
+        startsWith(github.ref_name, 'test-') && secrets.VM_HOST ||
+        secrets.PROD_VM_HOST
+    }}
+      # Use a conditional expression to select the correct VM_USER
+      SELECTED_VM_USER: ${{
+        startsWith(github.ref_name, 'test-') && secrets.VM_USER ||
+        secrets.PROD_VM_USER
+    }}
+      # Use a conditional expression to select the correct SSH_KEY
+      SELECTED_SSH_KEY: ${{
+        startsWith(github.ref_name, 'test-') && secrets.VM_SSH_KEY ||
+        secrets.PROD_VM_SSH_KEY
+    }}
+      # Set the non-secret environment name
+      ENV_NAME: ${{
+        startsWith(github.ref_name, 'test-') && 'test' ||
+        'production'
+    }}
+
     steps:
       # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Detect environment and set variables (FIXED: Uses $GITHUB_OUTPUT for secrets)
-      - name: Set environment
-        id: set-env # Added ID to reference outputs
+      # 2️⃣ Detect environment and set variables
+      # NOTE: The detection logic is now handled entirely in the job's 'env:' block above.
+      # This step is kept simple to ensure the tag is recognized.
+      - name: Check tag format
         run: |
           TAG_NAME="${GITHUB_REF_NAME}"
-
-          if [[ "$TAG_NAME" == test-* ]]; then
-            # Write variables to GITHUB_OUTPUT
-            echo "env_name=test" >> $GITHUB_OUTPUT
-            echo "vm_host=${{ secrets.VM_HOST }}" >> $GITHUB_OUTPUT
-            echo "vm_user=${{ secrets.VM_USER }}" >> $GITHUB_OUTPUT
-            echo "ssh_key=${{ secrets.VM_SSH_KEY }}" >> $GITHUB_OUTPUT
-          elif [[ "$TAG_NAME" == prod-* ]]; then
-            # Write variables to GITHUB_OUTPUT
-            echo "env_name=prod" >> $GITHUB_OUTPUT
-            echo "vm_host=${{ secrets.PROD_VM_HOST }}" >> $GITHUB_OUTPUT
-            echo "vm_user=${{ secrets.PROD_VM_USER }}" >> $GITHUB_OUTPUT
-            echo "ssh_key=${{ secrets.PROD_VM_SSH_KEY }}" >> $GITHUB_OUTPUT
-          else
+          if [[ "$TAG_NAME" != test-* ]] && [[ "$TAG_NAME" != prod-* ]]; then
             echo "❌ Unknown tag format: $TAG_NAME"
             exit 1
           fi
 
-      # 3️⃣ Setup SSH (Updated to use step outputs)
+      # 3️⃣ Setup SSH (Uses the SELECTED_SSH_KEY from the job's env block)
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ steps.set-env.outputs.ssh_key }}
+          ssh-private-key: ${{ env.SELECTED_SSH_KEY }}
 
-      # 4️⃣ Add host to known_hosts (Updated to use step outputs)
+      # 4️⃣ Add host to known_hosts (Uses the SELECTED_VM_HOST)
       - name: Add VM to known_hosts
-        run: ssh-keyscan -H ${{ steps.set-env.outputs.vm_host }} >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H ${{ env.SELECTED_VM_HOST }} >> ~/.ssh/known_hosts
 
       # 5️⃣ Setup Node.js
       - name: Setup Node.js
@@ -58,37 +70,36 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 7️⃣ Build Angular app (Updated to use step outputs)
+      # 7️⃣ Build Angular app (Uses the ENV_NAME)
       - name: Build Angular project
         run: |
-          # Use step output for env_name
-          ENV_NAME="${{ steps.set-env.outputs.env_name }}"
           if [[ "${ENV_NAME}" == "test" ]]; then
             npm run build -- --configuration test
           else
             npm run build -- --configuration production
           fi
 
-      # 8️⃣ Clean old frontend files on VM (Updated to use step outputs)
+      # 8️⃣ Clean old frontend files on VM (Uses SELECTED_VM_USER and SELECTED_VM_HOST)
       - name: Clean old frontend files
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << 'EOF'
-            VM_USER=$(whoami) # Get actual user on the VM
-            rm -rf /home/${VM_USER}/frontend/*
+          ssh -o StrictHostKeyChecking=no ${{ env.SELECTED_VM_USER }}@${{ env.SELECTED_VM_HOST }} << 'EOF'
+            VM_USER_REMOTE=$(whoami)
+            # Use the actual remote user variable
+            rm -rf /home/${VM_USER_REMOTE}/frontend/*
           EOF
 
-      # 9️⃣ Copy build files to VM (Updated to use step outputs)
+      # 9️⃣ Copy build files to VM (Uses SELECTED_VM_USER and SELECTED_VM_HOST)
       - name: Copy build to VM
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/browser/ \
-          ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }}:/home/${{ steps.set-env.outputs.vm_user }}/frontend/
+          ${{ env.SELECTED_VM_USER }}@${{ env.SELECTED_VM_HOST }}:/home/${{ env.SELECTED_VM_USER }}/frontend/
 
-      # 🔟 Create Nginx config (Updated to use step outputs)
+      # 🔟 Create Nginx config (Uses SELECTED_VM_USER and SELECTED_VM_HOST)
       - name: Create Nginx config
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << 'EOF'
-            VM_USER=$(whoami) # Get actual user on the VM
-            cat > /home/${VM_USER}/frontend/nginx.conf << 'EOL'
+          ssh -o StrictHostKeyChecking=no ${{ env.SELECTED_VM_USER }}@${{ env.SELECTED_VM_HOST }} << 'EOF'
+            VM_USER_REMOTE=$(whoami)
+            cat > /home/${VM_USER_REMOTE}/frontend/nginx.conf << 'EOL'
             server {
               listen 80;
               server_name _;
@@ -117,14 +128,14 @@ jobs:
             EOL
           EOF
 
-      # 11️⃣ Run Nginx container (Updated to use step outputs)
+      # 11️⃣ Run Nginx container (Uses SELECTED_VM_USER and SELECTED_VM_HOST)
       - name: Serve Angular with Nginx
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << 'EOF'
-            VM_USER=$(whoami) # Get actual user on the VM
+          ssh -o StrictHostKeyChecking=no ${{ env.SELECTED_VM_USER }}@${{ env.SELECTED_VM_HOST }} << 'EOF'
+            VM_USER_REMOTE=$(whoami)
             docker rm -f angular-frontend || true
             docker run --name angular-frontend -d -p 80:80 \
-              -v /home/${VM_USER}/frontend:/usr/share/nginx/html:ro \
-              -v /home/${VM_USER}/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
+              -v /home/${VM_USER_REMOTE}/frontend:/usr/share/nginx/html:ro \
+              -v /home/${VM_USER_REMOTE}/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
               --restart always nginx:latest
           EOF
