@@ -1,10 +1,10 @@
-name: Deploy Angular Frontend
+name: 🚀 Deploy Angular Frontend
 
 on:
   push:
     tags:
-      - 'test-*'
-      - 'prod-*'
+      - "test-*"
+      - "prod-*"
 
 jobs:
   deploy:
@@ -12,73 +12,75 @@ jobs:
 
     steps:
       # 1️⃣ Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # 2️⃣ Determine environment based on tag
-      - name: Set environment variables
+      # 2️⃣ Detect environment and set variables
+      - name: Set environment
         id: set-env
         run: |
-          if [[ "${GITHUB_REF##*/}" == test-* ]]; then
+          TAG_NAME="${GITHUB_REF_NAME}"
+
+          if [[ "$TAG_NAME" == test-* ]]; then
             echo "env_name=test" >> $GITHUB_OUTPUT
             echo "vm_host=${{ secrets.VM_HOST }}" >> $GITHUB_OUTPUT
             echo "vm_user=${{ secrets.VM_USER }}" >> $GITHUB_OUTPUT
             echo "ssh_key=${{ secrets.VM_SSH_KEY }}" >> $GITHUB_OUTPUT
-          elif [[ "${GITHUB_REF##*/}" == prod-* ]]; then
+          elif [[ "$TAG_NAME" == prod-* ]]; then
             echo "env_name=prod" >> $GITHUB_OUTPUT
             echo "vm_host=${{ secrets.PROD_VM_HOST }}" >> $GITHUB_OUTPUT
             echo "vm_user=${{ secrets.PROD_VM_USER }}" >> $GITHUB_OUTPUT
             echo "ssh_key=${{ secrets.PROD_VM_SSH_KEY }}" >> $GITHUB_OUTPUT
           else
-            echo "Unknown environment tag"; exit 1;
+            echo "❌ Unknown tag format"; exit 1;
           fi
 
-      # 3️⃣ Set up SSH for correct VM
-      - name: Set up SSH
+      # 3️⃣ Setup SSH
+      - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ steps.set-env.outputs.ssh_key }}
 
-      # 4️⃣ Add VM host to known_hosts
+      # 4️⃣ Add host to known_hosts
       - name: Add VM to known_hosts
         run: ssh-keyscan -H ${{ steps.set-env.outputs.vm_host }} >> ~/.ssh/known_hosts
 
       # 5️⃣ Setup Node.js
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
-      # 6️⃣ Install Angular dependencies
+      # 6️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 7️⃣ Build Angular project
+      # 7️⃣ Build Angular app
       - name: Build Angular project
         run: |
-          if [[ "${GITHUB_REF##*/}" == test-* ]]; then
+          if [[ "${{ steps.set-env.outputs.env_name }}" == "test" ]]; then
             npm run build -- --configuration test
           else
             npm run build -- --configuration production
           fi
 
-      # 8️⃣ Clean old frontend files on target VM
+      # 8️⃣ Clean old frontend files on VM
       - name: Clean old frontend files
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << EOF
             rm -rf /home/${{ steps.set-env.outputs.vm_user }}/frontend/*
           EOF
 
-      # 9️⃣ Copy build to VM
+      # 9️⃣ Copy build files to VM
       - name: Copy build to VM
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/browser/ \
           ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }}:/home/${{ steps.set-env.outputs.vm_user }}/frontend/
 
-      # 🔟 Create Nginx config for Angular SPA
+      # 🔟 Create Nginx config
       - name: Create Nginx config
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << EOF
             cat > /home/${{ steps.set-env.outputs.vm_user }}/frontend/nginx.conf << 'EOL'
             server {
               listen 80;
@@ -88,19 +90,19 @@ jobs:
               index index.html;
 
               location / {
-                try_files $uri /index.html;
+                try_files \$uri /index.html;
               }
 
               location /api/ {
                 proxy_pass http://127.0.0.1:8080;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Host \$host;
+                proxy_set_header X-Real-IP \$remote_addr;
+                proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto \$scheme;
               }
 
               location /assets/ {
-                try_files $uri =404;
+                try_files \$uri =404;
               }
 
               client_max_body_size 10M;
@@ -108,10 +110,10 @@ jobs:
             EOL
           EOF
 
-      # 11️⃣ Serve with Nginx container
+      # 11️⃣ Run Nginx container
       - name: Serve Angular with Nginx
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ steps.set-env.outputs.vm_user }}@${{ steps.set-env.outputs.vm_host }} << EOF
             docker rm -f angular-frontend || true
             docker run --name angular-frontend -d -p 80:80 \
               -v /home/${{ steps.set-env.outputs.vm_user }}/frontend:/usr/share/nginx/html:ro \
