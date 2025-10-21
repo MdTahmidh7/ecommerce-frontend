@@ -15,36 +15,38 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Determine environment and set variables
-      - name: Set environment
-        id: set-env
+      # 2️⃣ Determine environment name (test/prod)
+      - name: Detect environment
+        id: detect
         run: |
           TAG_NAME="${GITHUB_REF_NAME}"
-
           if [[ "$TAG_NAME" == test-* ]]; then
             echo "env_name=test" >> $GITHUB_ENV
-            echo "VM_HOST=${{ secrets.VM_HOST }}" >> $GITHUB_ENV
-            echo "VM_USER=${{ secrets.VM_USER }}" >> $GITHUB_ENV
-            echo "VM_SSH_KEY=${{ secrets.VM_SSH_KEY }}" >> $GITHUB_ENV
           elif [[ "$TAG_NAME" == prod-* ]]; then
             echo "env_name=prod" >> $GITHUB_ENV
-            echo "VM_HOST=${{ secrets.PROD_VM_HOST }}" >> $GITHUB_ENV
-            echo "VM_USER=${{ secrets.PROD_VM_USER }}" >> $GITHUB_ENV
-            echo "VM_SSH_KEY=${{ secrets.PROD_VM_SSH_KEY }}" >> $GITHUB_ENV
           else
             echo "❌ Unknown tag format"
             exit 1
           fi
 
-      # 3️⃣ Setup SSH
+      # 3️⃣ Setup SSH for selected environment
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
+        env:
+          TEST_KEY: ${{ secrets.VM_SSH_KEY }}
+          PROD_KEY: ${{ secrets.PROD_VM_SSH_KEY }}
         with:
-          ssh-private-key: ${{ env.VM_SSH_KEY }}
+          ssh-private-key: |
+            ${{ env.env_name == 'test' && secrets.VM_SSH_KEY || secrets.PROD_VM_SSH_KEY }}
 
       # 4️⃣ Add VM to known_hosts
       - name: Add VM to known_hosts
-        run: ssh-keyscan -H $VM_HOST >> ~/.ssh/known_hosts
+        run: |
+          if [[ "$env_name" == "test" ]]; then
+            ssh-keyscan -H "${{ secrets.VM_HOST }}" >> ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "${{ secrets.PROD_VM_HOST }}" >> ~/.ssh/known_hosts
+          fi
 
       # 5️⃣ Setup Node.js
       - name: Setup Node.js
@@ -56,7 +58,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 7️⃣ Build Angular app
+      # 7️⃣ Build Angular app with correct config
       - name: Build Angular project
         run: |
           if [[ "$env_name" == "test" ]]; then
@@ -65,24 +67,35 @@ jobs:
             npm run build -- --configuration production
           fi
 
-      # 8️⃣ Clean old frontend files on VM
+      # 8️⃣ Clean old frontend files
       - name: Clean old frontend files
         run: |
-          ssh -o StrictHostKeyChecking=no $VM_USER@$VM_HOST << EOF
-            rm -rf /home/$VM_USER/frontend/*
-          EOF
+          if [[ "$env_name" == "test" ]]; then
+            ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "rm -rf /home/${{ secrets.VM_USER }}/frontend/*"
+          else
+            ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_VM_USER }}@${{ secrets.PROD_VM_HOST }} "rm -rf /home/${{ secrets.PROD_VM_USER }}/frontend/*"
+          fi
 
-      # 9️⃣ Copy new build to VM
+      # 9️⃣ Copy build to VM
       - name: Copy build to VM
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/browser/ \
-          $VM_USER@$VM_HOST:/home/$VM_USER/frontend/
+          if [[ "$env_name" == "test" ]]; then
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/browser/ \
+              ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }}:/home/${{ secrets.VM_USER }}/frontend/
+          else
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/browser/ \
+              ${{ secrets.PROD_VM_USER }}@${{ secrets.PROD_VM_HOST }}:/home/${{ secrets.PROD_VM_USER }}/frontend/
+          fi
 
-      # 🔟 Create Nginx config
+      # 🔟 Create Nginx config on VM
       - name: Create Nginx config
         run: |
-          ssh -o StrictHostKeyChecking=no $VM_USER@$VM_HOST << 'EOF'
-            cat > /home/$VM_USER/frontend/nginx.conf << 'EOL'
+          if [[ "$env_name" == "test" ]]; then
+            ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << 'EOF'
+          else
+            ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_VM_USER }}@${{ secrets.PROD_VM_HOST }} << 'EOF'
+          fi
+            cat > /home/$USER/frontend/nginx.conf << 'EOL'
             server {
               listen 80;
               server_name _;
@@ -114,10 +127,20 @@ jobs:
       # 11️⃣ Run Nginx container
       - name: Serve Angular with Nginx
         run: |
-          ssh -o StrictHostKeyChecking=no $VM_USER@$VM_HOST << EOF
-            docker rm -f angular-frontend || true
-            docker run --name angular-frontend -d -p 80:80 \
-              -v /home/$VM_USER/frontend:/usr/share/nginx/html:ro \
-              -v /home/$VM_USER/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
-              --restart always nginx:latest
-          EOF
+          if [[ "$env_name" == "test" ]]; then
+            ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} << EOF
+              docker rm -f angular-frontend || true
+              docker run --name angular-frontend -d -p 80:80 \
+                -v /home/${{ secrets.VM_USER }}/frontend:/usr/share/nginx/html:ro \
+                -v /home/${{ secrets.VM_USER }}/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
+                --restart always nginx:latest
+            EOF
+          else
+            ssh -o StrictHostKeyChecking=no ${{ secrets.PROD_VM_USER }}@${{ secrets.PROD_VM_HOST }} << EOF
+              docker rm -f angular-frontend || true
+              docker run --name angular-frontend -d -p 80:80 \
+                -v /home/${{ secrets.PROD_VM_USER }}/frontend:/usr/share/nginx/html:ro \
+                -v /home/${{ secrets.PROD_VM_USER }}/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
+                --restart always nginx:latest
+            EOF
+          fi
