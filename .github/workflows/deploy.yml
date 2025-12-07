@@ -37,8 +37,7 @@ jobs:
           ssh-private-key: ${{
             steps.set-env.outputs.env_name == 'test'
             && secrets.VM_SSH_KEY
-            || secrets.PROD_VM_SSH_KEY
-      }}
+            || secrets.PROD_VM_SSH_KEY}}
 
       # 4️⃣ Add VPS as known host
       - name: Add VM to known_hosts
@@ -46,8 +45,7 @@ jobs:
           VM_HOST: ${{
             steps.set-env.outputs.env_name == 'test'
             && secrets.VM_HOST
-            || secrets.PROD_VM_HOST
-      }}
+            || secrets.PROD_VM_HOST}}
         run: ssh-keyscan -H ${{ env.VM_HOST }} >> ~/.ssh/known_hosts
 
       # 5️⃣ Setup Node.js
