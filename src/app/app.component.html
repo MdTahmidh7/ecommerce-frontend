@@ -3,7 +3,7 @@
   <app-navbar *ngIf="showNavbar" (messageEvent)="setMessage($event)"></app-navbar>
 
   <!-- Main Content Area -->
-  <main class="container flex-grow-1 py-4 d-flex flex-column align-items-center justify-content-center">
+  <main class="container">
     <!-- Message Display (Bootstrap Alert) -->
     <div *ngIf="message" class="alert alert-info alert-dismissible fade show w-100" role="alert">
       {{ message }}
