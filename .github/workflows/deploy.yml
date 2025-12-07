@@ -15,38 +15,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Detect environment and set non-secret variable
-      - name: Set environment Name (Non-Secret)
+      # 2️⃣ Detect environment
+      - name: Set environment Name
         id: set-env
         run: |
-          TAG_NAME="${GITHUB_REF_NAME}"
+          TAG="${GITHUB_REF_NAME}"
 
-          if [[ "$TAG_NAME" == test-* ]]; then
+          if [[ "$TAG" == test-* ]]; then
             echo "env_name=test" >> $GITHUB_OUTPUT
-          elif [[ "$TAG_NAME" == prod-* ]]; then
+          elif [[ "$TAG" == prod-* ]]; then
             echo "env_name=production" >> $GITHUB_OUTPUT
           else
-            echo "❌ Unknown tag format: $TAG_NAME"
+            echo "Unknown tag format"
             exit 1
           fi
 
-      # 3️⃣ Setup SSH (Uses direct conditional access for the secret)
+      # 3️⃣ Setup SSH
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          # Select the correct SSH key based on the tag
           ssh-private-key: ${{
-            steps.set-env.outputs.env_name == 'test' && secrets.VM_SSH_KEY ||
-            secrets.PROD_VM_SSH_KEY
-            }}
+            steps.set-env.outputs.env_name == 'test'
+            && secrets.VM_SSH_KEY
+            || secrets.PROD_VM_SSH_KEY
+      }}
 
-      # 4️⃣ Add host to known_hosts (Uses direct conditional access for the host)
+      # 4️⃣ Add VPS as known host
       - name: Add VM to known_hosts
         env:
           VM_HOST: ${{
-            steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST ||
-            secrets.PROD_VM_HOST
-            }}
+            steps.set-env.outputs.env_name == 'test'
+            && secrets.VM_HOST
+            || secrets.PROD_VM_HOST
+      }}
         run: ssh-keyscan -H ${{ env.VM_HOST }} >> ~/.ssh/known_hosts
 
       # 5️⃣ Setup Node.js
@@ -59,46 +60,43 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 7️⃣ Build Angular app (Uses env_name from step output)
-      - name: Build Angular project
+      # 7️⃣ Build Angular
+      - name: Build Angular
         run: |
-          ENV_NAME="${{ steps.set-env.outputs.env_name }}"
-          if [[ "${ENV_NAME}" == "test" ]]; then
+          if [[ "${{ steps.set-env.outputs.env_name }}" == "test" ]]; then
             npm run build -- --configuration test
           else
             npm run build -- --configuration production
           fi
 
-      # 8️⃣ Clean old frontend files on VM (INDENTATION FIXED)
-      - name: Clean old frontend files
+      # 8️⃣ Clean old frontend files
+      - name: Clean old frontend
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
-            VM_USER_REMOTE=$(whoami)
-            rm -rf /home/${VM_USER_REMOTE}/frontend/*
+          ssh ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
+            rm -rf /home/$(whoami)/frontend/*
+            mkdir -p /home/$(whoami)/frontend
           EOF
 
-      # 9️⃣ Copy build files to VM (INDENTATION FIXED)
-      - name: Copy build to VM
+      # 9️⃣ Upload Angular build
+      - name: Upload build
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./dist/ecommerce-frontend/browser/ \
+          rsync -avz --delete -e "ssh" ./dist/ecommerce-frontend/browser/ \
           ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/
 
-      # 🔟 Create Nginx config (INDENTATION FIXED)
-      - name: Create Nginx config
+      # 🔟 Write Nginx config on VPS
+      - name: Write Nginx config
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
-            VM_USER_REMOTE=$(whoami)
-            mkdir -p /home/${VM_USER_REMOTE}/frontend
-            cat > /home/${VM_USER_REMOTE}/frontend/nginx.conf << 'EOL'
+          ssh ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
+            cat > /home/$(whoami)/frontend/default.conf << 'EOL'
             server {
             listen 80;
             server_name _;
@@ -107,37 +105,37 @@ jobs:
             index index.html;
 
             location / {
-            try_files $uri /index.html;
+            try_files \$uri /index.html;
           }
 
             location /api/ {
             proxy_pass http://127.0.0.1:8080;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header Host \$host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
           }
 
             location /assets/ {
-            try_files $uri =404;
+            try_files \$uri =404;
           }
 
             client_max_body_size 10M;
           }
-          EOL
-          EOF
+            EOL
+            EOF
 
-      # 11️⃣ Run Nginx container (INDENTATION FIXED)
-      - name: Serve Angular with Nginx
+      # 1️⃣1️⃣ Run updated Nginx container
+      - name: Run Nginx container
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
-            VM_USER_REMOTE=$(whoami)
+          ssh ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
             docker rm -f angular-frontend || true
-            docker run --name angular-frontend -d -p 80:80 \
-              -v /home/${VM_USER_REMOTE}/frontend:/usr/share/nginx/html:ro \
-              -v /home/${VM_USER_REMOTE}/frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro \
+
+            docker run -d --name angular-frontend -p 80:80 \
+              -v /home/$(whoami)/frontend:/usr/share/nginx/html:ro \
+              -v /home/$(whoami)/frontend/default.conf:/etc/nginx/conf.d/default.conf:ro \
               --restart always nginx:latest
           EOF
