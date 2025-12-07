@@ -93,35 +93,32 @@ jobs:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
-          ssh ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
-            cat > /home/$(whoami)/frontend/default.conf << 'EOL'
-            server {
-            listen 80;
-            server_name _;
+          ssh ${{ env.VM_USER }}@${{ env.VM_HOST }} "cat << 'EOL' > /home/${{ env.VM_USER }}/frontend/default.conf
+          server {
+          listen 80;
+          server_name _;
 
-            root /usr/share/nginx/html;
-            index index.html;
+          root /usr/share/nginx/html;
+          index index.html;
 
-            location / {
-            try_files \$uri /index.html;
+          location / {
+          try_files \$uri \$uri/ /index.html;
           }
-
-            location /api/ {
-            proxy_pass http://127.0.0.1:8080;
-            proxy_set_header Host \$host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \$scheme;
+          location /api/ {
+          proxy_pass http://ecommerce_backend_app:8080/;
+          proxy_set_header Host \$host;
+          proxy_set_header X-Real-IP \$remote_addr;
+          proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto \$scheme;
           }
-
-            location /assets/ {
+          location /assets/ {
             try_files \$uri =404;
           }
 
-            client_max_body_size 10M;
+          client_max_body_size 10M;
           }
-            EOL
-            EOF
+          EOL"
+
 
       # 1️⃣1️⃣ Run updated Nginx container
       - name: Run Nginx container
