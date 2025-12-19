@@ -72,18 +72,18 @@ jobs:
             mkdir -p /home/$(whoami)/frontend/nginx-conf
           EOF
 
-      # 9️⃣ Upload Angular build
+      # 9️⃣ Upload Angular build and Nginx default.conf
       - name: Upload build
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
           # Upload Angular static build
-          rsync -avz --delete -e "ssh" ./dist/ecommerce-frontend/browser/ \
+          rsync -avz --delete -e "ssh" ./ecommerce-frontend/dist/ecommerce-frontend/browser/ \
           ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/
 
           # Upload Nginx default.conf
-          rsync -avz -e "ssh" ./nginx/default.conf \
+          rsync -avz -e "ssh" ./ecommerce-frontend/nginx/default.conf \
           ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/nginx-conf/default.conf
 
       # 🔟 Run Nginx container
