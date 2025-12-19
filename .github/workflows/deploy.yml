@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      VM_USER: ${{ secrets.VM_USER }}
-      VM_HOST: ${{ secrets.VM_HOST }}
+      VM_USER: ${{ secrets.PROD_VM_USER }}
+      VM_HOST: ${{ secrets.PROD_VM_HOST }}
 
     steps:
       # 1️⃣ Checkout source
