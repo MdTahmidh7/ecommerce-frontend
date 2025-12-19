@@ -79,12 +79,13 @@ jobs:
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
           # Upload Angular static build
-          rsync -avz --delete -e "ssh" ./ecommerce-frontend/dist/ecommerce-frontend/browser/ \
-          ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/
+            rsync -avz --delete -e "ssh" ./dist/ecommerce-frontend/browser/ \
+            ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/
 
-          # Upload Nginx default.conf
-          rsync -avz -e "ssh" ./ecommerce-frontend/nginx/default.conf \
-          ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/nginx-conf/default.conf
+            # Upload Nginx default.conf
+            rsync -avz -e "ssh" ./nginx/default.conf \
+            ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/nginx-conf/default.conf
+
 
       # 🔟 Run Nginx container
       - name: Run Nginx container
