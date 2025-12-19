@@ -20,7 +20,6 @@ jobs:
         id: set-env
         run: |
           TAG="${GITHUB_REF_NAME}"
-
           if [[ "$TAG" == test-* ]]; then
             echo "env_name=test" >> $GITHUB_OUTPUT
           elif [[ "$TAG" == prod-* ]]; then
@@ -34,18 +33,12 @@ jobs:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{
-            steps.set-env.outputs.env_name == 'test'
-            && secrets.VM_SSH_KEY
-            || secrets.PROD_VM_SSH_KEY}}
+          ssh-private-key: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_SSH_KEY || secrets.PROD_VM_SSH_KEY }}
 
       # 4️⃣ Add VPS as known host
       - name: Add VM to known_hosts
         env:
-          VM_HOST: ${{
-            steps.set-env.outputs.env_name == 'test'
-            && secrets.VM_HOST
-            || secrets.PROD_VM_HOST}}
+          VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: ssh-keyscan -H ${{ env.VM_HOST }} >> ~/.ssh/known_hosts
 
       # 5️⃣ Setup Node.js
@@ -67,8 +60,8 @@ jobs:
             npm run build -- --configuration production
           fi
 
-      # 8️⃣ Ensure frontend folders on VPS
-      - name: Prepare VPS frontend directories
+      # 8️⃣ Clean old frontend files on VPS
+      - name: Clean old frontend
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
@@ -80,32 +73,30 @@ jobs:
           EOF
 
       # 9️⃣ Upload Angular build
-      - name: Upload Angular build
+      - name: Upload build
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
+          # Upload Angular static build
           rsync -avz --delete -e "ssh" ./dist/ecommerce-frontend/browser/ \
           ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/
 
-      # 🔟 Upload Nginx config
-      - name: Upload Nginx config
-        env:
-          VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
-          VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
-        run: |
+          # Upload Nginx default.conf
           rsync -avz -e "ssh" ./nginx/default.conf \
           ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/nginx-conf/default.conf
 
-      # 1️⃣1️⃣ Run updated Nginx container
+      # 🔟 Run Nginx container
       - name: Run Nginx container
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
           VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
         run: |
           ssh ${{ env.VM_USER }}@${{ env.VM_HOST }} << 'EOF'
+            # Stop & remove existing container if exists
             docker rm -f angular-frontend || true
 
+            # Run Nginx container on same network as backend
             docker run -d \
               --name angular-frontend \
               --network app_ecommerce_network \
