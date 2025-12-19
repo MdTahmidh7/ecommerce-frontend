@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Detect environment
+      # 2️⃣ Detect environment Name
       - name: Set environment Name
         id: set-env
         run: |
@@ -58,13 +58,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 7️⃣ Build Angular
+      # 7️⃣ Build Angular with correct baseHref/deployUrl
       - name: Build Angular
         run: |
           if [[ "${{ steps.set-env.outputs.env_name }}" == "test" ]]; then
-            npm run build -- --configuration test
+            npm run build -- --configuration test --base-href / --deploy-url /
           else
-            npm run build -- --configuration production
+            npm run build -- --configuration production --base-href / --deploy-url /
           fi
 
       # 8️⃣ Clean old frontend files
@@ -87,42 +87,7 @@ jobs:
           rsync -avz --delete -e "ssh" ./dist/ecommerce-frontend/browser/ \
           ${{ env.VM_USER }}@${{ env.VM_HOST }}:/home/${{ env.VM_USER }}/frontend/
 
-      # 🔟 Write Nginx config on VPS
-      - name: Write Nginx config
-        env:
-          VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
-          VM_HOST: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_HOST || secrets.PROD_VM_HOST }}
-        run: |
-          ssh ${{ env.VM_USER }}@${{ env.VM_HOST }} "cat << 'EOL' > /home/${{ env.VM_USER }}/frontend/default.conf
-          server {
-              listen 80;
-              server_name _;
-
-              root /usr/share/nginx/html;
-              index index.html;
-
-              location / {
-                  try_files \$uri /index.html;
-              }
-
-              location /api/ {
-                  proxy_pass http://ecommerce_backend_app:8080/api/;
-                  proxy_http_version 1.1;
-                  proxy_set_header Host \$host;
-                  proxy_set_header X-Real-IP \$remote_addr;
-                  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto \$scheme;
-              }
-
-              location /assets/ {
-                  try_files \$uri =404;
-              }
-
-              client_max_body_size 10M;
-          }
-          EOL"
-
-      # 1️⃣1️⃣ Run updated Nginx container on the same network as backend
+      # 1️⃣0️⃣ Run updated Nginx container on the same network as backend
       - name: Run Nginx container
         env:
           VM_USER: ${{ steps.set-env.outputs.env_name == 'test' && secrets.VM_USER || secrets.PROD_VM_USER }}
