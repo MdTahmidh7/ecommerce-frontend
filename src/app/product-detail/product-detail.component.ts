@@ -54,6 +54,7 @@ export class ProductDetailComponent implements OnInit {
   resendDisabled: boolean = true;
   countdown: number = environment.otpExpiryTimeInMin*60;
   maxCountdown: number = environment.otpExpiryTimeInMin*60;
+  shippingCost: number = environment.shippingCost | 120;
   private countdownInterval: any;
   // Use ViewChildren to access the OTP input elements
   @ViewChildren('otp1, otp2, otp3, otp4, otp5, otp6') otpInputs!: ElementRef[];
