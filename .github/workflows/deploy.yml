@@ -57,20 +57,20 @@ jobs:
           ssh -o StrictHostKeyChecking=no $VM_USER@$VM_HOST << 'EOF'
             mkdir -p /home/root/frontend/nginx
           EOF
-
-        # 8️⃣ Upload Angular static build (This looks correct)
-      - name: Upload Angular static build
+        # 8️⃣ Upload built files to server
+      - name: Upload built files to server
         run: |
-          rsync -avz --delete \
-          ./dist/ecommerce-frontend/browser/ \
-          $VM_USER@$VM_HOST:/home/root/frontend/
-
-        # 9️⃣ Upload Nginx config (Updated path to match Docker)
-      - name: Upload Nginx default.conf
+          scp -o StrictHostKeyChecking=no -r dist/ecommerce-frontend/browser/* $VM_USER@$VM_HOST:/home/root/frontend/
+          scp -o StrictHostKeyChecking=no -r nginx/* $VM_USER@$VM_HOST:/home/root/frontend/nginx/
+        #9️⃣ Verify files on server (DEBUG – VERY IMPORTANT)
+      - name: Verify files on server
         run: |
-          rsync -avz \
-          ./nginx/default.conf \
-          $VM_USER@$VM_HOST:/home/root/frontend/nginx/default.conf
+          ssh $VM_USER@$VM_HOST << 'EOF'
+            echo "==== FRONTEND FILES ===="
+            ls -l /home/root/frontend/
+            echo "==== NGINX FILES ===="
+            ls -l /home/root/frontend/nginx/
+          EOF
 
       # 🔟 Restart Nginx container
       - name: Restart Nginx container
