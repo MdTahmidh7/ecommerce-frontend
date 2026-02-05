@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import {Router, NavigationEnd, RouterOutlet, RouterLink} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './navbar/navbar.component';
 import { AuthService } from './auth/auth.service';
@@ -8,7 +8,7 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, NavbarComponent],
+  imports: [RouterOutlet, CommonModule, NavbarComponent, RouterLink],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

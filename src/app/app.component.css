@@ -1,0 +1,83 @@
+.footer-modern {
+  background: linear-gradient(135deg, #4a64f6 0%, #a560f5 50%, #f259fc 100%);
+  padding: 60px 0 30px;
+  color: #ffffff;
+}
+
+.footer-logo {
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.footer-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.footer-heading::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 30px;
+  height: 2px;
+  background-color: #0d6efd;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-links a {
+  color: #adb5bd;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #0d6efd;
+  padding-left: 5px;
+}
+
+/* WhatsApp Box */
+.bg-dark-soft {
+  background-color: #6baf6b;
+}
+
+.whatsapp-link {
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.whatsapp-link:hover {
+  transform: scale(1.05);
+}
+
+/* Social Buttons */
+.social-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #1a1d24;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-btn.fb:hover {
+  background-color: #1877F2;
+}
+
+.social-btn.yt:hover {
+  background-color: #FF0000;
+}
+
+.footer-bottom {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
