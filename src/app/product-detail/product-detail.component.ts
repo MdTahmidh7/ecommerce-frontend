@@ -33,7 +33,6 @@ export class ProductDetailComponent implements OnInit {
   orderRequest: CreateOrderRequest = null as any;
 
   selectedColor: string = '';
-  selectedSize: string = '';
   currentImageIndex: number = 0;
   quantity: number = 1;
   activeTab: string = 'description';
@@ -45,10 +44,6 @@ export class ProductDetailComponent implements OnInit {
   protected readonly Math = Math;
   protected readonly Number = Number;
   isSubmitting: boolean = false;
-
-  divisions:DivisionModel[] = [];
-  districts:DistrictsModel[] = [];
-  upazilas:UpazilaModel[] = [];
 
   otp: string = '';
   resendDisabled: boolean = true;
@@ -448,5 +443,13 @@ export class ProductDetailComponent implements OnInit {
     const embedUrl = `https://www.youtube.com/embed/${videoId}`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
 
+  }
+
+  getTotalPayable() {
+    if (this.product && this.product.price) {
+      return (this.product.price * this.quantity) + this.shippingCost;
+    } else {
+      return "";
+    }
   }
 }
