@@ -13,4 +13,5 @@ export interface Product {
   imageUrl: string;
   imageUrls: string[];
   category: Category;
+  youtubeLink?: string;
 }

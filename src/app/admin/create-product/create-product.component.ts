@@ -53,7 +53,8 @@ export class CreateProductComponent implements OnInit, OnDestroy {
       description: ['<p>Add rich description here...</p>', Validators.required],
       price: ['', Validators.required],
       stockQuantity: ['', Validators.required],
-      categoryId: [null, Validators.required]
+      categoryId: [null, Validators.required],
+      youtubeLink: ['']
     });
     // Initialize the editor
     this.editor = new Editor();

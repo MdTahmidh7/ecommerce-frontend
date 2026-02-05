@@ -26,6 +26,7 @@ interface ProductResponse {
   stockQuantity: number;
   categoryId: number;
   imageUrls: string[]; // List of existing image URLs
+  youtubeLink?: string;
 }
 
 @Component({
@@ -73,6 +74,7 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
       description: ['', Validators.required],
       price: ['', Validators.required],
       stockQuantity: ['', Validators.required],
+      youtubeLink: ['']
       //categoryId: [null, Validators.required]
     });
 
@@ -100,7 +102,8 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
           description: descriptionDoc, // Use the doc format for the editor
           price: product.price,
           stockQuantity: product.stockQuantity,
-          categoryId: product.categoryId
+          categoryId: product.categoryId,
+          youtubeLink: product.youtubeLink || ''
         });
 
         // 3. Populate selectedFiles with existing images

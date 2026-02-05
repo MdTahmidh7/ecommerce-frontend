@@ -137,15 +137,6 @@ export class ProductDetailComponent implements OnInit {
     } else {
       this.router.navigate(['/products']); // No product ID, navigate away
     }
-    this.getAllDivisions();
-  }
-
-  selectColor(color: string): void {
-    this.selectedColor = color;
-  }
-
-  selectSize(size: string): void {
-    this.selectedSize = size;
   }
 
   selectImage(index: number): void {
@@ -178,17 +169,6 @@ export class ProductDetailComponent implements OnInit {
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
-  }
-
-  addToCart(): void {
-    if (!this.product) return;
-    // In a real app, this would add the product to the cart
-    console.log('Added to cart:', {
-      product: this.product.name,
-      color: this.selectedColor,
-      size: this.selectedSize,
-      quantity: this.quantity
-    });
   }
 
   buyNow(modal: any, deliveryAddressModal: any): void {
@@ -299,59 +279,6 @@ export class ProductDetailComponent implements OnInit {
         }
       });
     }
-  }
-
-  private getAllDivisions() {
-    this.productDetailsService.getAllDivisions().subscribe({
-      next: (data: any) => {
-        this.divisions = data.content || [];
-        console.log('Divisions fetched successfully:', this.divisions);
-      },
-      error: (error: any) => {
-        console.error('Error fetching divisions:', error);
-      }
-    });
-  }
-
-  onDivisionChange(event: Event) {
-    this.registrationForm.get('upazilaId')?.disable();
-    const divisionId = (event.target as HTMLSelectElement).value;
-    if (!divisionId) {
-      this.districts = [];
-      this.upazilas = [];
-      this.registrationForm.patchValue({ district: '', upazila: '' });
-      return;
-    }
-    this.productDetailsService.getAllDistrictByDivisionId(divisionId).subscribe({
-      next: (data: any) => {
-        this.districts = data.content || [];
-        this.upazilas = [];
-        this.registrationForm.patchValue({ district: '', upazila: '' });
-      },
-      error: (error: any) => {
-        console.error('Error fetching districts:', error);
-      }
-    });
-  }
-
-  onDistrictChange(event: Event) {
-    const districtId = (event.target as HTMLSelectElement).value;
-    console.log('Selected District ID:', districtId);
-    this.registrationForm.get('upazilaId')?.enable();
-    if (!districtId) {
-      this.upazilas = [];
-      this.registrationForm.patchValue({ upazila: '' });
-      return;
-    }
-    this.productDetailsService.getAllUpazilaByDistrictId(districtId).subscribe({
-      next: (data: any) => {
-        this.upazilas = data.content || [];
-        this.registrationForm.patchValue({ upazila: '' });
-      },
-      error: (error: any) => {
-        console.error('Error fetching upazilas:', error);
-      }
-    });
   }
 
 // Update your form validity checks as needed:
@@ -507,5 +434,19 @@ export class ProductDetailComponent implements OnInit {
   redirectToLogin() {
     this.modalService.dismissAll();
     this.router.navigate(['/login']);
+  }
+
+  getYoutubeEmbedUrl() {
+    //return safe video url
+    const videoUrl = this.product?.youtubeLink || '';
+    const videoId = videoUrl.split('v=')[1];
+    //for share url if video url is like https://youtu.be/VIDEO_ID
+    if (!videoId) {
+      const urlParts = videoUrl.split('/');
+      return this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${urlParts[urlParts.length - 1]}`);
+    }
+    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+
   }
 }
