@@ -200,7 +200,7 @@ export class UpdateProductComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error updating product', error);
-          this.alertService.error('Update Failed', error.message || 'Check console for details.');
+          this.alertService.error('Update Failed', error.error.message || 'Check console for details.');
         }
       });
     }

@@ -56,6 +56,7 @@ export class ProductDetailComponent implements OnInit {
   protected  environment = environment;
   errorMessage: string | null = null;
   safeDescription!: SafeHtml;
+  contactNumber:string = '01716750237';
 
   constructor(
     private route: ActivatedRoute,
