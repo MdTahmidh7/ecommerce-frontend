@@ -1682,78 +1682,137 @@
 
 /* OTP Modal */
 ::ng-deep .otp-modal-window .modal-dialog {
-  max-width: 380px;
-  margin: 1.5rem auto;
+  max-width: 370px !important;
+  margin: 1.5rem auto !important;
 }
 
 @media (max-width: 576px) {
   ::ng-deep .otp-modal-window .modal-dialog {
-    margin: 1rem auto;
-    max-width: calc(100% - 1.5rem);
+    margin: 1rem auto !important;
+    max-width: calc(100% - 1.5rem) !important;
   }
+}
+
+::ng-deep .otp-modal-window .modal-content {
+  border: none !important;
+  border-radius: 18px !important;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22) !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
 }
 
 .otp-modal-container {
   background: #ffffff;
-  border-radius: 16px;
-  padding: 16px 18px;
+  padding: 22px 20px 20px;
   position: relative;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+}
+
+.otp-header {
+  margin-bottom: 8px;
 }
 
 .otp-icon-wrapper {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
 }
 
 .otp-close-btn {
   position: absolute;
   top: 14px;
   right: 14px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.otp-close-btn:hover {
+  opacity: 1;
+}
+
+.otp-phone-badge {
+  display: inline-block;
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
 }
 
 .otp-input-container {
-  max-width: 300px;
+  max-width: 310px;
   margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
 }
 
-.otp-input {
-  width: 40px;
-  height: 46px;
-  font-size: 1.3rem;
-  font-weight: 700;
-  text-align: center;
-  border-radius: 8px;
-  border: 1.5px solid #cbd5e1;
+@media (max-width: 380px) {
+  .otp-input-container {
+    gap: 4px;
+  }
 }
 
-.otp-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+.otp-digit-box {
+  width: 42px !important;
+  height: 48px !important;
+  max-width: 44px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 1.45rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  text-align: center !important;
+  line-height: 48px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background-color: #f8fafc !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease;
+  caret-color: #2563eb;
+  -webkit-appearance: none;
+}
+
+@media (max-width: 380px) {
+  .otp-digit-box {
+    width: 36px !important;
+    height: 44px !important;
+    font-size: 1.25rem !important;
+    line-height: 44px !important;
+  }
+}
+
+.otp-digit-box:focus {
+  background-color: #ffffff !important;
+  border-color: #2563eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18) !important;
+  outline: none !important;
 }
 
 .otp-footer {
   display: flex;
-  gap: 8px;
-  padding-top: 10px;
+  gap: 10px;
+  padding-top: 14px;
 }
 
 .otp-cancel-btn {
-  flex: 1 1 40%;
-  height: 40px;
+  flex: 1 1 38%;
+  height: 42px;
   padding: 8px 12px;
-  font-size: 0.88rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #475569;
-  background-color: #ffffff;
+  background-color: #f8fafc;
   border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1764,31 +1823,35 @@
 .otp-cancel-btn:hover {
   background-color: #f1f5f9;
   border-color: #94a3b8;
+  color: #1e293b;
 }
 
 .otp-submit-btn {
-  flex: 1 1 60%;
-  height: 40px;
-  padding: 8px 14px;
-  font-size: 0.9rem;
+  flex: 1 1 62%;
+  height: 42px;
+  padding: 8px 16px;
+  font-size: 0.92rem;
   font-weight: 600;
   color: #ffffff;
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.28);
   transition: all 0.2s ease;
 }
 
 .otp-submit-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-1px);
 }
 
 .otp-submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }

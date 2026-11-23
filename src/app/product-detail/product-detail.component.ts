@@ -437,6 +437,49 @@ export class ProductDetailComponent implements OnInit {
     this.updateOtpString();
   }
 
+  onOtpInput(event: Event, nextInput: HTMLInputElement | null) {
+    const input = event.target as HTMLInputElement;
+    if (input && input.value) {
+      if (input.value.length > 1) {
+        input.value = input.value.slice(-1);
+      }
+      if (nextInput) {
+        nextInput.focus();
+        nextInput.select();
+      }
+    }
+    this.updateOtpString();
+  }
+
+  onOtpKeyDown(event: KeyboardEvent, prevInput: HTMLInputElement | null) {
+    const input = event.target as HTMLInputElement;
+    if (event.key === 'Backspace' && (!input.value || input.value === '')) {
+      if (prevInput) {
+        prevInput.focus();
+        prevInput.select();
+      }
+    }
+  }
+
+  onOtpPaste(event: ClipboardEvent) {
+    event.preventDefault();
+    const clipboardData = event.clipboardData?.getData('text') || '';
+    const digits = clipboardData.replace(/\D/g, '').slice(0, 6);
+    if (digits && this.otpInputs) {
+      const inputsArray = Array.from(this.otpInputs);
+      digits.split('').forEach((digit, index) => {
+        if (inputsArray[index]) {
+          inputsArray[index].nativeElement.value = digit;
+        }
+      });
+      this.updateOtpString();
+      const lastIndex = Math.min(digits.length, 5);
+      if (inputsArray[lastIndex]) {
+        inputsArray[lastIndex].nativeElement.focus();
+      }
+    }
+  }
+
   // A helper method to combine all input values into a single string
   updateOtpString() {
     this.otp = this.otpInputs.map(input => input.nativeElement.value).join('');

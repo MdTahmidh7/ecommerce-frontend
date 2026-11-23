@@ -413,24 +413,26 @@
   <div class="otp-modal-container">
     <div class="otp-header text-center position-relative">
       <div class="otp-icon-wrapper mx-auto mb-2">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg>
       </div>
-      <h5 class="fw-bold mb-1">ওটিপি কোড দিন</h5>
+      <h5 class="fw-bold mb-1 text-dark">ওটিপি কোড লিখুন</h5>
       <p class="text-muted small mb-0">
-        {{ checkoutForm.get('phoneNumber')?.value }} নম্বরে একটি ৬ ডিজিটের কোড পাঠানো হয়েছে
+        <span class="otp-phone-badge">{{ checkoutForm.get('phoneNumber')?.value }}</span>
+        <span class="d-block mt-1">নম্বরে ৬ ডিজিটের ভেরিফিকেশন কোড পাঠানো হয়েছে</span>
       </p>
       <button type="button" class="btn-close otp-close-btn" aria-label="Close" (click)="d('Cross click')"></button>
     </div>
 
-    <div class="otp-body py-3">
-      <div class="text-center alert alert-danger py-2 small mb-3 animate__animated animate__shakeX" *ngIf="errorMessage">
+    <div class="otp-body py-2">
+      <div class="text-center alert alert-danger py-2 small mb-2 animate__animated animate__shakeX" *ngIf="errorMessage">
         {{ errorMessage }}
       </div>
 
       <div class="countdown-container mb-3">
-        <div class="progress" style="height: 4px;">
+        <div class="progress" style="height: 4px; border-radius: 4px; background-color: #e2e8f0;">
           <div
             class="progress-bar bg-primary"
             role="progressbar"
@@ -440,45 +442,60 @@
             aria-valuemax="100"
           ></div>
         </div>
-        <p class="countdown-text mt-1 text-muted small text-center">মেয়াদ শেষ হতে বাকি {{ countdown }} সেকেন্ড</p>
+        <p class="countdown-text mt-1 text-muted small text-center mb-0">
+          ⏱️ মেয়াদ শেষ হতে বাকি <strong>{{ countdown }}</strong> সেকেন্ড
+        </p>
       </div>
 
-      <div class="d-flex justify-content-center gap-1 gap-sm-2 mb-3 otp-input-container">
+      <div class="d-flex justify-content-center gap-1 gap-sm-2 mb-3 otp-input-container" (paste)="onOtpPaste($event)">
         <input
-          #otp1 type="tel" maxlength="1"
-          class="form-control text-center otp-input"
+          #otp1 type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+          class="otp-digit-box"
+          (input)="onOtpInput($event, otp2)"
+          (keydown)="onOtpKeyDown($event, null)"
           (keyup)="onOtpChange($event, otp2, null)"
+          autocomplete="one-time-code"
         >
         <input
-          #otp2 type="tel" maxlength="1"
-          class="form-control text-center otp-input"
+          #otp2 type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+          class="otp-digit-box"
+          (input)="onOtpInput($event, otp3)"
+          (keydown)="onOtpKeyDown($event, otp1)"
           (keyup)="onOtpChange($event, otp3, otp1)"
         >
         <input
-          #otp3 type="tel" maxlength="1"
-          class="form-control text-center otp-input"
+          #otp3 type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+          class="otp-digit-box"
+          (input)="onOtpInput($event, otp4)"
+          (keydown)="onOtpKeyDown($event, otp2)"
           (keyup)="onOtpChange($event, otp4, otp2)"
         >
         <input
-          #otp4 type="tel" maxlength="1"
-          class="form-control text-center otp-input"
+          #otp4 type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+          class="otp-digit-box"
+          (input)="onOtpInput($event, otp5)"
+          (keydown)="onOtpKeyDown($event, otp3)"
           (keyup)="onOtpChange($event, otp5, otp3)"
         >
         <input
-          #otp5 type="tel" maxlength="1"
-          class="form-control text-center otp-input"
+          #otp5 type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+          class="otp-digit-box"
+          (input)="onOtpInput($event, otp6)"
+          (keydown)="onOtpKeyDown($event, otp4)"
           (keyup)="onOtpChange($event, otp6, otp4)"
         >
         <input
-          #otp6 type="tel" maxlength="1"
-          class="form-control text-center otp-input"
+          #otp6 type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+          class="otp-digit-box"
+          (input)="onOtpInput($event, null)"
+          (keydown)="onOtpKeyDown($event, otp5)"
           (keyup)="onOtpChange($event, null, otp5)"
         >
       </div>
 
       <div class="text-center small">
-        কোড পাননি?
-        <button type="button" class="btn btn-link p-0 fw-bold small text-decoration-none" (click)="resendOTP()" [disabled]="resendDisabled">
+        <span class="text-muted">কোড পাননি?</span>
+        <button type="button" class="btn btn-link p-0 fw-bold small text-decoration-none ms-1" (click)="resendOTP()" [disabled]="resendDisabled">
           আবার পাঠান
         </button>
         <span *ngIf="resendDisabled" class="text-muted ms-1">({{ countdown }}s)</span>
@@ -490,7 +507,7 @@
         বাতিল
       </button>
       <button type="button" class="otp-submit-btn" (click)="verifyOTP(verifyOtpModal)" [disabled]="otp.length !== 6 || isSubmitting">
-        <span *ngIf="!isSubmitting">যাচাই করুন</span>
+        <span *ngIf="!isSubmitting">যাচাই ও অর্ডার কনফার্ম</span>
         <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm" role="status"></span>
       </button>
     </div>
