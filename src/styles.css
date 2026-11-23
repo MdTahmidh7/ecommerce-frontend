@@ -205,3 +205,36 @@ html {
     margin: 0 5px;
   }
 }
+
+/* Global Modal Styles for Checkout & OTP */
+.checkout-modal-window .modal-dialog {
+  max-width: 520px;
+  margin: 1.25rem auto;
+}
+
+.checkout-modal-window .modal-content {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+}
+
+@media (max-width: 576px) {
+  .checkout-modal-window .modal-dialog {
+    margin: 0.5rem auto;
+    max-width: calc(100% - 1rem);
+  }
+}
+
+.otp-modal-window .modal-dialog {
+  max-width: 380px;
+  margin: 1.5rem auto;
+}
+
+@media (max-width: 576px) {
+  .otp-modal-window .modal-dialog {
+    margin: 1rem auto;
+    max-width: calc(100% - 1.5rem);
+  }
+}

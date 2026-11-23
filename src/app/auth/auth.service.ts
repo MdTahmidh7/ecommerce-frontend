@@ -94,7 +94,7 @@ export class AuthService {
   }
 
   reSendOtp(phoneNumber: string): Observable<any> {
-    const resendOtpEndpoint = `${this.baseUrl}/resend-otp`;
+    const resendOtpEndpoint = `${this.baseUrl}/login/resend-otp`;
     const body = { phoneNumber: phoneNumber };
     const headers = new HttpHeaders({'Content-Type': 'application/json'});
     return this.http.post<any>(resendOtpEndpoint, body, { headers });
@@ -154,6 +154,22 @@ export class AuthService {
       }
     }
     return null;
+  }
+
+  getUserPhoneNumber(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          return payload.phoneNumber || payload.sub || '';
+        } catch (e) {
+          console.error('Error parsing token:', e);
+          return '';
+        }
+      }
+    }
+    return '';
   }
 
   clearToken() {

@@ -1392,3 +1392,403 @@
     width: 80vw;        /* Slightly slimmer on larger screens */
   }
 }
+
+/* ==========================================================
+   Checkout Modal & OTP Modal Styles (Mobile & Desktop)
+   ========================================================== */
+::ng-deep .checkout-modal-window .modal-dialog {
+  max-width: 520px;
+  margin: 1.25rem auto;
+}
+
+::ng-deep .checkout-modal-window .modal-content {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+  background: #ffffff;
+}
+
+@media (max-width: 576px) {
+  ::ng-deep .checkout-modal-window .modal-dialog {
+    margin: 0.5rem auto;
+    max-width: calc(100% - 1rem);
+  }
+}
+
+.checkout-modal-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkout-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #ffffff;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 576px) {
+  .checkout-header {
+    padding: 12px 18px;
+  }
+}
+
+.checkout-header-icon-small {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.checkout-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 2px 4px;
+  letter-spacing: 0.2px;
+}
+
+.checkout-subtitle {
+  font-size: 0.76rem;
+  color: #e0e7ff;
+}
+
+.checkout-close-btn {
+  background: rgba(255, 255, 255, 0.18);
+  border: none;
+  color: #ffffff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkout-close-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
+}
+
+.checkout-body {
+  padding: 18px 22px;
+  background: #ffffff;
+  max-height: calc(85vh - 120px);
+  overflow-y: auto;
+}
+
+@media (max-width: 576px) {
+  .checkout-body {
+    padding: 16px 18px;
+    max-height: calc(88vh - 110px);
+  }
+}
+
+.checkout-product-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.checkout-product-calc {
+  font-size: 0.82rem;
+  color: #334155;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.checkout-product-calc .delivery-text {
+  font-size: 0.76rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.checkout-product-img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.checkout-product-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.25;
+}
+
+.checkout-product-meta {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.checkout-total-badge .total-label {
+  font-size: 0.68rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.checkout-total-badge .total-amount {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2563eb;
+  line-height: 1.2;
+}
+
+.checkout-total-badge .delivery-hint {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.checkout-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 3px;
+  display: block;
+}
+
+.checkout-input {
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #cbd5e1;
+  min-height: 40px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.checkout-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.checkout-footer {
+  padding: 14px 22px 22px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkout-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkout-cancel-btn {
+  width: auto;
+  min-width: 70px;
+  height: 40px;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #475569;
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.checkout-cancel-btn:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  border-color: #94a3b8;
+}
+
+.checkout-submit-btn {
+  width: auto;
+  min-width: unset;
+  height: 40px;
+  padding: 8px 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.checkout-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  transform: translateY(-1px);
+}
+
+.checkout-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 576px) {
+  .checkout-footer {
+    padding: 12px 18px 20px;
+  }
+
+  .checkout-btn-group {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .checkout-cancel-btn {
+    flex: 0 0 75px;
+    width: 75px;
+    height: 42px;
+    font-size: 0.85rem;
+  }
+
+  .checkout-submit-btn {
+    flex: 1 1 auto;
+    width: auto;
+    height: 42px;
+    font-size: 0.86rem;
+    padding: 8px 10px;
+  }
+}
+
+/* OTP Modal */
+::ng-deep .otp-modal-window .modal-dialog {
+  max-width: 380px;
+  margin: 1.5rem auto;
+}
+
+@media (max-width: 576px) {
+  ::ng-deep .otp-modal-window .modal-dialog {
+    margin: 1rem auto;
+    max-width: calc(100% - 1.5rem);
+  }
+}
+
+.otp-modal-container {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 18px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+}
+
+.otp-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+.otp-input-container {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.otp-input {
+  width: 40px;
+  height: 46px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 8px;
+  border: 1.5px solid #cbd5e1;
+}
+
+.otp-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.otp-footer {
+  display: flex;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.otp-cancel-btn {
+  flex: 1 1 40%;
+  height: 40px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #475569;
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.otp-cancel-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.otp-submit-btn {
+  flex: 1 1 60%;
+  height: 40px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+}
+
+.otp-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+}
+
+.otp-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

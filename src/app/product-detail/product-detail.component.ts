@@ -38,8 +38,10 @@ export class ProductDetailComponent implements OnInit {
   activeTab: string = 'description';
   user: UserRegistrationRequest = null as any;
 
-  registrationForm: FormGroup;
-  deliveryAddressForm: FormGroup;
+  registrationForm!: FormGroup;
+  deliveryAddressForm!: FormGroup;
+  checkoutForm: FormGroup;
+  pendingOrderPayload: CreateOrderRequest | null = null;
 
   protected readonly Math = Math;
   protected readonly Number = Number;
@@ -60,7 +62,7 @@ export class ProductDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private authService : AuthService,
+    public authService : AuthService,
     private router: Router,
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -70,37 +72,19 @@ export class ProductDetailComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {
 
-    this.registrationForm = this.fb.group({
+    this.checkoutForm = this.fb.group({
       name: ['', [
         Validators.required,
-        Validators.pattern('^[a-zA-Z0-9 ]+$'),
-        Validators.minLength(2)]
-      ],
-      phoneNumber: ['',
-        [
-          Validators.required,
-          Validators.pattern('^(?:\\+88|88)?01[3-9]\\d{8}$'),
-          Validators.maxLength(11),
-        ]
-      ],
-      districtName: ['',
-        [
-          Validators.required,
-          Validators.pattern('^[a-zA-Z0-9 ]+$')
-        ]
-      ],
-      upazilaName: ['',
-        [
-          Validators.required,
-          Validators.pattern('^[a-zA-Z0-9 ]+$')
-        ]
-      ]
-    });
-
-    this.deliveryAddressForm = this.fb.group({
-      districtName: ['',Validators.required],
-      upazilaName: ['',Validators.required],
-      address: ['',]
+        Validators.minLength(2)
+      ]],
+      phoneNumber: ['', [
+        Validators.required,
+        Validators.pattern('^(?:\\+88|88)?01[3-9]\\d{8}$'),
+        Validators.maxLength(11)
+      ]],
+      districtName: ['', Validators.required],
+      upazilaName: ['', Validators.required],
+      address: ['', Validators.required]
     });
 
   }
@@ -167,32 +151,32 @@ export class ProductDetailComponent implements OnInit {
     this.activeTab = tab;
   }
 
-  buyNow(modal: any, deliveryAddressModal: any): void {
-    // //First check if the user is logged in
-    if (!this.authService.isUserAuthenticated()) {
-      this.openModal(modal);
-      return;
+  buyNow(modal: any): void {
+    if (this.authService.isUserAuthenticated()) {
+      const currentName = this.authService.getUserName();
+      const currentPhone = this.authService.getUserPhoneNumber();
+      if (currentName && currentName !== 'Guest') {
+        this.checkoutForm.patchValue({ name: currentName });
+      }
+      if (currentPhone) {
+        this.checkoutForm.patchValue({ phoneNumber: currentPhone });
+      }
     }
-    else{
-      this.openModal(deliveryAddressModal);
-    }
-
+    this.openModal(modal);
   }
 
   openModal(modal: any) {
-
-    //this.contactForm.reset(); // Reset form when opening
-
     const modalRef = this.modalService.open(modal, {
-      size: 'md',
       backdrop: 'static',
       centered: true,
-      keyboard: false
+      keyboard: false,
+      scrollable: true,
+      windowClass: 'checkout-modal-window'
     });
 
     modalRef.result.then(
       (result) => {
-        console.log('Form submitted successfully:', result);
+        console.log('Modal closed:', result);
       },
       (dismissed) => {
         console.log('Modal dismissed:', dismissed);
@@ -200,156 +184,155 @@ export class ProductDetailComponent implements OnInit {
     );
   }
 
-  onSubmit(modal: any, verifyOtpModal: any): void {
-
-    if (this.registrationForm.valid) {
-      console.log("Form values for user registration = ", this.registrationForm.value)
-      this.user = {
-        name: this.registrationForm.value.name,
-        phoneNumber: this.registrationForm.value.phoneNumber,
-        address: this.registrationForm.value.address,
-        upazilaId: this.registrationForm.value.upazilaId,
-        districtName: this.registrationForm.value.districtName,
-        upazilaName: this.registrationForm.value.upazilaName
-      };
-
-      this.isSubmitting = true;
-
-      //call register API
-      this.authService.register(this.user).subscribe({
-        next: (response) => {
-          console.log('Contact registered successfully:', response);
-          const modalRef = this.modalService.open(verifyOtpModal, {
-            size: 'md',
-            backdrop: 'static',
-            centered: true,
-            keyboard: false
-          });
-          modal.close(this.registrationForm.value);
-          this.isSubmitting = false;
-          this.startCountdown();
-        },
-        error: (error) => {
-          this.isSubmitting = false;
-          let errorMessage = 'An unexpected error occurred.';
-          if (error && error.error) {
-            // If the error body is already a JSON object
-            if (typeof error.error === 'object' && error.error.message) {
-              errorMessage = error.error.message;
-            }
-            // If the error body is a JSON string, attempt to parse it
-            else if (typeof error.error === 'string') {
-              try {
-                const parsedError = JSON.parse(error.error);
-                if (parsedError.message) {
-                  errorMessage = parsedError.message;
-                }
-              } catch (e) {
-                console.error('Failed to parse error response:', e);
-              }
-              this.alertService.error('Login Failed', errorMessage);
-            }
-          }
-        }
+  onSubmitCheckout(modal: any, verifyOtpModal: any): void {
+    if (this.checkoutForm.invalid) {
+      Object.keys(this.checkoutForm.controls).forEach(key => {
+        this.checkoutForm.get(key)?.markAsTouched();
       });
-    } else {
-      // Mark all fields as touched to show validation errors
-      Object.keys(this.registrationForm.controls).forEach(key => {
-        this.registrationForm.get(key)?.markAsTouched();
-      });
+      return;
     }
-  }
 
+    const formValues = this.checkoutForm.value;
 
-  onSubmitDeliveryAddress(modal: any): void {
-    if (this.deliveryAddressForm.valid) {
-      modal.close(this.deliveryAddressForm.value);
+    // If user is already authenticated, place order directly
+    if (this.authService.isUserAuthenticated()) {
       this.alertService.confirm(
         "Confirm Order",
         "Are you sure you want to place the order?"
       ).then((result) => {
         if (result.isConfirmed) {
           this.isSubmitting = true;
-          this.placeOrder();
-          this.isSubmitting = false;
+          this.placeDirectOrder(modal);
         }
       });
+      return;
     }
-  }
 
-// Update your form validity checks as needed:
-  isFieldInvalid(field: string) {
-    const control = this.registrationForm.get(field);
-    return control && control.invalid && (control.dirty || control.touched);
-  }
-
-  getCurrentImage() {
-    if (this.product && this.product.imageUrls && this.product.imageUrls.length > 0) {
-      return this.product.imageUrls[this.currentImageIndex];
-    }else {
-      return 'assets/images/no-image.png'; // Fallback image
-    }
-  }
-
-  private placeOrder() {
-
-    const districtName = this.deliveryAddressForm.get('districtName')?.value;
-    const upazilaName = this.deliveryAddressForm.get('upazilaName')?.value;
-    const userId = this.authService.getUserId();
-    const upazilaId = this.deliveryAddressForm.get('upazilaId')?.value;
-    const productId = this.product?.id;
+    // For unauthenticated user: stage pending order payload
+    const productId = this.product?.id || 0;
     const quantity = this.quantity;
-    const price = this.product?.price;
-    const totalPrice = price ? price * quantity : 0;
+    const price = this.product?.price || 0;
+    const totalPrice = price * quantity;
 
-    //prepare order request
-    this.orderRequest = {
-      districtName: districtName,
-      upazilaName: upazilaName,
-      upazilaId: upazilaId,
-      userId: userId,
+    this.pendingOrderPayload = {
+      districtName: formValues.districtName,
+      upazilaName: formValues.upazilaName,
+      address: formValues.address,
       orderItems: [{
-        productId: productId || 0, // Fallback to 0 if productId is undefined
+        productId: productId,
         quantity: quantity,
         price: totalPrice
       }]
     };
 
-    //call api for order request
-    this.orderService.createOrder(this.orderRequest).subscribe({
+    this.user = {
+      name: formValues.name,
+      phoneNumber: formValues.phoneNumber,
+      districtName: formValues.districtName,
+      upazilaName: formValues.upazilaName,
+      address: formValues.address,
+      upazilaId: 0
+    };
+
+    this.isSubmitting = true;
+
+    // Attempt registration first
+    this.authService.register(this.user).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        modal.close();
+        this.openOtpModal(verifyOtpModal);
+      },
+      error: (error) => {
+        const errorMsg = this.extractErrorMessage(error);
+        // If user already exists, request OTP via login
+        if (errorMsg.toLowerCase().includes('already') || errorMsg.toLowerCase().includes('in use') || error.status === 400) {
+          this.authService.login(formValues.name, formValues.phoneNumber).subscribe({
+            next: () => {
+              this.isSubmitting = false;
+              modal.close();
+              this.openOtpModal(verifyOtpModal);
+            },
+            error: (loginErr) => {
+              this.isSubmitting = false;
+              const loginErrMsg = this.extractErrorMessage(loginErr);
+              this.alertService.error('Verification Failed', loginErrMsg);
+            }
+          });
+        } else {
+          this.isSubmitting = false;
+          this.alertService.error('Registration Failed', errorMsg);
+        }
+      }
+    });
+  }
+
+  private openOtpModal(verifyOtpModal: any) {
+    this.otp = '';
+    this.countdown = environment.otpExpiryTimeInMin * 60;
+    this.resendDisabled = true;
+    this.errorMessage = null;
+    this.modalService.open(verifyOtpModal, {
+      backdrop: 'static',
+      centered: true,
+      keyboard: false,
+      windowClass: 'otp-modal-window'
+    });
+    this.startCountdown();
+  }
+
+  isFieldInvalid(field: string): boolean {
+    const control = this.checkoutForm?.get(field);
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  getCurrentImage() {
+    if (this.product && this.product.imageUrls && this.product.imageUrls.length > 0) {
+      return this.product.imageUrls[this.currentImageIndex];
+    } else {
+      return 'assets/images/no-image.png'; // Fallback image
+    }
+  }
+
+  private placeDirectOrder(modal: any) {
+    const formVal = this.checkoutForm.value;
+    const userId = this.authService.getUserId();
+    const productId = this.product?.id || 0;
+    const quantity = this.quantity;
+    const price = this.product?.price || 0;
+    const totalPrice = price * quantity;
+
+    const orderRequest: CreateOrderRequest = {
+      districtName: formVal.districtName,
+      upazilaName: formVal.upazilaName,
+      address: formVal.address,
+      userId: userId,
+      orderItems: [{
+        productId: productId,
+        quantity: quantity,
+        price: totalPrice
+      }]
+    };
+
+    this.orderService.createOrder(orderRequest).subscribe({
       next: (response) => {
-        console.log('Order created successfully:', response);
+        this.isSubmitting = false;
+        modal.close();
         this.alertService.success(
           "Order Placed Successfully",
           "Your order has been placed successfully!"
-        )
-        this.deliveryAddressForm.reset();
+        );
+        this.checkoutForm.reset();
+        this.router.navigate(['/my-orders']);
       },
       error: (error) => {
-        console.error('Error creating order:', error);
-        // is staus is 401 or 403 then logout the user and redirect to login page
+        this.isSubmitting = false;
         if (error.status === 401 || error.status === 403) {
           this.authService.logout();
+          modal.close();
           this.router.navigate(['/products']);
         } else {
-          let errorMessage = 'An unexpected error occurred while placing the order.';
-          if (error && error.error) {
-            // If the error body is already a JSON object
-            if (typeof error.error === 'object' && error.error.message) {
-              errorMessage = error.error.message;
-            }
-            // If the error body is a JSON string, attempt to parse it
-            else if (typeof error.error === 'string') {
-              try {
-                const parsedError = JSON.parse(error.error);
-                if (parsedError.message) {
-                  errorMessage = parsedError.message;
-                }
-              } catch (e) {
-                console.error('Failed to parse error response:', e);
-              }
-            }
-          }
+          const errorMessage = this.extractErrorMessage(error);
           this.alertService.error('Order Failed', errorMessage);
         }
       }
@@ -357,34 +340,82 @@ export class ProductDetailComponent implements OnInit {
   }
 
   verifyOTP(modal: any) {
-    if (this.otp != null) {
-      console.log("Form values for user registration = ", this.registrationForm.value)
-      console.log("Phone Number: ", this.registrationForm.value.phoneNumber);
-      console.log("OTP: ", this.otp);
+    if (this.otp && this.otp.length === 6) {
+      const phoneNumber = this.checkoutForm.value.phoneNumber;
+      this.isSubmitting = true;
 
-      this.authService.verifyOtp(
-        this.registrationForm.value.phoneNumber,
-        this.otp.toString()
-      ).subscribe({
+      this.authService.verifyOtp(phoneNumber, this.otp.toString()).subscribe({
         next: (response) => {
-          this.modalService.dismissAll();
-          this.alertService.success('Login Successful','Welcome back.');
-          // Handle successful OTP verification
-          console.log('OTP verified successfully:', response);
+          this.isSubmitting = false;
+          const userId = this.authService.getUserId();
+
+          if (this.pendingOrderPayload) {
+            this.pendingOrderPayload.userId = userId;
+            this.orderService.createOrder(this.pendingOrderPayload).subscribe({
+              next: () => {
+                this.modalService.dismissAll();
+                this.alertService.success(
+                  "Order Placed Successfully",
+                  "Your order has been placed successfully!"
+                );
+                this.checkoutForm.reset();
+                this.pendingOrderPayload = null;
+                this.router.navigate(['/my-orders']);
+              },
+              error: (err) => {
+                this.modalService.dismissAll();
+                const errMessage = this.extractErrorMessage(err);
+                this.alertService.error('Order Failed', errMessage || 'Logged in successfully, but order placement failed.');
+              }
+            });
+          } else {
+            this.modalService.dismissAll();
+            this.alertService.success('Login Successful', 'Welcome back.');
+          }
         },
         error: (error) => {
+          this.isSubmitting = false;
           this.errorMessage = error.message || 'OTP verification failed. Please try again.';
           console.error('OTP Verification error:', error);
-        },
-        complete: () => {
-          //this.loading = false;
         }
       });
     }
   }
 
   resendOTP() {
-    //handle resend otp
+    if (this.resendDisabled) return;
+    const phoneNumber = this.checkoutForm.value.phoneNumber;
+    if (!phoneNumber) return;
+
+    this.authService.reSendOtp(phoneNumber).subscribe({
+      next: () => {
+        this.countdown = environment.otpExpiryTimeInMin * 60;
+        this.resendDisabled = true;
+        this.startCountdown();
+        this.alertService.success('OTP Resent', 'A new OTP has been sent to your phone.');
+      },
+      error: (err) => {
+        const errMsg = this.extractErrorMessage(err);
+        this.alertService.error('Failed', errMsg || 'Failed to resend OTP.');
+      }
+    });
+  }
+
+  private extractErrorMessage(error: any): string {
+    if (!error) return 'An unexpected error occurred.';
+    if (error.error) {
+      if (typeof error.error === 'object' && error.error.message) {
+        return error.error.message;
+      } else if (typeof error.error === 'string') {
+        try {
+          const parsed = JSON.parse(error.error);
+          if (parsed.message) return parsed.message;
+        } catch (e) {
+          return error.error;
+        }
+      }
+    }
+    return error.message || 'An unexpected error occurred.';
   }
 
   onOtpChange(event: KeyboardEvent, nextInput: HTMLInputElement | null, prevInput: HTMLInputElement | null) {
