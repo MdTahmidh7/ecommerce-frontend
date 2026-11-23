@@ -440,10 +440,10 @@ export class ProductDetailComponent implements OnInit {
   onOtpInput(event: Event, nextInput: HTMLInputElement | null) {
     const input = event.target as HTMLInputElement;
     if (input && input.value) {
-      if (input.value.length > 1) {
-        input.value = input.value.slice(-1);
-      }
-      if (nextInput) {
+      // Keep only single numeric digit
+      const numeric = input.value.replace(/\D/g, '');
+      input.value = numeric ? numeric.slice(-1) : '';
+      if (input.value && nextInput) {
         nextInput.focus();
         nextInput.select();
       }

@@ -1682,52 +1682,70 @@
 
 /* OTP Modal */
 ::ng-deep .otp-modal-window .modal-dialog {
-  max-width: 370px !important;
-  margin: 1.5rem auto !important;
+  max-width: 350px !important;
+  margin: 1.25rem auto !important;
+  padding: 0 10px !important;
 }
 
 @media (max-width: 576px) {
   ::ng-deep .otp-modal-window .modal-dialog {
     margin: 1rem auto !important;
-    max-width: calc(100% - 1.5rem) !important;
+    max-width: 340px !important;
+    width: 95% !important;
   }
 }
 
 ::ng-deep .otp-modal-window .modal-content {
   border: none !important;
-  border-radius: 18px !important;
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.2) !important;
   overflow: hidden !important;
   background: #ffffff !important;
 }
 
 .otp-modal-container {
   background: #ffffff;
-  padding: 22px 20px 20px;
+  padding: 16px 16px 14px;
   position: relative;
 }
 
 .otp-header {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .otp-icon-wrapper {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12);
+}
+
+.otp-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2px;
+}
+
+.otp-subtitle {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.35;
 }
 
 .otp-close-btn {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  opacity: 0.6;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
   transition: opacity 0.2s ease;
 }
 
@@ -1739,53 +1757,58 @@
   display: inline-block;
   background: #f1f5f9;
   color: #0f172a;
-  padding: 2px 10px;
-  border-radius: 12px;
+  padding: 1px 8px;
+  border-radius: 6px;
   font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
+  font-size: 0.8rem;
+  margin-bottom: 2px;
+}
+
+.otp-timer-text {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 10px;
 }
 
 .otp-input-container {
-  max-width: 310px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  gap: 7px;
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr) !important;
+  gap: 6px !important;
+  max-width: 290px !important;
+  margin: 0 auto 10px !important;
+  width: 100% !important;
 }
 
-@media (max-width: 380px) {
+@media (max-width: 360px) {
   .otp-input-container {
-    gap: 4px;
+    gap: 4px !important;
   }
 }
 
 .otp-digit-box {
-  width: 42px !important;
-  height: 48px !important;
-  max-width: 44px !important;
+  width: 100% !important;
+  height: 44px !important;
   padding: 0 !important;
   margin: 0 !important;
-  font-size: 1.45rem !important;
+  font-size: 1.35rem !important;
   font-weight: 700 !important;
   color: #0f172a !important;
   text-align: center !important;
-  line-height: 48px !important;
-  border-radius: 10px !important;
+  line-height: 44px !important;
+  border-radius: 8px !important;
   border: 1.5px solid #cbd5e1 !important;
   background-color: #f8fafc !important;
   box-sizing: border-box !important;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   caret-color: #2563eb;
   -webkit-appearance: none;
 }
 
-@media (max-width: 380px) {
+@media (max-width: 360px) {
   .otp-digit-box {
-    width: 36px !important;
-    height: 44px !important;
-    font-size: 1.25rem !important;
-    line-height: 44px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    font-size: 1.15rem !important;
   }
 }
 
@@ -1799,20 +1822,20 @@
 
 .otp-footer {
   display: flex;
-  gap: 10px;
-  padding-top: 14px;
+  gap: 8px;
+  padding-top: 10px;
 }
 
 .otp-cancel-btn {
-  flex: 1 1 38%;
-  height: 42px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
+  flex: 1 1 35%;
+  height: 38px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #475569;
   background-color: #f8fafc;
   border: 1.5px solid #cbd5e1;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1827,31 +1850,29 @@
 }
 
 .otp-submit-btn {
-  flex: 1 1 62%;
-  height: 42px;
-  padding: 8px 16px;
-  font-size: 0.92rem;
+  flex: 1 1 65%;
+  height: 38px;
+  padding: 6px 12px;
+  font-size: 0.88rem;
   font-weight: 600;
   color: #ffffff;
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.28);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
   transition: all 0.2s ease;
 }
 
 .otp-submit-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-  transform: translateY(-1px);
 }
 
 .otp-submit-btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
   box-shadow: none;
-  transform: none;
 }
