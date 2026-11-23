@@ -47,6 +47,12 @@
             {{ orderDetails.upazilaName }}
           </span>
         </div>
+        <div class="info-row" *ngIf="orderDetails.address">
+          <span class="info-label">Address:</span>
+          <span class="info-value">
+            {{ orderDetails.address }}
+          </span>
+        </div>
       </div>
     </div>
 
