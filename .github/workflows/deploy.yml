@@ -78,54 +78,51 @@ jobs:
           ssh -o StrictHostKeyChecking=no $VM_USER@$VM_HOST << 'EOF'
             echo "==== CHECKING NGINX CONTAINER STATUS ===="
             
-            # Check if container exists
-            if docker ps -a --format '{{.Names}}' | grep -q '^angular-frontend-new$'; then
-              # If running, attempt zero-downtime graceful reload
-              if docker ps --format '{{.Names}}' | grep -q '^angular-frontend-new$'; then
-                echo "Container is running. Gracefully reloading Nginx..."
-                docker exec angular-frontend-new nginx -s reload || docker restart angular-frontend-new
-              else
-                echo "Container is stopped. Attempting safe start with network repair..."
-                # Disconnect any stale or deleted ghost networks
-                docker inspect angular-frontend-new --format '{{range $net, $conf := .NetworkSettings.Networks}}{{$net}} {{end}}' 2>/dev/null | xargs -n1 -I{} docker network disconnect -f {} angular-frontend-new 2>/dev/null || true
-                
-                # Discover active ecommerce/backend network
-                ACTIVE_NET=$(docker network ls --format '{{.Name}}' | grep -E 'ecommerce|backend' | head -n 1)
-                if [ -n "$ACTIVE_NET" ]; then
-                  echo "Attaching container to active network: $ACTIVE_NET"
-                  docker network connect "$ACTIVE_NET" angular-frontend-new 2>/dev/null || true
-                fi
-                
-                # Start or recreate if starting fails
-                docker start angular-frontend-new || {
-                  echo "Start failed. Recreating container fresh..."
-                  docker rm -f angular-frontend-new
-                  docker run -d \
-                    --name angular-frontend-new \
-                    ${ACTIVE_NET:+--network "$ACTIVE_NET"} \
-                    -p 80:80 \
-                    -p 443:443 \
-                    -v /home/root/frontend:/usr/share/nginx/html:ro \
-                    -v /home/root/frontend/nginx:/etc/nginx/conf.d:ro \
-                    -v /etc/ssl/cloudflare:/etc/ssl/cloudflare:ro \
-                    --restart always \
-                    nginx:latest
-                }
-              fi
-            else
-              echo "Container does not exist. Creating new container..."
-              ACTIVE_NET=$(docker network ls --format '{{.Name}}' | grep -E 'ecommerce|backend' | head -n 1)
-              docker run -d \
-                --name angular-frontend-new \
-                ${ACTIVE_NET:+--network "$ACTIVE_NET"} \
-                -p 80:80 \
-                -p 443:443 \
-                -v /home/root/frontend:/usr/share/nginx/html:ro \
-                -v /home/root/frontend/nginx:/etc/nginx/conf.d:ro \
-                -v /etc/ssl/cloudflare:/etc/ssl/cloudflare:ro \
-                --restart always \
-                nginx:latest
+            # 1. If angular-frontend-new is already running and healthy, reload Nginx gracefully
+            if docker ps --format '{{.Names}}' | grep -q '^angular-frontend-new$'; then
+              echo "angular-frontend-new is running. Gracefully reloading Nginx..."
+              docker exec angular-frontend-new nginx -s reload && exit 0
             fi
+
+            echo "Container is not actively running. Preparing clean startup..."
+
+            # 2. Free port 80 and 443 from any conflicting containers (e.g. old angular-frontend)
+            for PORT in 80 443; do
+              OCCUPYING_CONTAINERS=$(docker ps -q --filter "publish=$PORT")
+              if [ -n "$OCCUPYING_CONTAINERS" ]; then
+                echo "Removing conflicting container(s) on port $PORT..."
+                docker rm -f $OCCUPYING_CONTAINERS 2>/dev/null || true
+              fi
+            done
+
+            # Ensure both angular-frontend and angular-frontend-new are removed before fresh run
+            docker rm -f angular-frontend angular-frontend-new 2>/dev/null || true
+
+            # 3. Check if a native host service (e.g. system nginx/apache) is binding port 80
+            if ss -tuln 2>/dev/null | grep -E ':80\s|:443\s'; then
+              echo "Stopping native host web services on port 80/443..."
+              systemctl stop nginx 2>/dev/null || true
+              systemctl stop apache2 2>/dev/null || true
+              fuser -k 80/tcp 2>/dev/null || true
+              fuser -k 443/tcp 2>/dev/null || true
+            fi
+
+            # 4. Discover active ecommerce/backend network
+            ACTIVE_NET=$(docker network ls --format '{{.Name}}' | grep -E 'ecommerce|backend' | head -n 1)
+            echo "Using active network: ${ACTIVE_NET:-bridge}"
+
+            # 5. Start fresh Nginx container
+            echo "Starting angular-frontend-new container..."
+            docker run -d \
+              --name angular-frontend-new \
+              ${ACTIVE_NET:+--network "$ACTIVE_NET"} \
+              -p 80:80 \
+              -p 443:443 \
+              -v /home/root/frontend:/usr/share/nginx/html:ro \
+              -v /home/root/frontend/nginx:/etc/nginx/conf.d:ro \
+              -v /etc/ssl/cloudflare:/etc/ssl/cloudflare:ro \
+              --restart always \
+              nginx:latest
 
             echo "==== NGINX CONTAINER CURRENT STATUS ===="
             docker ps --filter "name=angular-frontend-new"
