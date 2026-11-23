@@ -167,10 +167,11 @@ export class ProductDetailComponent implements OnInit {
 
   openModal(modal: any) {
     const modalRef = this.modalService.open(modal, {
-      size: 'lg',
       backdrop: 'static',
       centered: true,
-      keyboard: false
+      keyboard: false,
+      scrollable: true,
+      windowClass: 'checkout-modal-window'
     });
 
     modalRef.result.then(
@@ -272,10 +273,10 @@ export class ProductDetailComponent implements OnInit {
     this.resendDisabled = true;
     this.errorMessage = null;
     this.modalService.open(verifyOtpModal, {
-      size: 'md',
       backdrop: 'static',
       centered: true,
-      keyboard: false
+      keyboard: false,
+      windowClass: 'otp-modal-window'
     });
     this.startCountdown();
   }
